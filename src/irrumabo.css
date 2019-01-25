@@ -1,0 +1,10 @@
+body, html {
+	width: 100vw;
+	height: 100vh;
+	max-width: 1280px;
+	max-height: 780px;
+	padding: 0;
+	margin: 0;
+	background: #161621;
+	color: #ddd;
+}
