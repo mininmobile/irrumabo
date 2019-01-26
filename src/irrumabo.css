@@ -55,10 +55,13 @@ body, html {
 	z-index: 9;
 	border-top-left-radius: 3em;
 	border-bottom-left-radius: 3em;
+	transition: height 0.5s;
+	overflow: auto;
 }
 
 .tools-panel {
 	width: 5em;
+	height: 21em;
 	max-height: calc(100vh - 10em);
 	background: rgba(255, 255, 255, 0.05);
 	position: absolute;
@@ -67,6 +70,8 @@ body, html {
 	z-index: 9;
 	border-top-right-radius: 3em;
 	border-bottom-right-radius: 3em;
+	transition: height 0.5s;
+	overflow: auto;
 }
 
 .tools-option-panel {
@@ -79,11 +84,19 @@ body, html {
 	z-index: 9;
 	border-top-left-radius: 3em;
 	border-top-right-radius: 3em;
+	transition: width 0.5s;
+	overflow: auto;
 }
+
+.components-panel.hidden { height: 0 !important; overflow: hidden; }
+.tools-panel.hidden { height: 0 !important; overflow: hidden; }
+.tools-option-panel.hidden { width: 0 !important; overflow: hidden; }
 
 .tools-panel > div, .components-panel > div {
 	width: 3em;
 	height: 3em;
 	margin: 1em;
-	background: #f00;
+	background: #fff;
+	border-radius: 50%;
+	cursor: pointer;
 }
