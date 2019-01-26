@@ -56,7 +56,8 @@ body, html {
 	border-top-left-radius: 3em;
 	border-bottom-left-radius: 3em;
 	transition: height 0.5s;
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .tools-panel {
@@ -71,7 +72,8 @@ body, html {
 	border-top-right-radius: 3em;
 	border-bottom-right-radius: 3em;
 	transition: height 0.5s;
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .tools-option-panel {
@@ -85,12 +87,13 @@ body, html {
 	border-top-left-radius: 3em;
 	border-top-right-radius: 3em;
 	transition: width 0.5s;
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
-.components-panel.hidden { height: 0 !important; overflow: hidden; }
-.tools-panel.hidden { height: 0 !important; overflow: hidden; }
-.tools-option-panel.hidden { width: 0 !important; overflow: hidden; }
+.components-panel.hidden { height: 0 !important; overflow-y: hidden; }
+.tools-panel.hidden { height: 0 !important; overflow-y: hidden; }
+.tools-option-panel.hidden { width: 0 !important; overflow-y: hidden; }
 
 .tools-panel > div, .components-panel > div {
 	width: 3em;
