@@ -150,7 +150,7 @@ Events.on(mouseConstraint, "mouseup", (e) => {
 						Math.floor((drawing.endY - drawing.startY) / 10),
 						0, 0, (x, y) => {
 					let body = Bodies.circle(x, y, 10, {
-						friction: 0, frictionStatic: 0, label: "water", render: { fillStyle: "#00f" }
+						friction: 0, frictionStatic: 0, density: 0.1, label: "water", render: { fillStyle: "#00f" }
 					});
 				
 					return body;
