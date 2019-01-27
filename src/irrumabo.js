@@ -67,6 +67,18 @@ buttonSettings.addEventListener("click", () => {});
 buttonTools.addEventListener("click", () => { panelTools.classList.toggle("hidden"); panelToolOptions.classList.toggle("hidden") });
 buttonComponents.addEventListener("click", () => { panelComponents.classList.toggle("hidden") });
 
+Object.keys(Tools).forEach((t) => {
+	let button = document.createElement("div");
+	button.classList.add("tool");
+	button.setAttribute("tool", t.toString());
+
+	button.addEventListener("click", () => {
+		tool = Tools[t];
+	});
+
+	panelTools.appendChild(button);
+});
+
 // add keyboard shortcuts
 document.addEventListener("keyup", (e) => {
 	switch (e.code) {
@@ -104,6 +116,15 @@ Events.on(mouseConstraint, "mousedown", (e) => {
 				endY: mouse.absolute.y,
 			}
 		} break;
+
+		case Tools.circle: {
+			drawing = {
+				startX: mouse.absolute.x,
+				startY: mouse.absolute.y,
+				endX: mouse.absolute.x,
+				endY: mouse.absolute.y,
+			}
+		} break;
 	}
 });
 
@@ -111,6 +132,11 @@ Events.on(mouseConstraint, "mousemove", (e) => {
 	if (drawing) {
 		switch (tool) {
 			case Tools.rectangle: {
+				drawing.endX = mouse.absolute.x;
+				drawing.endY = mouse.absolute.y;
+			} break;
+
+			case Tools.circle: {
 				drawing.endX = mouse.absolute.x;
 				drawing.endY = mouse.absolute.y;
 			} break;
@@ -123,7 +149,20 @@ Events.on(mouseConstraint, "mouseup", (e) => {
 		switch (tool) {
 			case Tools.rectangle: {
 				World.add(engine.world, [
-					Bodies.rectangle(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY)
+					Bodies.rectangle(
+						drawing.startX,
+						drawing.startY,
+						drawing.endX - drawing.startX,
+						drawing.endY - drawing.startY)
+				]);
+			} break;
+
+			case Tools.circle: {
+				World.add(engine.world, [
+					Bodies.circle(
+						drawing.startX,
+						drawing.startY,
+						Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY))
 				]);
 			} break;
 		}
@@ -158,8 +197,6 @@ let context = canvas.getContext("2d");
 
 		context.lineTo(vertices[0].x, vertices[0].y);
 
-		context.closePath();
-
 		context.fillStyle = bodies[i].render.fillStyle;
 		context.fill();
 	}
@@ -167,6 +204,18 @@ let context = canvas.getContext("2d");
 	if (tool == Tools.rectangle && drawing) {
 		context.strokeStyle = "#ddd";
 		context.strokeRect(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY);
+	}
+
+	if (tool == Tools.circle && drawing) {
+		context.strokeStyle = "#ddd";
+		context.beginPath();
+		context.ellipse(
+			drawing.startX,
+			drawing.startY,
+			Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
+			Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
+			0, 0, Math.PI * 2);
+		context.stroke();
 	}
 })();
 
