@@ -222,6 +222,8 @@ let context = canvas.getContext("2d");
 function togglePaused() {
 	paused = !paused;
 
+	paused ? document.body.classList.add("paused") : document.body.classList.remove("paused");
+
 	runner.enabled = !paused;
 }
 

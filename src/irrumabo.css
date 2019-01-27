@@ -48,6 +48,10 @@ body, html {
 	background: url("./img/pause.svg") center / contain;
 }
 
+.paused .pause::after {
+	background: url("./img/play.svg") center / contain;
+}
+
 .settings {
 	top: 0;
 	right: 0;
