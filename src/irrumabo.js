@@ -14,6 +14,7 @@ const Tools = utilenum(
 	"rectangle",
 	"circle",
 	"brush",
+	"eraser",
 );
 
 // get buttons
@@ -125,6 +126,11 @@ Events.on(mouseConstraint, "mousedown", (e) => {
 				endY: mouse.absolute.y,
 			}
 		} break;
+
+		case Tools.eraser: {
+			drawing = true;
+			if (mouseConstraint.body) World.remove(engine.world, mouseConstraint.body, true);
+		} break;
 	}
 });
 
@@ -139,6 +145,10 @@ Events.on(mouseConstraint, "mousemove", (e) => {
 			case Tools.circle: {
 				drawing.endX = mouse.absolute.x;
 				drawing.endY = mouse.absolute.y;
+			} break;
+
+			case Tools.eraser: {
+				if (mouseConstraint.body) World.remove(engine.world, mouseConstraint.body, true);
 			} break;
 		}
 	}
@@ -166,6 +176,7 @@ Events.on(mouseConstraint, "mouseup", (e) => {
 				]);
 			} break;
 		}
+
 		drawing = undefined;
 	}
 });
