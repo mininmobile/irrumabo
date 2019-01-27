@@ -16,24 +16,42 @@ body, html {
 	}
 }
 
+[tooltip]::after {
+	content: attr(tooltip);
+	padding: 0.5em 0.75em;
+	margin-top: 0.5em;
+	background: rgba(255, 255, 255, 0.05);
+	position: absolute;
+	left: 4em;
+	opacity: 0;
+	border-radius: 2em;
+	pointer-events: none;
+	transition: opacity 0.2s, left 0.2s, right 0.2s;
+}
+
+[tooltip]:hover::after {
+	left: 6em;
+	opacity: 1;
+}
+
+.r[tooltip]::after {  left: unset; right: 4em; }
+.r[tooltip]:hover::after { left: unset; right: 6em; }
+
+/* buttons */
+
 .button {
 	width: 5em;
 	height: 5em;
 	background: rgba(255, 255, 255, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	position: absolute;
 	z-index: 9;
 	cursor: pointer;
 }
 
-/* buttons */
-
-.button {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.button::after {
+.button::before {
 	content: "";
 	width: 55%;
 	height: 55%;
@@ -46,7 +64,7 @@ body, html {
 	border-bottom-right-radius: 3em;
 }
 
-.pause::after {
+.pause::before {
 	width: 65%;
 	height: 65%;
 	margin-bottom: 5%;
@@ -54,7 +72,7 @@ body, html {
 	background: url("./img/pause.svg") center / contain;
 }
 
-.paused .pause::after {
+.paused .pause::before {
 	background: url("./img/play.svg") center / contain;
 }
 
@@ -64,7 +82,7 @@ body, html {
 	border-bottom-left-radius: 3em;
 }
 
-.settings::after {
+.settings::before {
 	margin-bottom: 10%;
 	margin-left: 10%;
 	background: url("./img/settings.svg") center / contain;
@@ -76,7 +94,7 @@ body, html {
 	border-top-right-radius: 3em;
 }
 
-.tools::after {
+.tools::before {
 	margin-top: 10%;
 	margin-right: 10%;
 	background: url("./img/tools.svg") center / contain;
@@ -88,7 +106,7 @@ body, html {
 	border-top-left-radius: 3em;
 }
 
-.components::after {
+.components::before {
 	margin-top: 10%;
 	margin-left: 10%;
 	background: url("./img/components.svg") center / contain;
@@ -154,26 +172,25 @@ body, html {
 	cursor: pointer;
 }
 
-.tool::after {
-	content: attr(tool);
-	padding: 0.5em 0.75em;
-	margin-top: 0.5em;
-	background: rgba(255, 255, 255, 0.05);
+.tool::before {
+	content: "";
+	width: 1em;
+	height: 1em;
+	margin-top: 1em;
+	background: white;
 	position: absolute;
-	left: 4em;
-	opacity: 0;
-	border-radius: 2em;
-	transition: opacity 0.2s, left 0.2s;
+	left: -1em;
+	border-radius: 50%;
+	transition: left 0.3s;
 }
 
-.tool:hover::after {
-	left: 6em;
-	opacity: 1;
+.tool.selected::before {
+	left: -0.5em;
 }
 
-.tool[tool="drag"] { background: url("./img/tooldrag.svg") center / contain; }
-.tool[tool="water"] { background: url("./img/toolwater.svg") center / contain; }
-.tool[tool="rectangle"] { background: url("./img/toolrectangle.svg") center / contain; }
-.tool[tool="circle"] { background: url("./img/toolcircle.svg") center / contain; }
-.tool[tool="brush"] { background: url("./img/toolbrush.svg") center / contain; }
-.tool[tool="eraser"] { background: url("./img/tooleraser.svg") center / contain; }
+.tool[tooltip="drag"] { background: url("./img/tooldrag.svg") center / contain; }
+.tool[tooltip="water"] { background: url("./img/toolwater.svg") center / contain; }
+.tool[tooltip="rectangle"] { background: url("./img/toolrectangle.svg") center / contain; }
+.tool[tooltip="circle"] { background: url("./img/toolcircle.svg") center / contain; }
+.tool[tooltip="brush"] { background: url("./img/toolbrush.svg") center / contain; }
+.tool[tooltip="eraser"] { background: url("./img/tooleraser.svg") center / contain; }

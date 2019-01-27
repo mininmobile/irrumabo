@@ -52,15 +52,7 @@ let ballB = Bodies.circle(200, document.body.scrollHeight / 1.5 - 300, 40, { den
 let groundB = Bodies.rectangle(document.body.scrollWidth / 4, document.body.scrollHeight / 1.5, document.body.scrollWidth / 2, 60, { isStatic: true, angle: Math.PI * 0.1 });
 let groundC = Bodies.rectangle(document.body.scrollWidth / 1.5, document.body.scrollHeight / 1.5, document.body.scrollWidth / 2, 60, { isStatic: true, angle: Math.PI * -0.1 });
 
-let water = Composites.stack(document.body.scrollWidth / 2 + 200, 200, 15, 15, 0, 0, (x, y) => {
-	let body = Bodies.circle(x, y, 10, {
-		friction: 0, frictionStatic: 0, label: "water", render: { fillStyle: "#00f" }
-	});
-
-	return body;
-});
-
-World.add(engine.world, [ballA, groundA, ballB, groundB, groundC, water]);
+World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 
 // add button actions
 buttonPause.addEventListener("click", togglePaused);
@@ -71,10 +63,17 @@ buttonComponents.addEventListener("click", () => { panelComponents.classList.tog
 Object.keys(Tools).forEach((t) => {
 	let button = document.createElement("div");
 	button.classList.add("tool");
-	button.setAttribute("tool", t.toString());
+	if (tool == Tools[t]) button.classList.add("selected");
+	button.setAttribute("tooltip", t.toString());
 
 	button.addEventListener("click", () => {
 		tool = Tools[t];
+
+		for (let i = 0; i < panelTools.children.length; i++) {
+			panelTools.children[i].classList.remove("selected");
+		}
+
+		button.classList.add("selected");
 	});
 
 	panelTools.appendChild(button);
@@ -109,16 +108,7 @@ World.add(engine.world, mouseConstraint);
 
 Events.on(mouseConstraint, "mousedown", (e) => {
 	switch (tool) {
-		case Tools.rectangle: {
-			drawing = {
-				startX: mouse.absolute.x,
-				startY: mouse.absolute.y,
-				endX: mouse.absolute.x,
-				endY: mouse.absolute.y,
-			}
-		} break;
-
-		case Tools.circle: {
+		case Tools.water: case Tools.rectangle: case Tools.circle: {
 			drawing = {
 				startX: mouse.absolute.x,
 				startY: mouse.absolute.y,
@@ -137,12 +127,7 @@ Events.on(mouseConstraint, "mousedown", (e) => {
 Events.on(mouseConstraint, "mousemove", (e) => {
 	if (drawing) {
 		switch (tool) {
-			case Tools.rectangle: {
-				drawing.endX = mouse.absolute.x;
-				drawing.endY = mouse.absolute.y;
-			} break;
-
-			case Tools.circle: {
+			case Tools.water: case Tools.rectangle: case Tools.circle: {
 				drawing.endX = mouse.absolute.x;
 				drawing.endY = mouse.absolute.y;
 			} break;
@@ -157,6 +142,23 @@ Events.on(mouseConstraint, "mousemove", (e) => {
 Events.on(mouseConstraint, "mouseup", (e) => {
 	if (drawing) {
 		switch (tool) {
+			case Tools.water: {
+				let water = Composites.stack(
+						drawing.startX,
+						drawing.startY,
+						Math.floor((drawing.endX - drawing.startX) / 10),
+						Math.floor((drawing.endY - drawing.startY) / 10),
+						0, 0, (x, y) => {
+					let body = Bodies.circle(x, y, 10, {
+						friction: 0, frictionStatic: 0, label: "water", render: { fillStyle: "#00f" }
+					});
+				
+					return body;
+				});
+
+				World.add(engine.world, [water]);
+			} break;
+
 			case Tools.rectangle: {
 				World.add(engine.world, [
 					Bodies.rectangle(
@@ -212,7 +214,7 @@ let context = canvas.getContext("2d");
 		context.fill();
 	}
 
-	if (tool == Tools.rectangle && drawing) {
+	if ((tool == Tools.rectangle || tool == Tools.water) && drawing) {
 		context.strokeStyle = "#ddd";
 		context.strokeRect(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY);
 	}
@@ -234,6 +236,7 @@ function togglePaused() {
 	paused = !paused;
 
 	paused ? document.body.classList.add("paused") : document.body.classList.remove("paused");
+	paused ? buttonPause.setAttribute("tooltip", "play") : buttonPause.setAttribute("tooltip", "pause");
 
 	runner.enabled = !paused;
 }
