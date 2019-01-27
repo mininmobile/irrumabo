@@ -106,48 +106,47 @@ let mouseConstraint = MouseConstraint.create(engine, {
 
 World.add(engine.world, mouseConstraint);
 
-Events.on(mouseConstraint, "mousedown", (e) => {
-	switch (tool) {
-		case Tools.water: case Tools.rectangle: case Tools.circle: {
-			drawing = {
-				startX: mouse.absolute.x,
-				startY: mouse.absolute.y,
-				endX: mouse.absolute.x,
-				endY: mouse.absolute.y,
-			}
-		} break;
-
-		case Tools.eraser: {
-			drawing = true;
-			if (mouseConstraint.body) World.remove(engine.world, mouseConstraint.body, true);
-		} break;
+document.addEventListener("mousedown", (e) => {
+	if (e.button == 0) {
+		switch (tool) {
+			case Tools.water: case Tools.rectangle: case Tools.circle: {
+				drawing = {
+					startX: mouse.absolute.x,
+					startY: mouse.absolute.y,
+					endX: mouse.absolute.x,
+					endY: mouse.absolute.y,
+				}
+			} break;
+	
+			case Tools.eraser: {
+				drawing = true;
+			} break;
+		}
+	} else if (e.button == 2) {
+		
 	}
 });
 
-Events.on(mouseConstraint, "mousemove", (e) => {
+document.addEventListener("mousemove", (e) => {
 	if (drawing) {
 		switch (tool) {
 			case Tools.water: case Tools.rectangle: case Tools.circle: {
 				drawing.endX = mouse.absolute.x;
 				drawing.endY = mouse.absolute.y;
 			} break;
-
-			case Tools.eraser: {
-				if (mouseConstraint.body) World.remove(engine.world, mouseConstraint.body, true);
-			} break;
 		}
 	}
 });
 
-Events.on(mouseConstraint, "mouseup", (e) => {
+document.addEventListener("mouseup", (e) => {
 	if (drawing) {
 		switch (tool) {
 			case Tools.water: {
 				let water = Composites.stack(
 						drawing.startX,
 						drawing.startY,
-						Math.floor((drawing.endX - drawing.startX) / 10),
-						Math.floor((drawing.endY - drawing.startY) / 10),
+						Math.floor((drawing.endX - drawing.startX) / 20),
+						Math.floor((drawing.endY - drawing.startY) / 20),
 						0, 0, (x, y) => {
 					let body = Bodies.circle(x, y, 10, {
 						friction: 0, frictionStatic: 0, density: 0.1, label: "water", render: { fillStyle: "#00f" }
@@ -164,8 +163,8 @@ Events.on(mouseConstraint, "mouseup", (e) => {
 					Bodies.rectangle(
 						drawing.startX,
 						drawing.startY,
-						drawing.endX - drawing.startX,
-						drawing.endY - drawing.startY)
+						(drawing.endX - drawing.startX),
+						(drawing.endY - drawing.startY))
 				]);
 			} break;
 
@@ -176,6 +175,10 @@ Events.on(mouseConstraint, "mouseup", (e) => {
 						drawing.startY,
 						Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY))
 				]);
+			} break;
+
+			case Tools.eraser: {
+				if (mouseConstraint.body) World.remove(engine.world, mouseConstraint.body, true);
 			} break;
 		}
 
@@ -188,6 +191,8 @@ Runner.run(runner, engine);
 
 // start rendering
 let context = canvas.getContext("2d");
+context.lineWidth = 2;
+context.font = "1em Arial";
 
 (function render() {
 	let bodies = Composite.allBodies(engine.world);
@@ -214,21 +219,64 @@ let context = canvas.getContext("2d");
 		context.fill();
 	}
 
-	if ((tool == Tools.rectangle || tool == Tools.water) && drawing) {
-		context.strokeStyle = "#ddd";
-		context.strokeRect(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY);
-	}
+	{ // show action
+		if (tool == Tools.water && drawing) {
+			context.strokeStyle = "#ddd";
+			context.strokeRect(
+				drawing.startX,
+				drawing.startY,
+				Math.floor((drawing.endX - drawing.startX) / 20) * 20,
+				Math.floor((drawing.endY - drawing.startY) / 20) * 20);
+			context.fillStyle = "#ddd";
+			context.fillText(
+				`${Math.floor((drawing.endX - drawing.startX) / 20)}x${Math.floor((drawing.endY - drawing.startY) / 20)}`,
+				drawing.startX,
+				drawing.startY - 5);
+		}
 
-	if (tool == Tools.circle && drawing) {
-		context.strokeStyle = "#ddd";
-		context.beginPath();
-		context.ellipse(
-			drawing.startX,
-			drawing.startY,
-			Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
-			Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
-			0, 0, Math.PI * 2);
-		context.stroke();
+		if (tool == Tools.rectangle && drawing) {
+			context.strokeStyle = "#ddd";
+			context.strokeRect(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY);
+			context.fillStyle = "#ddd";
+			context.fillText(
+				`${drawing.endX - drawing.startX}x${drawing.endY - drawing.startY}`,
+				drawing.startX,
+				drawing.startY - 5);
+		}
+
+		if (tool == Tools.circle && drawing) {
+			context.strokeStyle = "#ddd";
+			context.beginPath();
+			context.ellipse(
+				drawing.startX,
+				drawing.startY,
+				Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
+				Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
+				0, 0, Math.PI * 2);
+			context.stroke();
+			context.fillStyle = "#ddd";
+			context.fillText(
+				`r${Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY)}`,
+				drawing.startX,
+				drawing.startY);
+		}
+
+		if (tool == Tools.eraser && drawing && mouseConstraint.body) {
+			context.beginPath();
+	
+			let vertices = mouseConstraint.body.vertices;
+	
+			context.moveTo(vertices[0].x, vertices[0].y);
+	
+			for (let j = 1; j < vertices.length; j += 1) {
+				context.lineTo(vertices[j].x, vertices[j].y);
+			}
+	
+			context.lineTo(vertices[0].x, vertices[0].y);
+	
+			context.strokeStyle = "#f00";
+			context.stroke();
+		}
 	}
 })();
 
