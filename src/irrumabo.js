@@ -1,18 +1,19 @@
 let Engine = Matter.Engine;
-let Render = Matter.Render;
+let Events = Matter.Events;
 let Mouse = Matter.Mouse;
 let MouseConstraint = Matter.MouseConstraint;
 let Runner = Matter.Runner;
 let World = Matter.World;
+let Composite = Matter.Composite;
 let Composites = Matter.Composites;
 let Bodies = Matter.Bodies;
 
 const Tools = utilenum(
 	"drag",
-	"move",
-	"pencil",
+	"water",
+	"rectangle",
+	"circle",
 	"brush",
-	"rubber",
 );
 
 // get buttons
@@ -25,22 +26,17 @@ let panelTools = document.getElementById("tools-panel");
 let panelToolOptions = document.getElementById("tools-option-panel");
 let panelComponents = document.getElementById("components-panel");
 
+let canvas = document.createElement('canvas');
+canvas.width = document.body.scrollWidth;
+canvas.height = document.body.scrollHeight;
+document.body.appendChild(canvas);
+
 let tool = Tools.drag;
+let drawing = undefined;
 let paused = false;
 
 // create enviroment
 let engine = Engine.create();
-
-let render = Render.create({
-	element: document.body,
-	engine: engine,
-	options: {
-		width: document.body.scrollWidth,
-		height: document.body.scrollHeight,
-		background: "#161621",
-		wireframes: false,
-	}
-});
 
 let runner = Runner.create({
 	delta: 1000 / 30,
@@ -78,8 +74,14 @@ document.addEventListener("keyup", (e) => {
 	}
 });
 
+// support for resizing
+document.addEventListener("resize", () => {
+	canvas.width = document.body.scrollWidth;
+	canvas.height = document.body.scrollHeight;
+});
+
 // add mouse control
-let mouse = Mouse.create(render.canvas);
+let mouse = Mouse.create(canvas);
 let mouseConstraint = MouseConstraint.create(engine, {
 	mouse: mouse,
 	constraint: {
@@ -91,10 +93,82 @@ let mouseConstraint = MouseConstraint.create(engine, {
 });
 
 World.add(engine.world, mouseConstraint);
-render.mouse = mouse;
 
+Events.on(mouseConstraint, "mousedown", (e) => {
+	switch (tool) {
+		case Tools.rectangle: {
+			drawing = {
+				startX: mouse.absolute.x,
+				startY: mouse.absolute.y,
+				endX: mouse.absolute.x,
+				endY: mouse.absolute.y,
+			}
+		} break;
+	}
+});
+
+Events.on(mouseConstraint, "mousemove", (e) => {
+	if (drawing) {
+		switch (tool) {
+			case Tools.rectangle: {
+				drawing.endX = mouse.absolute.x;
+				drawing.endY = mouse.absolute.y;
+			} break;
+		}
+	}
+});
+
+Events.on(mouseConstraint, "mouseup", (e) => {
+	if (drawing) {
+		switch (tool) {
+			case Tools.rectangle: {
+				World.add(engine.world, [
+					Bodies.rectangle(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY)
+				]);
+			} break;
+		}
+		drawing = undefined;
+	}
+});
+
+// start engine
 Runner.run(runner, engine);
-Render.run(render);
+
+// start rendering
+let context = canvas.getContext("2d");
+
+(function render() {
+	let bodies = Composite.allBodies(engine.world);
+
+	window.requestAnimationFrame(render);
+
+	context.fillStyle = "#161621";
+	context.fillRect(0, 0, canvas.width, canvas.height);
+
+	for (let i = 0; i < bodies.length; i += 1) {
+		context.beginPath();
+
+		let vertices = bodies[i].vertices;
+
+		context.moveTo(vertices[0].x, vertices[0].y);
+
+		for (let j = 1; j < vertices.length; j += 1) {
+			context.lineTo(vertices[j].x, vertices[j].y);
+		}
+
+		context.lineTo(vertices[0].x, vertices[0].y);
+
+		context.closePath();
+
+		context.fillStyle = bodies[i].render.fillStyle;
+		context.fill();
+	}
+
+	if (tool == Tools.rectangle && drawing) {
+		context.strokeStyle = "#ddd";
+		context.strokeRect(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY);
+	}
+})();
 
 function togglePaused() {
 	paused = !paused;
