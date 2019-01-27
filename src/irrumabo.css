@@ -10,6 +10,12 @@ body, html {
 	font-size: 1em;
 }
 
+@media (pointer:none), (pointer:coarse) {
+	body {
+		font-size: 0.5em;
+	}
+}
+
 .button {
 	width: 5em;
 	height: 5em;
