@@ -20,6 +20,10 @@ p, h1, h2, h3, h4, h5, h6 {
 	}
 }
 
+.hidden {
+	pointer-events: none;
+}
+
 [tooltip]::after {
 	content: attr(tooltip);
 	padding: 0.5em 0.75em;
@@ -29,8 +33,8 @@ p, h1, h2, h3, h4, h5, h6 {
 	left: 4em;
 	opacity: 0;
 	border-radius: 2em;
-	pointer-events: none;
 	transition: opacity 0.2s, left 0.2s, right 0.2s;
+	pointer-events: none;
 }
 
 [tooltip]:hover::after {
@@ -199,13 +203,13 @@ p, h1, h2, h3, h4, h5, h6 {
 .tool[tooltip="brush"] { background: url("./img/toolbrush.svg") center / contain; }
 .tool[tooltip="eraser"] { background: url("./img/tooleraser.svg") center / contain; }
 
-/* settings */
+/* windows */
 
 input[type="range"]::after {
 	content:"ass";
 }
 
-.settings-window {
+.window {
 	width: 50vw;
 	height: 50vh;
 	min-width: 300px;
@@ -220,7 +224,7 @@ input[type="range"]::after {
 	transition: transform 0.4s, opacity 0.3s;
 }
 
-.settings-window.hidden {
+.window.hidden {
 	opacity: 0;
 	transform: skewX(-45deg);
 }

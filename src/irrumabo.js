@@ -28,7 +28,6 @@ let settings = {
 		gravityY: document.getElementById("settings-gravity-y"),
 	},
 	displays: {
-		gravityEnable: document.getElementById("settings-display-gravity-enable"),
 		gravityX: document.getElementById("settings-display-gravity-x"),
 		gravityY: document.getElementById("settings-display-gravity-y"),
 	},
@@ -74,7 +73,23 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 // initialize dialogs
 settings.window.window.style.left = `${document.body.scrollWidth / 4}px`;
 settings.window.window.style.top = `${document.body.scrollHeight / 4}px`;
-settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") })
+settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") });
+
+settings.inputs.gravityEnable.checked = true;
+
+settings.inputs.gravityEnable.addEventListener("change", () => {
+	engine.world.gravity.scale = settings.inputs.gravityEnable.checked ? 0.001 : 0
+});
+settings.inputs.gravityX.addEventListener("mousemove", () => {
+	settings.displays.gravityX.innerText =
+	engine.world.gravity.x =
+	settings.inputs.gravityX.value;
+});
+settings.inputs.gravityY.addEventListener("mousemove", () => {
+	settings.displays.gravityY.innerText =
+	engine.world.gravity.y =
+	settings.inputs.gravityY.value;
+});
 
 // add button actions
 buttonPause.addEventListener("click", togglePaused);
