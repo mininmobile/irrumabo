@@ -20,5 +20,35 @@
 
 	<div tooltip="components" id="components" class="button components r"></div>
 	<div id="components-panel" class="components-panel"></div>
+
+	<div id="context-container" class="context-container">
+		<div class="context"></div>
+	</div>
+
+	<div id="settings-window" class="settings-window">
+		<div class="titlebar">
+			<div class="title">Settings</div>
+			<div id="settings-close" class="close"></div>
+		</div>
+		<div class="content">
+			<span>
+				<span>Gravity Enabled</span>
+				<input id="settings-gravity-enable" type="checkbox" checked>
+				<span></span>
+			</span>
+
+			<span>
+				<span>Gravity X</span>
+				<input id="settings-gravity-x" type="range" min="-1" max="1" step="0.25" value="0">
+				<span id="settings-display-gravity-x">0</span>
+			</span>
+
+			<span>
+				<span>Gravity Y</span>
+				<input id="settings-gravity-y" type="range" min="-1" max="1" step="0.25" value="1">
+				<span id="settings-display-gravity-y">1</span>
+			</span>
+		</div>
+	</div>
 </body>
 </html>

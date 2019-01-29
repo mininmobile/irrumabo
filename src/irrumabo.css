@@ -10,6 +10,10 @@ body, html {
 	font-size: 1em;
 }
 
+p, h1, h2, h3, h4, h5, h6 {
+	margin: 0;
+}
+
 @media (pointer:none), (pointer:coarse) {
 	body {
 		font-size: 0.5em;
@@ -194,3 +198,82 @@ body, html {
 .tool[tooltip="circle"] { background: url("./img/toolcircle.svg") center / contain; }
 .tool[tooltip="brush"] { background: url("./img/toolbrush.svg") center / contain; }
 .tool[tooltip="eraser"] { background: url("./img/tooleraser.svg") center / contain; }
+
+/* settings */
+
+input[type="range"]::after {
+	content:"ass";
+}
+
+.settings-window {
+	width: 50vw;
+	height: 50vh;
+	min-width: 300px;
+	min-height: 200px;
+	background: rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	z-index: 99;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	border-radius: 3em;
+	transition: transform 0.4s, opacity 0.3s;
+}
+
+.settings-window.hidden {
+	opacity: 0;
+	transform: skewX(-45deg);
+}
+
+.titlebar {
+	width: calc(100% - 5em);
+	height: 5em;
+	padding: 0 2.5em;
+	background: rgba(0, 0, 0, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-top-left-radius: 3em;
+	border-top-right-radius: 3em;
+}
+
+.titlebar > .title {
+	font-size: 1.25em;
+}
+
+.titlebar > .close {
+	width: 2em;
+	height: 2em;
+	background-color: white;
+	-webkit-mask: url("./img/tooleraser.svg") center / contain;
+	        mask: url("./img/tooleraser.svg") center / contain;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.titlebar > .close:hover {
+	background-color: #d55;
+}
+
+.content {
+	padding: 2em;
+	padding-top: 1em;
+	flex: 1;
+	border-bottom-left-radius: 3em;
+	border-bottom-right-radius: 3em;
+	overflow: auto;
+}
+
+.content > span {
+	display: flex;
+	align-items: center;
+}
+
+.content > span :first-child {
+	flex: 1;
+}
+
+.content > span :last-child {
+	flex: 1;
+	text-align: right;
+}

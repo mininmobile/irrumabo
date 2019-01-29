@@ -17,6 +17,23 @@ const Tools = utilenum(
 	"eraser",
 );
 
+let settings = {
+	window: {
+		window: document.getElementById("settings-window"),
+		close: document.getElementById("settings-close"),
+	},
+	inputs: {
+		gravityEnable: document.getElementById("settings-gravity-enable"),
+		gravityX: document.getElementById("settings-gravity-x"),
+		gravityY: document.getElementById("settings-gravity-y"),
+	},
+	displays: {
+		gravityEnable: document.getElementById("settings-display-gravity-enable"),
+		gravityX: document.getElementById("settings-display-gravity-x"),
+		gravityY: document.getElementById("settings-display-gravity-y"),
+	},
+}
+
 // get buttons
 let buttonPause = document.getElementById("pause");
 let buttonSettings = document.getElementById("settings");
@@ -54,9 +71,14 @@ let groundC = Bodies.rectangle(document.body.scrollWidth / 1.5, document.body.sc
 
 World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 
+// initialize dialogs
+settings.window.window.style.left = `${document.body.scrollWidth / 4}px`;
+settings.window.window.style.top = `${document.body.scrollHeight / 4}px`;
+settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") })
+
 // add button actions
 buttonPause.addEventListener("click", togglePaused);
-buttonSettings.addEventListener("click", () => {});
+buttonSettings.addEventListener("click", () => { settings.window.window.classList.toggle("hidden") });
 buttonTools.addEventListener("click", () => { panelTools.classList.toggle("hidden"); panelToolOptions.classList.toggle("hidden") });
 buttonComponents.addEventListener("click", () => { panelComponents.classList.toggle("hidden") });
 
