@@ -84,16 +84,16 @@ p, h1, h2, h3, h4, h5, h6 {
 	background: url("./img/play.svg") center / contain;
 }
 
-.settings {
+.missions {
 	top: 0;
 	right: 0;
 	border-bottom-left-radius: 3em;
 }
 
-.settings::before {
+.missions::before {
 	margin-bottom: 10%;
 	margin-left: 10%;
-	background: url("./img/settings.svg") center / contain;
+	background: url("./img/missions.svg") center / contain;
 }
 
 .tools {
@@ -210,8 +210,6 @@ input[type="range"]::after {
 }
 
 .window {
-	width: 50vw;
-	height: 50vh;
 	min-width: 300px;
 	min-height: 200px;
 	background: rgba(0, 0, 0, 0.1);
@@ -227,6 +225,16 @@ input[type="range"]::after {
 .window.hidden {
 	opacity: 0;
 	transform: skewX(-45deg);
+}
+
+.setw {
+	width: 33.333vw;
+	height: 50vh;
+}
+
+.misw {
+	width: 33.333vw;
+	height: 50vh;
 }
 
 .titlebar {

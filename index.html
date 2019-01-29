@@ -12,7 +12,7 @@
 <body oncontextmenu="return false">
 	<div tooltip="pause" id="pause" class="button pause"></div>
 
-	<div tooltip="settings" id="settings" class="button settings r"></div>
+	<div tooltip="missions" id="missions" class="button missions r"></div>
 
 	<div tooltip="tools" id="tools" class="button tools"></div>
 	<div id="tools-panel" class="tools-panel"></div>
@@ -25,7 +25,7 @@
 		<div class="context"></div>
 	</div>
 
-	<div id="settings-window" class="window">
+	<div id="settings-window" class="setw window hidden">
 		<div class="titlebar">
 			<div class="title">Settings</div>
 			<div id="settings-close" class="close"></div>
@@ -50,6 +50,35 @@
 			</span>
 
 			<hr>
+		</div>
+	</div>
+
+	<div id="missions-window" class="misw window">
+		<div class="titlebar">
+			<div class="title">Missions</div>
+			<div id="missions-close" class="close"></div>
+		</div>
+		<div class="content">
+			<div class="mission complete">
+				<span>Intro to Density</span>
+				<span>+10xp</span>
+			</div>
+			<div class="mission complete">
+				<span>Rolling Balls</span>
+				<span>+10xp</span>
+			</div>
+			<div class="mission incomplete">
+				<span>Playing with Fire</span>
+				<span>+10xp</span>
+			</div>
+			<div class="mission incomplete">
+				<span>Reactions</span>
+				<span>+25xp</span>
+			</div>
+			<div class="mission incomplete">
+				<span>Distillation</span>
+				<span>+50xp</span>
+			</div>
 		</div>
 	</div>
 </body>

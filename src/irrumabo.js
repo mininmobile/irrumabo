@@ -33,9 +33,27 @@ let settings = {
 	},
 }
 
+let missions = {
+	window: {
+		window: document.getElementById("missions-window"),
+		close: document.getElementById("missions-close"),
+	},
+	mission: {
+		"Intro to Density": {},
+		"Rolling Balls": {},
+		"Playing with Fire": {},
+		"Reactions": {},
+		"Distillation": {},
+	},
+	status: {
+		complete: [0, 1],
+		xp: 20,
+	},
+}
+
 // get buttons
 let buttonPause = document.getElementById("pause");
-let buttonSettings = document.getElementById("settings");
+let buttonMissions = document.getElementById("missions");
 let buttonTools = document.getElementById("tools");
 let buttonComponents = document.getElementById("components");
 // get panels
@@ -71,29 +89,37 @@ let groundC = Bodies.rectangle(document.body.scrollWidth / 1.5, document.body.sc
 World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 
 // initialize dialogs
-settings.window.window.style.left = `${document.body.scrollWidth / 4}px`;
-settings.window.window.style.top = `${document.body.scrollHeight / 4}px`;
-settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") });
+{ // missions window
+	missions.window.window.style.left = `${document.body.scrollWidth / 3}px`;
+	missions.window.window.style.top = `${document.body.scrollHeight / 4}px`;
+	missions.window.close.addEventListener("click", () => { missions.window.window.classList.add("hidden") });
+}
 
-settings.inputs.gravityEnable.checked = true;
-
-settings.inputs.gravityEnable.addEventListener("change", () => {
-	engine.world.gravity.scale = settings.inputs.gravityEnable.checked ? 0.001 : 0
-});
-settings.inputs.gravityX.addEventListener("mousemove", () => {
-	settings.displays.gravityX.innerText =
-	engine.world.gravity.x =
-	settings.inputs.gravityX.value;
-});
-settings.inputs.gravityY.addEventListener("mousemove", () => {
-	settings.displays.gravityY.innerText =
-	engine.world.gravity.y =
-	settings.inputs.gravityY.value;
-});
+{ // settings window
+	settings.window.window.style.left = `${document.body.scrollWidth / 3}px`;
+	settings.window.window.style.top = `${document.body.scrollHeight / 4}px`;
+	settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") });
+	
+	settings.inputs.gravityEnable.checked = true;
+	
+	settings.inputs.gravityEnable.addEventListener("change", () => {
+		engine.world.gravity.scale = settings.inputs.gravityEnable.checked ? 0.001 : 0
+	});
+	settings.inputs.gravityX.addEventListener("mousemove", () => {
+		settings.displays.gravityX.innerText =
+		engine.world.gravity.x =
+		settings.inputs.gravityX.value;
+	});
+	settings.inputs.gravityY.addEventListener("mousemove", () => {
+		settings.displays.gravityY.innerText =
+		engine.world.gravity.y =
+		settings.inputs.gravityY.value;
+	});
+}
 
 // add button actions
 buttonPause.addEventListener("click", togglePaused);
-buttonSettings.addEventListener("click", () => { settings.window.window.classList.toggle("hidden") });
+buttonMissions.addEventListener("click", () => { missions.window.window.classList.toggle("hidden") });
 buttonTools.addEventListener("click", () => { panelTools.classList.toggle("hidden"); panelToolOptions.classList.toggle("hidden") });
 buttonComponents.addEventListener("click", () => { panelComponents.classList.toggle("hidden") });
 
