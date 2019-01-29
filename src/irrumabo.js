@@ -146,6 +146,7 @@ Object.keys(Tools).forEach((t) => {
 document.addEventListener("keyup", (e) => {
 	switch (e.code) {
 		case "Space": togglePaused(); break;
+		case "Escape": settings.window.window.classList.toggle("hidden"); break;
 	}
 });
 
