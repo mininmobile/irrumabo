@@ -276,16 +276,40 @@ input[type="range"]::after {
 	overflow: auto;
 }
 
-.content > span {
+/* settings window */
+
+.content .option {
 	display: flex;
 	align-items: center;
 }
 
-.content > span :first-child {
+.content .option :first-child {
 	flex: 1;
 }
 
-.content > span :last-child {
+.content .option :last-child {
 	flex: 1;
 	text-align: right;
+}
+
+/* missions window */
+
+.content .mission {
+	padding: 0.5em;
+	margin: 0.5em 0;
+	background: rgba(0, 0, 0, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	opacity: 0.5;
+	cursor: pointer;
+	transition: opacity 0.2s;
+}
+
+.content .mission:hover {
+	opacity: 1;
+}
+
+.content .mission.complete + .mission.incomplete {
+	opacity: 1;
 }
