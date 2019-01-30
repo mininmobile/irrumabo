@@ -318,12 +318,40 @@ input[type="range"]::after {
 
 /* missions window */
 
-.content meter {
-	width: calc(100% - 2em);
-	padding: 0.5em;
-	margin: 0.5em 0;
+.content .meter {
+	width: 100%;
+	height: 1em;
+	margin-top: 0.5em;
+	margin-bottom: 1.4em;
 	background: rgba(0, 0, 0, 0.4);
 	display: block;
+}
+
+.content .meter div {
+	height: 100%;
+	background: rgba(255, 255, 255, 0.8);
+}
+
+.content .meter div::before {
+	content: "";
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.6)) center / contain;
+	display: block;
+	opacity: 0;
+	animation: progress 2s infinite;
+}
+
+@keyframes progress {
+	0% {
+		width: 0;
+		opacity: 1;
+	}
+
+	100% {
+		width: 100%;
+		opacity: 0;
+	}
 }
 
 .content .mission {

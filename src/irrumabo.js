@@ -94,6 +94,11 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 	missions.window.window.style.left = `${document.body.scrollWidth / 3}px`;
 	missions.window.window.style.top = `${document.body.scrollHeight / 4}px`;
 	missions.window.close.addEventListener("click", () => { missions.window.window.classList.add("hidden") });
+
+	{ // update missions
+		let meter = document.getElementsByClassName("meter")[0];
+		meter.children[0].style.width = (100 / parseInt(meter.getAttribute("max"))) * parseInt(meter.getAttribute("value")) + "%"
+	}
 }
 
 { // settings window
