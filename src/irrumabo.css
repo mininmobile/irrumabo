@@ -372,10 +372,6 @@ input[type="range"]::after {
 	text-align: center;
 }
 
-.content .mission.complete .indicator::before { content: "✓"; }
-.content .mission.incomplete .indicator::before { content: "-"; }
-.content .mission.complete + .mission.incomplete .indicator::before { content: "!"; }
-
 .content .mission:hover {
 	opacity: 1;
 }

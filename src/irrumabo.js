@@ -37,17 +37,19 @@ let missions = {
 	window: {
 		window: document.getElementById("missions-window"),
 		close: document.getElementById("missions-close"),
+		content: document.getElementById("missions-content"),
 	},
 	missions: {
 		order: ["Intro to Density", "Rolling Balls", "Playing with Fire", "Reactions", "Distillation"],
-		"Intro to Density": {},
-		"Rolling Balls": {},
-		"Playing with Fire": {},
-		"Reactions": {},
-		"Distillation": {},
+		"Intro to Density": { xp: 10, objectives: ["Create a ball", "Pour water over it", "Change the density in the right click menu"] },
+		"Rolling Balls": { xp: 10, objectives: ["Pause simulation", "Create a rectangle", "Rotate to 15 degrees", "Set as static in right click menu", "Copy and move copy down beneath the first", "Place two balls on the different slopes", "Set the density of one of them to maximum", "Resume simulation"] },
+		"Playing with Fire": { xp: 10, objectives: ["Create a box with water inside", "Use the fire tool to light a flame under it"] },
+		"Reactions": { xp: 25, objectives: ["todo"] },
+		"Distillation": { xp: 50, objectives: ["todo"] },
 	},
 	status: {
-		complete: [],
+		complete: [0],
+		current: "",
 		xp: 10,
 	},
 }
@@ -96,8 +98,51 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 	missions.window.close.addEventListener("click", () => { missions.window.window.classList.add("hidden") });
 
 	{ // update missions
-		let meter = document.getElementsByClassName("meter")[0];
-		meter.children[0].style.width = (100 / parseInt(meter.getAttribute("max"))) * parseInt(meter.getAttribute("value")) + "%"
+		{ // progress bar
+			let meter = document.createElement("div");
+			meter.classList.add("meter");
+			meter.setAttribute("max", "105");
+			meter.setAttribute("value", missions.status.xp);
+
+			let meterBar = document.createElement("div");
+			meterBar.style.width = (100 / parseInt(meter.getAttribute("max"))) * parseInt(meter.getAttribute("value")) + "%"
+
+			meter.appendChild(meterBar);
+			missions.window.content.appendChild(meter);
+		}
+
+		{ // mission list
+			missions.missions.order.forEach((m, i) => {
+				let mission = missions.missions[m];
+
+				let button = document.createElement("div");
+				button.classList.add("mission");
+
+				missions.status.complete.includes(i) ?
+					button.classList.add("complete") :
+					button.classList.add("incomplete");
+
+				let title = document.createElement("span");
+				let indicator = document.createElement("span");
+				let xp = document.createElement("span");
+
+				title.innerText = m;
+
+				indicator.classList.add("indicator");
+				indicator.innerText = missions.status.complete.includes(i) ? "✓" : "-";
+				// complete   ✓
+				// mext       !
+				// incomplete -
+
+				xp.innerText = `+${mission.xp}xp`;
+
+				button.appendChild(title);
+				button.appendChild(indicator);
+				button.appendChild(xp);
+
+				missions.window.content.appendChild(button);
+			});
+		}
 	}
 }
 
