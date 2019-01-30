@@ -324,16 +324,43 @@ input[type="range"]::after {
 	background: rgba(0, 0, 0, 0.4);
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	opacity: 0.5;
 	cursor: pointer;
 	transition: opacity 0.2s;
+}
+
+.content .mission :first-child {
+	flex: 1;
+}
+
+.content .mission .indicator {
+	width: 2em;
+	text-align: center;
+}
+
+.content .mission.complete .indicator::before {
+	content: "✓";
+}
+
+.content .mission.incomplete .indicator::before {
+	content: "-";
+}
+
+.content .mission.complete + .mission.incomplete .indicator::before {
+	content: "!";
 }
 
 .content .mission:hover {
 	opacity: 1;
 }
 
+.content .mission.incomplete {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
 .content .mission.complete + .mission.incomplete {
 	opacity: 1;
+	cursor: pointer;
+	pointer-events: all;
 }
