@@ -236,7 +236,7 @@ input[type="range"]::after {
 .window {
 	min-width: 300px;
 	min-height: 200px;
-	background: rgba(0, 0, 0, 0.1);
+	background: rgba(0, 0, 0, 0.4);
 	display: flex;
 	flex-direction: column;
 	position: absolute;
@@ -265,7 +265,7 @@ input[type="range"]::after {
 	width: calc(100% - 5em);
 	height: 5em;
 	padding: 0 2.5em;
-	background: rgba(0, 0, 0, 0.1);
+	background: rgba(0, 0, 0, 0.4);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -321,7 +321,7 @@ input[type="range"]::after {
 .content .mission {
 	padding: 0.5em;
 	margin: 0.5em 0;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.4);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
