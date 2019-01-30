@@ -38,7 +38,8 @@ let missions = {
 		window: document.getElementById("missions-window"),
 		close: document.getElementById("missions-close"),
 	},
-	mission: {
+	missions: {
+		order: ["Intro to Density", "Rolling Balls", "Playing with Fire", "Reactions", "Distillation"],
 		"Intro to Density": {},
 		"Rolling Balls": {},
 		"Playing with Fire": {},
@@ -46,8 +47,8 @@ let missions = {
 		"Distillation": {},
 	},
 	status: {
-		complete: [0, 1],
-		xp: 20,
+		complete: [],
+		xp: 10,
 	},
 }
 

@@ -318,6 +318,14 @@ input[type="range"]::after {
 
 /* missions window */
 
+.content meter {
+	width: calc(100% - 2em);
+	padding: 0.5em;
+	margin: 0.5em 0;
+	background: rgba(0, 0, 0, 0.4);
+	display: block;
+}
+
 .content .mission {
 	padding: 0.5em;
 	margin: 0.5em 0;
@@ -329,26 +337,16 @@ input[type="range"]::after {
 	transition: opacity 0.2s;
 }
 
-.content .mission :first-child {
-	flex: 1;
-}
+.content .mission :first-child { flex: 1 }
 
-.content .mission .indicator {
+.content .mission .indicator { 
 	width: 2em;
 	text-align: center;
 }
 
-.content .mission.complete .indicator::before {
-	content: "✓";
-}
-
-.content .mission.incomplete .indicator::before {
-	content: "-";
-}
-
-.content .mission.complete + .mission.incomplete .indicator::before {
-	content: "!";
-}
+.content .mission.complete .indicator::before { content: "✓"; }
+.content .mission.incomplete .indicator::before { content: "-"; }
+.content .mission.complete + .mission.incomplete .indicator::before { content: "!"; }
 
 .content .mission:hover {
 	opacity: 1;
