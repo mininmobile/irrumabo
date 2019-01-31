@@ -264,10 +264,6 @@ p, h1, h2, h3, h4, h5, h6 {
 
 /* windows */
 
-input[type="range"]::after {
-	content:"ass";
-}
-
 .window {
 	min-width: 300px;
 	min-height: 200px;
@@ -278,13 +274,17 @@ input[type="range"]::after {
 	z-index: 99;
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	border-radius: 3em;
-	transition: transform 0.4s, opacity 0.3s;
+	transition: width 0.4s, height 0.4s, opacity 0.3s;
 }
 
 .window.hidden {
+	width: 0;
+	height: 0;
+	min-width: 0;
+	min-height: 0;
 	opacity: 0;
-	transform: skewX(-45deg);
 	pointer-events: none;
+	overflow: none;
 }
 
 .setw {
