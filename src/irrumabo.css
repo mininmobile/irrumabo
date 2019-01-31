@@ -8,6 +8,9 @@ body, html {
 	overflow: hidden;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 1em;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
 }
 
 p, h1, h2, h3, h4, h5, h6 {
@@ -122,17 +125,24 @@ p, h1, h2, h3, h4, h5, h6 {
 
 /* panels */
 
+.objective-panel-container {
+	height: 5em;
+	width: calc(100vw - 10em);
+	display: flex;
+	justify-content: center;
+	position: absolute;
+	top: 0;
+	left: 5em;
+	z-index: 9;
+}
+
 .objective-panel {
 	height: 5em;
-	max-width: calc(100vw - 14em);
+	max-width: calc(100vw - 10em);
 	padding: 0 2em;
 	background: rgba(255, 255, 255, 0.05);
 	display: flex;
 	align-items: center;
-	position: absolute;
-	top: 0;
-	right: 5em;
-	z-index: 9;
 	text-align: right;
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	border-bottom-left-radius: 3em;
@@ -386,4 +396,38 @@ input[type="range"]::after {
 	opacity: 1;
 	cursor: pointer;
 	pointer-events: all;
+}
+
+.content .title-container {
+	height: 1.5em;
+	width: 100%;
+	display: flex;
+	align-items: center;
+}
+
+.content .title-container .title {
+	margin-left: 0.3em;
+	flex: 1;
+}
+
+.content .title-container .back {
+	width: 1.5em;
+	height: 1.5em;
+	background: #ddd;
+	cursor: pointer;
+}
+
+.content .mission-track-button {
+	padding: 0.5em;
+	margin: 0.5em 0;
+	background: rgba(0, 0, 0, 0.4);
+	display: block;
+	text-align: center;
+	opacity: 0.5;
+	cursor: pointer;
+	transition: opacity 0.2s;
+}
+
+.content .mission-track-button:hover {
+	opacity: 1;
 }

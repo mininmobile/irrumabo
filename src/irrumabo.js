@@ -63,6 +63,7 @@ let buttonComponents = document.getElementById("components");
 let panelTools = document.getElementById("tools-panel");
 let panelToolOptions = document.getElementById("tools-option-panel");
 let panelComponents = document.getElementById("components-panel");
+let panelObjective = document.getElementById("mission-objective");
 
 let canvas = document.createElement('canvas');
 canvas.width = document.body.scrollWidth;
@@ -158,6 +159,50 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 				missions.window.content.appendChild(button);
 			});
 		}
+	}
+
+	function generateSelectedMissionPage(m) {
+		missions.window.content.innerHTML = "";
+
+		let mission = missions.missions[m];
+
+		let titleContainer = document.createElement("div");
+		let title  = document.createElement("div"); title.innerText = m;
+		let back = document.createElement("div");
+		let objectives = document.createElement("ol");
+		let trackButton = document.createElement("div"); trackButton.innerText = "Track Mission";
+
+		titleContainer.classList.add("title-container");
+		titleContainer.appendChild(back);
+		titleContainer.appendChild(title);
+
+		title.classList.add("title");
+
+		back.classList.add("back");
+		back.addEventListener("click", () => {
+			generateMissionList();
+		});
+
+		objectives.classList.add("objectives-list");
+		mission.objectives.forEach((o) => {
+			let subMission = document.createElement("li");
+			subMission.innerText = o;
+
+			objectives.appendChild(subMission);
+		});
+
+		trackButton.classList.add("mission-track-button");
+		trackButton.addEventListener("click", () => trackMission(m));
+
+		missions.window.content.appendChild(titleContainer);
+		missions.window.content.appendChild(objectives);
+		missions.window.content.appendChild(trackButton);
+	}
+
+	function trackMission(m) {
+		let mission = missions.missions[m];
+
+		panelObjective.innerText = mission.objectives[0];
 	}
 }
 
