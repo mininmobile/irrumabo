@@ -249,6 +249,7 @@ input[type="range"]::after {
 .window.hidden {
 	opacity: 0;
 	transform: skewX(-45deg);
+	pointer-events: none;
 }
 
 .setw {
@@ -381,7 +382,7 @@ input[type="range"]::after {
 	cursor: not-allowed;
 }
 
-.content .mission.complete + .mission.incomplete {
+.content .mission.next {
 	opacity: 1;
 	cursor: pointer;
 	pointer-events: all;

@@ -48,7 +48,7 @@ let missions = {
 		"Distillation": { xp: 50, objectives: ["todo"] },
 	},
 	status: {
-		complete: [0],
+		complete: [],
 		current: "",
 		xp: 10,
 	},
@@ -98,6 +98,12 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 	missions.window.close.addEventListener("click", () => { missions.window.window.classList.add("hidden") });
 
 	{ // update missions
+		generateMissionList();
+	}
+
+	function generateMissionList() {
+		missions.window.content.innerHTML = "";
+
 		{ // progress bar
 			let meter = document.createElement("div");
 			meter.classList.add("meter");
@@ -114,13 +120,10 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 		{ // mission list
 			missions.missions.order.forEach((m, i) => {
 				let mission = missions.missions[m];
+				let complete = missions.status.complete;
 
 				let button = document.createElement("div");
 				button.classList.add("mission");
-
-				missions.status.complete.includes(i) ?
-					button.classList.add("complete") :
-					button.classList.add("incomplete");
 
 				let title = document.createElement("span");
 				let indicator = document.createElement("span");
@@ -129,16 +132,28 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 				title.innerText = m;
 
 				indicator.classList.add("indicator");
-				indicator.innerText = missions.status.complete.includes(i) ? "✓" : "-";
-				// complete   ✓
-				// mext       !
-				// incomplete -
+				if (complete.includes(i)) {
+					button.classList.add("complete");
+					indicator.innerText = "✓";
+				} else {
+					if ((i == complete[complete.length - 1] + 1) || (complete.length == 0 && i == 0)) {
+						button.classList.add("next");
+						indicator.innerText = "!";
+					} else {
+						button.classList.add("incomplete");
+						indicator.innerText = "-";
+					}
+				}
 
 				xp.innerText = `+${mission.xp}xp`;
 
 				button.appendChild(title);
 				button.appendChild(indicator);
 				button.appendChild(xp);
+
+				if (button.classList.contains("complete") || button.classList.contains("next")) {
+					button.addEventListener("click", () => generateSelectedMissionPage(m));
+				}
 
 				missions.window.content.appendChild(button);
 			});
