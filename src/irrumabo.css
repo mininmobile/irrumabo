@@ -399,10 +399,22 @@ input[type="range"]::after {
 }
 
 .content .title-container {
-	height: 2em;
 	width: 100%;
 	display: flex;
 	align-items: center;
+}
+
+.content .title-container .back {
+	width: 1.5em;
+	height: 1.5em;
+	background: url("./img/back.svg") center / contain;
+	opacity: 0.5;
+	cursor: pointer;
+	transition: opacity 0.2s;
+}
+
+.content .title-container .back:hover {
+	opacity: 1;
 }
 
 .content .title-container .title {
@@ -411,11 +423,8 @@ input[type="range"]::after {
 	flex: 1;
 }
 
-.content .title-container .back {
-	width: 1.5em;
-	height: 1.5em;
-	background: #ddd;
-	cursor: pointer;
+.content .title-container .xp {
+	opacity: 0.5;
 }
 
 .content .mission-track-button {

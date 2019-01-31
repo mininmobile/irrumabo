@@ -114,9 +114,10 @@ let missions = {
 	},
 	status: {
 		complete: [],
-		currentMission: "",
-		currentObjective: "",
-		xp: 10,
+		currentMission: undefined,
+		currentObjectiveId: undefined,
+		currentObjective: undefined,
+		xp: 0,
 	},
 }
 
@@ -264,10 +265,40 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 	function trackMission(m) {
 		let mission = missions.missions[m];
 
-		missions.status.currentMission = m
-		missions.status.currentObjective = 0;
+		missions.status.currentMission = m;
+		missions.status.currentObjectiveId = 0;
+		missions.status.currentObjective = mission.objectives[0];
 
 		panelObjective.innerText = `${0 + 1}/${mission.objectives.length}) ${mission.objectives[0]}`;
+	}
+
+	function completeObjective() {
+		if (!missions.status.currentMission) return;
+
+		let mission = missions.missions[missions.status.currentMission];
+
+		missions.status.currentObjectiveId++;
+		missions.status.currentObjective = mission.objectives[missions.status.currentObjectiveId];
+
+		panelObjective.innerText = `${missions.status.currentObjectiveId + 1}/${mission.objectives.length}) ${mission.objectives[missions.status.currentObjectiveId]}`;
+
+		if (missions.status.currentObjectiveId == mission.objectives.length) completeMission();
+	}
+
+	function completeMission() {
+		let m = missions.status.currentMission;
+		let mission = missions.missions[missions.status.currentMission];
+
+		if (!missions.status.complete.includes(missions.missions.order.indexOf(m))) {
+			missions.status.complete.push(missions.missions.order.indexOf(m));
+			missions.status.xp += mission.xp;
+		}
+
+		missions.status.currentMission = undefined;
+		missions.status.currentObjectiveId = undefined;
+		missions.status.currentObjective = undefined;
+
+		panelObjective.innerText = "press ESC to open settings";
 	}
 }
 
@@ -396,6 +427,8 @@ document.addEventListener("mouseup", (e) => {
 				});
 
 				World.add(engine.world, [water]);
+
+				if (missions.status.currentObjective == "Create a pool of water.") completeObjective();
 			} break;
 
 			case Tools.rectangle: {
@@ -406,6 +439,8 @@ document.addEventListener("mouseup", (e) => {
 						(drawing.endX - drawing.startX),
 						(drawing.endY - drawing.startY))
 				]);
+
+				if (missions.status.currentObjective == "Create a rectangle.") completeObjective();
 			} break;
 
 			case Tools.circle: {
@@ -415,6 +450,8 @@ document.addEventListener("mouseup", (e) => {
 						drawing.startY,
 						Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY))
 				]);
+
+				if (missions.status.currentObjective == "Create a ball.") completeObjective();
 			} break;
 
 			case Tools.eraser: {
