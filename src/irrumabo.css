@@ -60,6 +60,19 @@ p, h1, h2, h3, h4, h5, h6 {
 .r[tooltip]::after {  left: unset; right: 4em; }
 .r[tooltip]:hover::after { left: unset; right: 6em; }
 
+/* context menus */
+
+.context {
+	width: 1em;
+	height: 1em;
+	background: rgba(0, 0, 0, 0.4);
+	position: absolute;
+}
+
+.context.hidden {
+	display: none;
+}
+
 /* buttons */
 
 .button {

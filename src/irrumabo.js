@@ -1,9 +1,11 @@
 let Engine = Matter.Engine;
-let Events = Matter.Events;
-let Mouse = Matter.Mouse;
-let MouseConstraint = Matter.MouseConstraint;
-let Runner = Matter.Runner;
 let World = Matter.World;
+let Runner = Matter.Runner;
+let Events = Matter.Events;
+let Bounds = Matter.Bounds;
+let Mouse = Matter.Mouse;
+let Vertices = Matter.Vertices;
+let MouseConstraint = Matter.MouseConstraint;
 let Composite = Matter.Composite;
 let Composites = Matter.Composites;
 let Bodies = Matter.Bodies;
@@ -136,6 +138,8 @@ let canvas = document.createElement('canvas');
 canvas.width = document.body.scrollWidth;
 canvas.height = document.body.scrollHeight;
 document.body.appendChild(canvas);
+
+let context = document.getElementById("context");
 
 let tool = Tools.drag;
 let drawing = undefined;
@@ -394,7 +398,20 @@ document.addEventListener("mousedown", (e) => {
 			} break;
 		}
 	} else if (e.button == 2) {
-		
+		let bodies = Composite.allBodies(engine.world);
+
+		for (i = 0; i < bodies.length; i++) {
+			var body = bodies[i];
+
+			if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
+				context.classList.remove("hidden");
+
+				context.style.left = mouse.absolute.x - 1 + "px";
+				context.style.top = mouse.absolute.y - 1 + "px";
+
+				break;
+			}
+		}
 	}
 });
 
@@ -461,98 +478,100 @@ document.addEventListener("mouseup", (e) => {
 
 		drawing = undefined;
 	}
+
+	if (e.target != context) context.classList.add("hidden");
 });
 
 // start engine
 Runner.run(runner, engine);
 
 // start rendering
-let context = canvas.getContext("2d");
-context.lineWidth = 2;
-context.font = "1em Arial";
+let ctx = canvas.getContext("2d");
+ctx.lineWidth = 2;
+ctx.font = "1em Arial";
 
 (function render() {
 	let bodies = Composite.allBodies(engine.world);
 
 	window.requestAnimationFrame(render);
 
-	context.fillStyle = "#161621";
-	context.fillRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = "#161621";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	for (let i = 0; i < bodies.length; i += 1) {
-		context.beginPath();
+		ctx.beginPath();
 
 		let vertices = bodies[i].vertices;
 
-		context.moveTo(vertices[0].x, vertices[0].y);
+		ctx.moveTo(vertices[0].x, vertices[0].y);
 
 		for (let j = 1; j < vertices.length; j += 1) {
-			context.lineTo(vertices[j].x, vertices[j].y);
+			ctx.lineTo(vertices[j].x, vertices[j].y);
 		}
 
-		context.lineTo(vertices[0].x, vertices[0].y);
+		ctx.lineTo(vertices[0].x, vertices[0].y);
 
-		context.fillStyle = bodies[i].render.fillStyle;
-		context.fill();
+		ctx.fillStyle = bodies[i].render.fillStyle;
+		ctx.fill();
 	}
 
 	{ // show action
 		if (tool == Tools.water && drawing) {
-			context.strokeStyle = "#ddd";
-			context.strokeRect(
+			ctx.strokeStyle = "#ddd";
+			ctx.strokeRect(
 				drawing.startX,
 				drawing.startY,
 				Math.floor((drawing.endX - drawing.startX) / 20) * 20,
 				Math.floor((drawing.endY - drawing.startY) / 20) * 20);
-			context.fillStyle = "#ddd";
-			context.fillText(
+			ctx.fillStyle = "#ddd";
+			ctx.fillText(
 				`${Math.floor((drawing.endX - drawing.startX) / 20)}x${Math.floor((drawing.endY - drawing.startY) / 20)}`,
 				drawing.startX,
 				drawing.startY - 5);
 		}
 
 		if (tool == Tools.rectangle && drawing) {
-			context.strokeStyle = "#ddd";
-			context.strokeRect(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY);
-			context.fillStyle = "#ddd";
-			context.fillText(
+			ctx.strokeStyle = "#ddd";
+			ctx.strokeRect(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY);
+			ctx.fillStyle = "#ddd";
+			ctx.fillText(
 				`${drawing.endX - drawing.startX}x${drawing.endY - drawing.startY}`,
 				drawing.startX,
 				drawing.startY - 5);
 		}
 
 		if (tool == Tools.circle && drawing) {
-			context.strokeStyle = "#ddd";
-			context.beginPath();
-			context.ellipse(
+			ctx.strokeStyle = "#ddd";
+			ctx.beginPath();
+			ctx.ellipse(
 				drawing.startX,
 				drawing.startY,
 				Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
 				Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
 				0, 0, Math.PI * 2);
-			context.stroke();
-			context.fillStyle = "#ddd";
-			context.fillText(
+			ctx.stroke();
+			ctx.fillStyle = "#ddd";
+			ctx.fillText(
 				`r${Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY)}`,
 				drawing.startX,
 				drawing.startY);
 		}
 
 		if (tool == Tools.eraser && drawing && mouseConstraint.body) {
-			context.beginPath();
+			ctx.beginPath();
 	
 			let vertices = mouseConstraint.body.vertices;
 	
-			context.moveTo(vertices[0].x, vertices[0].y);
+			ctx.moveTo(vertices[0].x, vertices[0].y);
 	
 			for (let j = 1; j < vertices.length; j += 1) {
-				context.lineTo(vertices[j].x, vertices[j].y);
+				ctx.lineTo(vertices[j].x, vertices[j].y);
 			}
 	
-			context.lineTo(vertices[0].x, vertices[0].y);
+			ctx.lineTo(vertices[0].x, vertices[0].y);
 	
-			context.strokeStyle = "#f00";
-			context.stroke();
+			ctx.strokeStyle = "#f00";
+			ctx.stroke();
 		}
 	}
 })();
