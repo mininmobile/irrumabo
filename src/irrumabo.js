@@ -166,24 +166,21 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 
 		let mission = missions.missions[m];
 
-		let titleContainer = document.createElement("div");
-		let title  = document.createElement("div"); title.innerText = m;
-		let back = document.createElement("div");
-		let objectives = document.createElement("ol");
-		let trackButton = document.createElement("div"); trackButton.innerText = "Track Mission";
+		let titleContainer = document.createElement("div"); titleContainer.classList.add("title-container");
+		let back = document.createElement("div"); back.classList.add("back");
+		let title  = document.createElement("div"); title.innerText = m; title.classList.add("title");
+		let xp = document.createElement("div"); xp.innerText = `+${mission.xp}xp`; xp.classList.add("xp");
+		let objectives = document.createElement("ol"); objectives.classList.add("objectives-list");
+		let trackButton = document.createElement("div"); trackButton.innerText = "Track Mission"; trackButton.classList.add("mission-track-button");
 
-		titleContainer.classList.add("title-container");
 		titleContainer.appendChild(back);
 		titleContainer.appendChild(title);
+		titleContainer.appendChild(xp);
 
-		title.classList.add("title");
-
-		back.classList.add("back");
 		back.addEventListener("click", () => {
 			generateMissionList();
 		});
 
-		objectives.classList.add("objectives-list");
 		mission.objectives.forEach((o) => {
 			let subMission = document.createElement("li");
 			subMission.innerText = o;
@@ -191,7 +188,6 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 			objectives.appendChild(subMission);
 		});
 
-		trackButton.classList.add("mission-track-button");
 		trackButton.addEventListener("click", () => trackMission(m));
 
 		missions.window.content.appendChild(titleContainer);
