@@ -8,6 +8,38 @@ let Composite = Matter.Composite;
 let Composites = Matter.Composites;
 let Bodies = Matter.Bodies;
 
+class Objective {
+	constructor(...args) {
+		this.args = args;
+	}
+
+	toString() {
+		let string = "";
+
+		this.args.forEach((a, i) => {
+			if (i == 0) {
+				switch (a) {
+					case Verb.create: string += "Create a"; break;
+					case Verb.increase: string += "Increase the"; break;
+					case Verb.decrease: string += "Decrease the"; break;
+					case Verb.pause: string += "Pause the simulation"; break;
+				}
+			} else {
+				switch (a) {
+					case Noun.water: string += " pool of water"; break;
+					case Noun.rectangle: string += " rectangle"; break;
+					case Noun.ball: string += " ball"; break;
+					case Noun.density: string += " density of the"; break;
+				}
+			}
+		});
+
+		string += ".";
+
+		return string;
+	}
+}
+
 const Tools = utilenum(
 	"drag",
 	"water",
@@ -15,6 +47,20 @@ const Tools = utilenum(
 	"circle",
 	"brush",
 	"eraser",
+);
+
+const Verb = utilenum(
+	"create",
+	"decrease",
+	"increase",
+	"pause",
+);
+
+const Noun = utilenum(
+	"water",
+	"rectangle",
+	"ball",
+	"density",
 );
 
 let settings = {
@@ -41,15 +87,35 @@ let missions = {
 	},
 	missions: {
 		order: ["Intro to Density", "Rolling Balls", "Playing with Fire", "Reactions", "Distillation"],
-		"Intro to Density": { xp: 10, objectives: ["Create a ball", "Pour water over it", "Change the density in the right click menu"] },
-		"Rolling Balls": { xp: 10, objectives: ["Pause simulation", "Create a rectangle", "Rotate to 15 degrees", "Set as static in right click menu", "Copy and move copy down beneath the first", "Place two balls on the different slopes", "Set the density of one of them to maximum", "Resume simulation"] },
-		"Playing with Fire": { xp: 10, objectives: ["Create a box with water inside", "Use the fire tool to light a flame under it"] },
-		"Reactions": { xp: 25, objectives: ["todo"] },
-		"Distillation": { xp: 50, objectives: ["todo"] },
+		"Intro to Density": {
+			xp: 10,
+			objectives: [
+				new Objective(Verb.create, Noun.ball),
+				new Objective(Verb.create, Noun.water),
+				new Objective(Verb.increase, Noun.density, Noun.ball),
+			],
+		},
+		"Rolling Balls": {
+			xp: 10,
+			objectives: ["Pause simulation", "Create a rectangle", "Rotate to 15 degrees", "Set as static in right click menu", "Copy and move copy down beneath the first", "Place two balls on the different slopes", "Set the density of one of them to maximum", "Resume simulation"]
+		},
+		"Playing with Fire": {
+			xp: 10,
+			objectives: ["Create a box with water inside", "Use the fire tool to light a flame under it"]
+		},
+		"Reactions": {
+			xp: 25,
+			objectives: ["todo"]
+		},
+		"Distillation": {
+			xp: 50,
+			objectives: ["todo"]
+		},
 	},
 	status: {
 		complete: [],
-		current: "",
+		currentMission: "",
+		currentObjective: "",
 		xp: 10,
 	},
 }
@@ -198,7 +264,10 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 	function trackMission(m) {
 		let mission = missions.missions[m];
 
-		panelObjective.innerText = mission.objectives[0];
+		missions.status.currentMission = m
+		missions.status.currentObjective = 0;
+
+		panelObjective.innerText = `${0 + 1}/${mission.objectives.length}) ${mission.objectives[0]}`;
 	}
 }
 
