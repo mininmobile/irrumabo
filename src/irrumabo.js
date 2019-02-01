@@ -393,9 +393,21 @@ document.addEventListener("mousedown", (e) => {
 					endY: mouse.absolute.y,
 				}
 			} break;
-	
+			
 			case Tools.eraser: {
 				drawing = true;
+
+				let bodies = Composite.allBodies(engine.world);
+
+				for (i = 0; i < bodies.length; i++) {
+					var body = bodies[i];
+		
+					if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
+						World.remove(engine.world, body, true);
+
+						break;
+					}
+				}
 			} break;
 		}
 	} else if (e.button == 2) {
@@ -436,6 +448,20 @@ document.addEventListener("mousemove", (e) => {
 			case Tools.water: case Tools.rectangle: case Tools.circle: {
 				drawing.endX = mouse.absolute.x;
 				drawing.endY = mouse.absolute.y;
+			} break;
+			
+			case Tools.eraser: {
+				let bodies = Composite.allBodies(engine.world);
+
+				for (i = 0; i < bodies.length; i++) {
+					var body = bodies[i];
+		
+					if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
+						World.remove(engine.world, body, true);
+
+						break;
+					}
+				}
 			} break;
 		}
 	}
@@ -484,10 +510,6 @@ document.addEventListener("mouseup", (e) => {
 				]);
 
 				if (missions.status.currentObjective == "Create a ball.") completeObjective();
-			} break;
-
-			case Tools.eraser: {
-				if (mouseConstraint.body) World.remove(engine.world, mouseConstraint.body, true);
 			} break;
 		}
 
@@ -574,23 +596,6 @@ ctx.font = "1em Arial";
 				`r${Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY)}`,
 				drawing.startX,
 				drawing.startY);
-		}
-
-		if (tool == Tools.eraser && drawing && mouseConstraint.body) {
-			ctx.beginPath();
-	
-			let vertices = mouseConstraint.body.vertices;
-	
-			ctx.moveTo(vertices[0].x, vertices[0].y);
-	
-			for (let j = 1; j < vertices.length; j += 1) {
-				ctx.lineTo(vertices[j].x, vertices[j].y);
-			}
-	
-			ctx.lineTo(vertices[0].x, vertices[0].y);
-	
-			ctx.strokeStyle = "#f00";
-			ctx.stroke();
 		}
 	}
 })();
