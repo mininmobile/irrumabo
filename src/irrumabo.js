@@ -143,6 +143,7 @@ let context = document.getElementById("context");
 
 let tool = Tools.drag;
 let drawing = undefined;
+let contextClick = false;
 let paused = false;
 
 // create enviroment
@@ -404,10 +405,24 @@ document.addEventListener("mousedown", (e) => {
 			var body = bodies[i];
 
 			if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
+				contextClick = true;
+
 				context.classList.remove("hidden");
 
 				context.style.left = mouse.absolute.x - 1 + "px";
 				context.style.top = mouse.absolute.y - 1 + "px";
+
+				generateContextMenu(context, [
+					{ type: "button", name: "Erase", action: () => alert("x") },
+					{ type: "button", name: "Clone", action: () => alert("x") },
+					{ type: "button", name: "Mirror", action: () => alert("x") },
+					{ type: "divider" },
+					{ type: "button", name: "Appearance", action: () => alert("x") },
+					{ type: "button", name: "Material", action: () => alert("x") },
+					{ type: "button", name: "Info", action: () => alert("x") },
+					{ type: "divider" },
+					{ type: "button", name: "Behavior", action: () => alert("x") },
+				]);
 
 				break;
 			}
@@ -479,7 +494,11 @@ document.addEventListener("mouseup", (e) => {
 		drawing = undefined;
 	}
 
-	if (e.target != context) context.classList.add("hidden");
+	if (contextClick) {
+		contextClick = false;
+	} else {
+		context.classList.add("hidden");
+	}
 });
 
 // start engine
@@ -575,6 +594,31 @@ ctx.font = "1em Arial";
 		}
 	}
 })();
+
+/** @param {HTMLElement} menu */
+function generateContextMenu(menu, items) {
+	menu.innerHTML = "";
+
+	items.forEach((item) => {
+		switch (item.type) {
+			case "button": {
+				let button = document.createElement("div");
+				button.classList.add("button");
+				button.innerText = item.name;
+				button.addEventListener("click", item.action);
+
+				menu.appendChild(button);
+			} break;
+
+			case "divider": {
+				let divider = document.createElement("div");
+				divider.classList.add("divider");
+
+				menu.appendChild(divider);
+			} break;
+		}
+	});
+}
 
 function togglePaused() {
 	paused = !paused;

@@ -63,19 +63,39 @@ p, h1, h2, h3, h4, h5, h6 {
 /* context menus */
 
 .context {
-	width: 1em;
-	height: 1em;
+	padding: 1em 0;
 	background: rgba(0, 0, 0, 0.4);
 	position: absolute;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	border-radius: 1em;
 }
 
 .context.hidden {
 	display: none;
 }
 
+.context .divider {
+	width: 80%;
+	height: 1px;
+	margin: 0.2em 10%;
+	background: white;
+}
+
+.context .button {
+	padding: 0.1em 1.4em;
+	padding-top: 0;
+	padding-right: 3em;
+	background: transparent;
+	transition: background 0.2s;
+}
+
+.context .button:hover {
+	background: rgba(255, 255, 255, 0.05);
+}
+
 /* buttons */
 
-.button {
+.ui-button {
 	width: 5em;
 	height: 5em;
 	background: rgba(255, 255, 255, 0.1);
@@ -87,7 +107,7 @@ p, h1, h2, h3, h4, h5, h6 {
 	cursor: pointer;
 }
 
-.button::before {
+.ui-button::before {
 	content: "";
 	width: 55%;
 	height: 55%;
