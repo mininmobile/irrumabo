@@ -7,6 +7,7 @@ let Mouse = Matter.Mouse;
 let Vertices = Matter.Vertices;
 let MouseConstraint = Matter.MouseConstraint;
 let Composite = Matter.Composite;
+let Body = Matter.Body;
 let Composites = Matter.Composites;
 let Bodies = Matter.Bodies;
 
@@ -42,6 +43,11 @@ class Objective {
 	}
 }
 
+const RenderMode = utilenum(
+	"regular",
+	"heat",
+);
+
 const Tools = utilenum(
 	"drag",
 	"water",
@@ -74,6 +80,7 @@ let settings = {
 		gravityEnable: document.getElementById("settings-gravity-enable"),
 		gravityX: document.getElementById("settings-gravity-x"),
 		gravityY: document.getElementById("settings-gravity-y"),
+		heatviewEnable: document.getElementById("settings-heatview-enable"),
 	},
 	displays: {
 		gravityX: document.getElementById("settings-display-gravity-x"),
@@ -142,6 +149,7 @@ document.body.appendChild(canvas);
 let context = document.getElementById("context");
 
 let tool = Tools.drag;
+let mode = RenderMode.heat;
 let drawing = undefined;
 let contextClick = false;
 let paused = false;
@@ -153,6 +161,19 @@ let runner = Runner.create({
 	delta: 1000 / 30,
 	isFixed: false,
 	enabled: true,
+});
+
+// extend simulation
+Events.on(engine, "collisionActive", (e) => {
+	e.pairs.forEach((c) => {
+		let tempA = c.bodyA.temperature;
+		let tempB = c.bodyB.temperature;
+
+		if (tempA != tempB) {
+			Body.set(c.bodyA, "temperature", tempB > tempA ? tempA + 0.01 : tempA - 0.01);
+			Body.set(c.bodyB, "temperature", tempA > tempB ? tempB + 0.01 : tempB - 0.01);
+		}
+	});
 });
 
 // create example scene
@@ -311,11 +332,15 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 	settings.window.window.style.left = `${document.body.scrollWidth / 3}px`;
 	settings.window.window.style.top = `${document.body.scrollHeight / 4}px`;
 	settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") });
-	
+
 	settings.inputs.gravityEnable.checked = true;
-	
+	settings.inputs.heatviewEnable.checked = false;
+
 	settings.inputs.gravityEnable.addEventListener("change", () => {
-		engine.world.gravity.scale = settings.inputs.gravityEnable.checked ? 0.001 : 0
+		engine.world.gravity.scale = settings.inputs.gravityEnable.checked ? 0.001 : 0;
+	});
+	settings.inputs.heatviewEnable.addEventListener("change", () => {
+		mode = settings.inputs.heatviewEnable.checked ? RenderMode.heat : RenderMode.regular;
 	});
 	settings.inputs.gravityX.addEventListener("mousemove", () => {
 		settings.displays.gravityX.innerText =
@@ -425,15 +450,14 @@ document.addEventListener("mousedown", (e) => {
 				context.style.top = mouse.absolute.y - 1 + "px";
 
 				generateContextMenu(context, [
-					{ type: "button", name: "Erase", action: () => alert("x") },
-					{ type: "button", name: "Clone", action: () => alert("x") },
-					{ type: "button", name: "Mirror", action: () => alert("x") },
+					{ type: "button", name: "Erase", action: () => World.remove(engine.world, body, true) },
 					{ type: "divider" },
-					{ type: "button", name: "Appearance", action: () => alert("x") },
-					{ type: "button", name: "Material", action: () => alert("x") },
-					{ type: "button", name: "Info", action: () => alert("x") },
+					{ type: "sub", name: "Appearance", menu: {} },
+					{ type: "sub", name: "Material", menu: {} },
+					{ type: "sub", name: "Material", menu: {} },
 					{ type: "divider" },
-					{ type: "button", name: "Behavior", action: () => alert("x") },
+					{ type: "sub", name: "Info", menu: {} },
+					{ type: "sub", name: "Behavior", menu: {} },
 				]);
 
 				break;
@@ -478,7 +502,7 @@ document.addEventListener("mouseup", (e) => {
 						Math.floor((drawing.endY - drawing.startY) / 20),
 						0, 0, (x, y) => {
 					let body = Bodies.circle(x, y, 10, {
-						friction: 0, frictionStatic: 0, density: 0.1, label: "water", render: { fillStyle: "#00f" }
+						friction: 0, frictionStatic: 0, density: 0.05, temperature: 22, label: "water", render: { fillStyle: "#00f" }
 					});
 				
 					return body;
@@ -542,7 +566,8 @@ ctx.font = "1em Arial";
 	for (let i = 0; i < bodies.length; i += 1) {
 		ctx.beginPath();
 
-		let vertices = bodies[i].vertices;
+		let body = bodies[i];
+		let vertices = body.vertices;
 
 		ctx.moveTo(vertices[0].x, vertices[0].y);
 
@@ -552,8 +577,34 @@ ctx.font = "1em Arial";
 
 		ctx.lineTo(vertices[0].x, vertices[0].y);
 
-		ctx.fillStyle = bodies[i].render.fillStyle;
+		switch (mode) {
+			case RenderMode.regular: {
+				ctx.fillStyle = body.render.fillStyle;
+			} break;
+
+			case RenderMode.heat: {
+				ctx.fillStyle = `rgb(${Math.min((body.temperature - 22) * 5, 255)}, ${
+					body.temperature - 22 < 0 ? Math.min(Math.abs(body.temperature - 22) * 5, 255) : 0
+				}, 0)`;
+			} break;
+		}
 		ctx.fill();
+	}
+
+	if (mode == RenderMode.heat) {
+		let bodies = Composite.allBodies(engine.world);
+	
+		for (i = 0; i < bodies.length; i++) {
+			var body = bodies[i];
+	
+			if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
+				ctx.fillStyle = "#ddd";
+				ctx.fillText(
+					`${body.temperature}°c`,
+					mouse.absolute.x,
+					mouse.absolute.y - 5);
+			}
+		}
 	}
 
 	{ // show action

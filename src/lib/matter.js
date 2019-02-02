@@ -92,7 +92,8 @@
 				motion: 0,
 				sleepThreshold: 60,
 				density: 0.001,
-				restitution: 0,
+				restitution: 0.5,
+				temperature: 432,
 				friction: 0.1,
 				frictionStatic: 0.5,
 				frictionAir: 0.01,
@@ -271,6 +272,7 @@
 				if (isStatic) {
 					part._original = {
 						restitution: part.restitution,
+						temperature: part.temperature,
 						friction: part.friction,
 						mass: part.mass,
 						inertia: part.inertia,
@@ -293,6 +295,7 @@
 					part.motion = 0;
 				} else if (part._original) {
 					part.restitution = part._original.restitution;
+					part.temperature = part._original.temperature;
 					part.friction = part._original.friction;
 					part.mass = part._original.mass;
 					part.inertia = part._original.inertia;
