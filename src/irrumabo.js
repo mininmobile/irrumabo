@@ -353,6 +353,14 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 		missions.status.currentObjective = undefined;
 
 		panelObjective.innerText = "press ESC to open settings";
+
+		{ // doot toot
+			let doottoot = document.createElement("div");
+			doottoot.classList.add("doottoot");
+			document.body.appendChild(doottoot);
+
+			setTimeout(() => doottoot.remove(), 2000);
+		}
 	}
 }
 

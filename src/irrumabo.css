@@ -65,6 +65,29 @@ p, h1, h2, h3, h4, h5, h6 {
 .r[tooltip]::after {  left: unset; right: 4em; }
 .r[tooltip]:hover::after { left: unset; right: 6em; }
 
+.doottoot {
+	width: 2em;
+	height: 2em;
+	background: white;
+	display: block;
+	position: absolute;
+	top: 1.5em;
+	border-radius: 50%;
+	animation: doottoot 2s;
+}
+
+@keyframes doottoot {
+	0% {
+		left: 50%;
+		opacity: 0;
+	}
+
+	100% {
+		left: 100%;
+		opacity: 1;
+	}
+}
+
 /* context menus */
 
 .context {
