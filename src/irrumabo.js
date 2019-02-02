@@ -335,21 +335,24 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 	settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") });
 
 	settings.inputs.gravityEnable.checked = true;
+	settings.inputs.rendermodeSelect.selectedIndex = 0;
 
 	settings.inputs.gravityEnable.addEventListener("change", () => {
 		engine.world.gravity.scale = settings.inputs.gravityEnable.checked ? 0.001 : 0;
 	});
+
 	settings.inputs.gravityX.addEventListener("mousemove", () => {
 		settings.displays.gravityX.innerText =
 		engine.world.gravity.x =
 		settings.inputs.gravityX.value;
 	});
+
 	settings.inputs.gravityY.addEventListener("mousemove", () => {
 		settings.displays.gravityY.innerText =
 		engine.world.gravity.y =
 		settings.inputs.gravityY.value;
 	});
-	
+
 	settings.inputs.rendermodeSelect.addEventListener("change", () => {
 		mode = settings.inputs.rendermodeSelect.selectedIndex;
 	});
@@ -385,6 +388,8 @@ document.addEventListener("keyup", (e) => {
 		case "Digit5": selectTool(4); break;
 		case "Digit6": selectTool(5); break;
 	}
+
+	return false;
 });
 
 // support for resizing
@@ -580,15 +585,23 @@ ctx.font = "1em Arial";
 		switch (mode) {
 			case RenderMode.regular: {
 				ctx.fillStyle = body.render.fillStyle;
+				ctx.fill();
+			} break;
+
+			case RenderMode.wireframe: {
+				if (body.circleRadius) ctx.lineTo(body.position.x, body.position.y);
+
+				ctx.strokeStyle = "#ddd";
+				ctx.stroke();
 			} break;
 
 			case RenderMode.heat: {
 				ctx.fillStyle = `rgb(${Math.min((body.temperature - 22) * 5, 255)}, 0, ${
 					body.temperature - 22 < 0 ? Math.min(Math.abs(body.temperature - 22) * 5, 255) : 0
 				})`;
+				ctx.fill();
 			} break;
 		}
-		ctx.fill();
 	}
 
 	if (mode == RenderMode.heat) {
