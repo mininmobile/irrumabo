@@ -170,8 +170,8 @@ Events.on(engine, "collisionActive", (e) => {
 		let tempB = c.bodyB.temperature;
 
 		if (tempA != tempB) {
-			Body.set(c.bodyA, "temperature", tempB > tempA ? tempA + 0.01 : tempA - 0.01);
-			Body.set(c.bodyB, "temperature", tempA > tempB ? tempB + 0.01 : tempB - 0.01);
+			Body.set(c.bodyA, "temperature", (tempA + tempB) / 2);
+			Body.set(c.bodyB, "temperature", (tempA + tempB) / 2);
 		}
 	});
 });
