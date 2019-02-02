@@ -45,6 +45,7 @@ class Objective {
 
 const RenderMode = utilenum(
 	"regular",
+	"wireframe",
 	"heat",
 );
 
@@ -80,7 +81,7 @@ let settings = {
 		gravityEnable: document.getElementById("settings-gravity-enable"),
 		gravityX: document.getElementById("settings-gravity-x"),
 		gravityY: document.getElementById("settings-gravity-y"),
-		heatviewEnable: document.getElementById("settings-heatview-enable"),
+		rendermodeSelect: document.getElementById("settings-rendermode-select"),
 	},
 	displays: {
 		gravityX: document.getElementById("settings-display-gravity-x"),
@@ -334,13 +335,9 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 	settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") });
 
 	settings.inputs.gravityEnable.checked = true;
-	settings.inputs.heatviewEnable.checked = false;
 
 	settings.inputs.gravityEnable.addEventListener("change", () => {
 		engine.world.gravity.scale = settings.inputs.gravityEnable.checked ? 0.001 : 0;
-	});
-	settings.inputs.heatviewEnable.addEventListener("change", () => {
-		mode = settings.inputs.heatviewEnable.checked ? RenderMode.heat : RenderMode.regular;
 	});
 	settings.inputs.gravityX.addEventListener("mousemove", () => {
 		settings.displays.gravityX.innerText =
@@ -351,6 +348,10 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 		settings.displays.gravityY.innerText =
 		engine.world.gravity.y =
 		settings.inputs.gravityY.value;
+	});
+	
+	settings.inputs.rendermodeSelect.addEventListener("change", () => {
+		mode = settings.inputs.rendermodeSelect.selectedIndex;
 	});
 }
 
