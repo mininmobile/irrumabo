@@ -23,8 +23,7 @@ class Objective {
 			if (i == 0) {
 				switch (a) {
 					case Verb.create: string += "Create a"; break;
-					case Verb.increase: string += "Increase the"; break;
-					case Verb.decrease: string += "Decrease the"; break;
+					case Verb.change: string += "Change the"; break;
 					case Verb.pause: string += "Pause the simulation"; break;
 				}
 			} else {
@@ -45,6 +44,7 @@ class Objective {
 
 const RenderMode = utilenum(
 	"regular",
+	"colorWireframe",
 	"wireframe",
 	"heat",
 );
@@ -60,8 +60,7 @@ const Tools = utilenum(
 
 const Verb = utilenum(
 	"create",
-	"decrease",
-	"increase",
+	"change",
 	"pause",
 );
 
@@ -102,7 +101,7 @@ let missions = {
 			objectives: [
 				new Objective(Verb.create, Noun.ball),
 				new Objective(Verb.create, Noun.water),
-				new Objective(Verb.increase, Noun.density, Noun.ball),
+				new Objective(Verb.change, Noun.density, Noun.ball),
 			],
 		},
 		"Rolling Balls": {
@@ -171,10 +170,28 @@ Events.on(engine, "collisionActive", (e) => {
 		let tempB = c.bodyB.temperature;
 
 		if (tempA != tempB) {
-			Body.set(c.bodyA, "temperature", (tempA + tempB) / 2);
-			Body.set(c.bodyB, "temperature", (tempA + tempB) / 2);
+			let eqA = tempA > tempB ? tempA - ((tempA - tempB) / 2) : tempA + ((tempB - tempA) / 2);
+			let eqB = tempB > tempA ? tempB - ((tempB - tempA) / 2) : tempB + ((tempA - tempB) / 2);
+
+			Body.set(c.bodyA, "temperature", eqA);
+			Body.set(c.bodyB, "temperature", eqB);
 		}
 	});
+});
+
+Events.on(engine, "beforeUpdate", (e) => {
+	let bodies = Composite.allBodies(engine.world);
+
+	for (i = 0; i < bodies.length; i++) {
+		var body = bodies[i];
+
+		if (body.label == "water") {
+			if (body.temperature >= 100) {
+				// turn water to steam
+				World.remove(engine.world, body, true);
+			}
+		}
+	}
 });
 
 // create example scene
@@ -457,12 +474,18 @@ document.addEventListener("mousedown", (e) => {
 				generateContextMenu(context, [
 					{ type: "button", name: "Erase", action: () => World.remove(engine.world, body, true) },
 					{ type: "divider" },
-					{ type: "sub", name: "Appearance", menu: {} },
-					{ type: "sub", name: "Material", menu: {} },
-					{ type: "sub", name: "Collision", menu: {} },
+					{ type: "sub", name: "Appearance", menu: [] },
+					{ type: "sub", name: "Material", menu: [
+						{ type: "title", name: "Density" },
+						{ type: "range", min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => {
+							Body.setDensity(body, e.value);
+							console.log(e.value);
+						} },
+					] },
+					{ type: "sub", name: "Collision", menu: [] },
 					{ type: "divider" },
-					{ type: "sub", name: "Info", menu: {} },
-					{ type: "sub", name: "Behavior", menu: {} },
+					{ type: "sub", name: "Info", menu: [] },
+					{ type: "sub", name: "Behavior", menu: [] },
 				]);
 
 				break;
@@ -548,7 +571,17 @@ document.addEventListener("mouseup", (e) => {
 	if (contextClick) {
 		contextClick = false;
 	} else {
-		context.classList.add("hidden");
+		let contexts = document.getElementsByClassName("context");
+
+		for (let i = 0; i < contexts.length; i++) {
+			let c = contexts[i];
+
+			if (c != context) {
+				c.remove();
+			} else {
+				c.classList.add("hidden");
+			}
+		}
 	}
 });
 
@@ -586,6 +619,13 @@ ctx.font = "1em Arial";
 			case RenderMode.regular: {
 				ctx.fillStyle = body.render.fillStyle;
 				ctx.fill();
+			} break;
+
+			case RenderMode.colorWireframe: {
+				if (body.circleRadius) ctx.lineTo(body.position.x, body.position.y);
+
+				ctx.strokeStyle = body.render.fillStyle;
+				ctx.stroke();
 			} break;
 
 			case RenderMode.wireframe: {
@@ -679,12 +719,29 @@ function generateContextMenu(menu, items) {
 				menu.appendChild(button);
 			} break;
 
+			case "title": {
+				let title = document.createElement("div");
+				title.classList.add("title");
+				title.innerText = item.name;
+
+				menu.appendChild(title);
+			} break;
+
 			case "sub": {
 				let submenu = document.createElement("div");
 				submenu.classList.add("submenu");
 				submenu.innerText = item.name;
-				submenu.addEventListener("click", () => {
-					
+				submenu.addEventListener("mouseup", () => {
+					contextClick = true;
+
+					let c = document.createElement("div");
+					c.classList.add("context", "submenu");
+					generateContextMenu(c, item.menu);
+
+					c.style.left = `calc(${context.style.left} + ${context.clientWidth}px)`;
+					c.style.top = `calc(${context.style.top} + ${submenu.offsetTop}px)`;
+
+					document.body.appendChild(c);
 				});
 
 				menu.appendChild(submenu);

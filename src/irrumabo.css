@@ -35,6 +35,11 @@ p, h1, h2, h3, h4, h5, h6 {
 	}
 }
 
+@keyframes fade-in {
+	0% { opacity: 0; }
+	100% { opacity: 1; }
+}
+
 .hidden {
 	pointer-events: none;
 }
@@ -68,6 +73,7 @@ p, h1, h2, h3, h4, h5, h6 {
 	position: absolute;
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	border-radius: 1em;
+	animation: fade-in 0.2s;
 }
 
 .context.hidden {
@@ -81,13 +87,14 @@ p, h1, h2, h3, h4, h5, h6 {
 	background: white;
 }
 
-.context .button, .context .submenu {
+.context .button, .context .submenu, .context .title {
 	height: 1.4em;
 	padding: 0 1.4em;
 	padding-right: 3em;
 	background: transparent;
 	display: flex;
 	align-items: center;
+	transition: background 0.3s;
 }
 
 .context .button:hover, .context .submenu:hover {
