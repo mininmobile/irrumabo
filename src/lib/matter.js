@@ -93,7 +93,7 @@
 				sleepThreshold: 60,
 				density: 0.001,
 				restitution: 0.5,
-				temperature: 432,
+				temperature: 22,
 				friction: 0.1,
 				frictionStatic: 0.5,
 				frictionAir: 0.01,

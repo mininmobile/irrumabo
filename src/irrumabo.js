@@ -149,7 +149,7 @@ document.body.appendChild(canvas);
 let context = document.getElementById("context");
 
 let tool = Tools.drag;
-let mode = RenderMode.heat;
+let mode = RenderMode.regular;
 let drawing = undefined;
 let contextClick = false;
 let paused = false;
@@ -366,15 +366,7 @@ Object.keys(Tools).forEach((t) => {
 	if (tool == Tools[t]) button.classList.add("selected");
 	button.setAttribute("tooltip", t.toString());
 
-	button.addEventListener("click", () => {
-		tool = Tools[t];
-
-		for (let i = 0; i < panelTools.children.length; i++) {
-			panelTools.children[i].classList.remove("selected");
-		}
-
-		button.classList.add("selected");
-	});
+	button.addEventListener("click", () => selectTool(Tools[t]));
 
 	panelTools.appendChild(button);
 });
@@ -384,6 +376,13 @@ document.addEventListener("keyup", (e) => {
 	switch (e.code) {
 		case "Space": togglePaused(); break;
 		case "Escape": settings.window.window.classList.toggle("hidden"); break;
+
+		case "Digit1": selectTool(0); break;
+		case "Digit2": selectTool(1); break;
+		case "Digit3": selectTool(2); break;
+		case "Digit4": selectTool(3); break;
+		case "Digit5": selectTool(4); break;
+		case "Digit6": selectTool(5); break;
 	}
 });
 
@@ -502,7 +501,7 @@ document.addEventListener("mouseup", (e) => {
 						Math.floor((drawing.endY - drawing.startY) / 20),
 						0, 0, (x, y) => {
 					let body = Bodies.circle(x, y, 10, {
-						friction: 0, frictionStatic: 0, density: 0.05, temperature: 22, label: "water", render: { fillStyle: "#00f" }
+						friction: 0, frictionStatic: 0, density: 0.05, label: "water", render: { fillStyle: "#00f" }
 					});
 				
 					return body;
@@ -583,9 +582,9 @@ ctx.font = "1em Arial";
 			} break;
 
 			case RenderMode.heat: {
-				ctx.fillStyle = `rgb(${Math.min((body.temperature - 22) * 5, 255)}, ${
+				ctx.fillStyle = `rgb(${Math.min((body.temperature - 22) * 5, 255)}, 0, ${
 					body.temperature - 22 < 0 ? Math.min(Math.abs(body.temperature - 22) * 5, 255) : 0
-				}, 0)`;
+				})`;
 			} break;
 		}
 		ctx.fill();
@@ -683,6 +682,15 @@ function togglePaused() {
 	paused ? buttonPause.setAttribute("tooltip", "play") : buttonPause.setAttribute("tooltip", "pause");
 
 	runner.enabled = !paused;
+}
+
+function selectTool(t) {
+	tool = t;
+
+	for (let i = 0; i < panelTools.children.length; i++) {
+		panelTools.children[i].classList.remove("selected");
+		if (i == t) panelTools.children[i].classList.add("selected");
+	}
 }
 
 function utilenum(...args) {
