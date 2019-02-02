@@ -476,11 +476,12 @@ document.addEventListener("mousedown", (e) => {
 					{ type: "divider" },
 					{ type: "sub", name: "Appearance", menu: [] },
 					{ type: "sub", name: "Material", menu: [
-						{ type: "title", name: "Density" },
-						{ type: "range", min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => {
-							Body.setDensity(body, e.value);
-							console.log(e.value);
-						} },
+						{ type: "title", hidden: body.isStatic, name: "Density" },
+						{ type: "range", hidden: body.isStatic, min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => Body.setDensity(body, e.value) },
+						{ type: "title", name: "Temperature" },
+						{ type: "range", min: 0, max: 532, step: 2, value: body.temperature + 100, onchange: (e) => body.temperature = e.value - 100 },
+						{ type: "divider" },
+						{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => body.isStatic = e.checked }
 					] },
 					{ type: "sub", name: "Collision", menu: [] },
 					{ type: "divider" },
@@ -636,8 +637,8 @@ ctx.font = "1em Arial";
 			} break;
 
 			case RenderMode.heat: {
-				ctx.fillStyle = `rgb(${Math.min((body.temperature - 22) * 5, 255)}, 0, ${
-					body.temperature - 22 < 0 ? Math.min(Math.abs(body.temperature - 22) * 5, 255) : 0
+				ctx.fillStyle = `rgb(${Math.max(Math.min((body.temperature - 22), 255), 0)}, 0, ${
+					body.temperature - 22 < 0 ? Math.max(Math.min(Math.abs(body.temperature - 22), 255), 0) : 0
 				})`;
 				ctx.fill();
 			} break;
@@ -709,6 +710,8 @@ function generateContextMenu(menu, items) {
 	menu.innerHTML = "";
 
 	items.forEach((item) => {
+		if (item.hidden) return;
+
 		switch (item.type) {
 			case "button": {
 				let button = document.createElement("div");
@@ -725,6 +728,29 @@ function generateContextMenu(menu, items) {
 				title.innerText = item.name;
 
 				menu.appendChild(title);
+			} break;
+
+			case "range": {
+				let range = document.createElement("input");
+				range.classList.add("range");
+				range.setAttribute("type", "range");
+				range.setAttribute("min", item.min);
+				range.setAttribute("max", item.max);
+				range.setAttribute("step", item.step);
+				range.setAttribute("value", item.value);
+				range.addEventListener("mousedown", () => contextClick = true);
+				range.addEventListener("mousemove", () => {
+					item.onchange({
+						value: range.value,
+						source: range,
+					});
+				});
+
+				menu.appendChild(range);
+			} break;
+
+			case "check": {
+				// todo
 			} break;
 
 			case "sub": {

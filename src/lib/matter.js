@@ -282,6 +282,7 @@
 					};
 	
 					part.restitution = 0;
+					part.temperature = 22;
 					part.friction = 1;
 					part.mass = part.inertia = part.density = Infinity;
 					part.inverseMass = part.inverseInertia = 0;
