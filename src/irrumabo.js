@@ -459,7 +459,7 @@ document.addEventListener("mousedown", (e) => {
 					{ type: "divider" },
 					{ type: "sub", name: "Appearance", menu: {} },
 					{ type: "sub", name: "Material", menu: {} },
-					{ type: "sub", name: "Material", menu: {} },
+					{ type: "sub", name: "Collision", menu: {} },
 					{ type: "divider" },
 					{ type: "sub", name: "Info", menu: {} },
 					{ type: "sub", name: "Behavior", menu: {} },
@@ -677,6 +677,15 @@ function generateContextMenu(menu, items) {
 				button.addEventListener("click", item.action);
 
 				menu.appendChild(button);
+			} break;
+
+			case "sub": {
+				let submenu = document.createElement("div");
+				submenu.classList.add("submenu");
+				submenu.innerText = item.name;
+				submenu.addEventListener("click", () => { /* todo */ });
+
+				menu.appendChild(submenu);
 			} break;
 
 			case "divider": {
