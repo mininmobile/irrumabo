@@ -150,9 +150,11 @@ let context = document.getElementById("context");
 
 let tool = Tools.drag;
 let mode = RenderMode.regular;
+let paused = false;
+
 let drawing = undefined;
 let contextClick = false;
-let paused = false;
+let contextBegin = false;
 
 // create enviroment
 let engine = Engine.create();
@@ -458,40 +460,7 @@ document.addEventListener("mousedown", (e) => {
 			} break;
 		}
 	} else if (e.button == 2) {
-		let bodies = Composite.allBodies(engine.world);
-
-		for (i = 0; i < bodies.length; i++) {
-			var body = bodies[i];
-
-			if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
-				contextClick = true;
-
-				context.classList.remove("hidden");
-
-				context.style.left = mouse.absolute.x - 1 + "px";
-				context.style.top = mouse.absolute.y - 1 + "px";
-
-				generateContextMenu(context, [
-					{ type: "button", name: "Erase", action: () => World.remove(engine.world, body, true) },
-					{ type: "divider" },
-					{ type: "sub", name: "Appearance", menu: [] },
-					{ type: "sub", name: "Material", menu: [
-						{ type: "title", hidden: body.isStatic, name: "Density" },
-						{ type: "range", hidden: body.isStatic, min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => Body.setDensity(body, e.value) },
-						{ type: "title", name: "Temperature" },
-						{ type: "range", min: 0, max: 532, step: 2, value: body.temperature + 100, onchange: (e) => body.temperature = e.value - 100 },
-						{ type: "divider" },
-						{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => body.isStatic = e.checked }
-					] },
-					{ type: "sub", name: "Collision", menu: [] },
-					{ type: "divider" },
-					{ type: "sub", name: "Info", menu: [] },
-					{ type: "sub", name: "Behavior", menu: [] },
-				]);
-
-				break;
-			}
-		}
+		contextBegin = true;
 	}
 });
 
@@ -518,6 +487,9 @@ document.addEventListener("mousemove", (e) => {
 			} break;
 		}
 	}
+
+	if (contextBegin)
+		contextBegin = false;
 });
 
 document.addEventListener("mouseup", (e) => {
@@ -567,6 +539,41 @@ document.addEventListener("mouseup", (e) => {
 		}
 
 		drawing = undefined;
+	} else if (contextBegin) {
+		let bodies = Composite.allBodies(engine.world);
+
+		for (i = 0; i < bodies.length; i++) {
+			var body = bodies[i];
+
+			if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
+				contextClick = true;
+
+				context.classList.remove("hidden");
+
+				context.style.left = mouse.absolute.x - 1 + "px";
+				context.style.top = mouse.absolute.y - 1 + "px";
+
+				generateContextMenu(context, [
+					{ type: "button", name: "Erase", action: () => World.remove(engine.world, body, true) },
+					{ type: "divider" },
+					{ type: "sub", name: "Appearance", menu: [] },
+					{ type: "sub", name: "Material", menu: [
+						{ type: "title", hidden: body.isStatic, name: "Density" },
+						{ type: "range", hidden: body.isStatic, min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => { if (!body.isStatic) Body.setDensity(body, e.value) } },
+						{ type: "title", name: "Temperature" },
+						{ type: "range", min: 0, max: 532, step: 2, value: body.temperature + 100, onchange: (e) => body.temperature = e.value - 100 },
+						{ type: "divider" },
+						{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => Body.setStatic(body, e.value) }
+					] },
+					{ type: "sub", name: "Collision", menu: [] },
+					{ type: "divider" },
+					{ type: "sub", name: "Info", menu: [] },
+					{ type: "sub", name: "Behavior", menu: [] },
+				]);
+
+				break;
+			}
+		}
 	}
 
 	if (contextClick) {
@@ -750,7 +757,28 @@ function generateContextMenu(menu, items) {
 			} break;
 
 			case "check": {
-				// todo
+				let c = document.createElement("div");
+				c.classList.add("check");
+
+				let check = document.createElement("input");
+				check.setAttribute("type", "checkbox");
+				check.checked = item.value;
+				c.appendChild(check);
+				
+				let label = document.createElement("span");
+				label.innerText = item.name;
+				c.appendChild(label);
+
+				c.addEventListener("mousedown", () => contextClick = true);
+				label.addEventListener("mouseup", () => check.click());
+				check.addEventListener("change", () => {
+					item.onchange({
+						value: check.checked,
+						source: check,
+					});
+				});
+
+				menu.appendChild(c);
 			} break;
 
 			case "sub": {
