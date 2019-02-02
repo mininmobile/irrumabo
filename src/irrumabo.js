@@ -683,7 +683,9 @@ function generateContextMenu(menu, items) {
 				let submenu = document.createElement("div");
 				submenu.classList.add("submenu");
 				submenu.innerText = item.name;
-				submenu.addEventListener("click", () => { /* todo */ });
+				submenu.addEventListener("click", () => {
+					
+				});
 
 				menu.appendChild(submenu);
 			} break;
