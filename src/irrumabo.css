@@ -504,3 +504,8 @@ p, h1, h2, h3, h4, h5, h6 {
 .content .mission-track-button:hover {
 	opacity: 1;
 }
+
+.content .mission-track-button[disabled] {
+	opacity: 0.5 !important;
+	cursor: not-allowed;
+}

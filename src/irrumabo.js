@@ -29,6 +29,7 @@ class Objective {
 			} else {
 				switch (a) {
 					case Noun.water: string += " pool of water"; break;
+					case Noun.polygon: string += " polygon"; break;
 					case Noun.rectangle: string += " rectangle"; break;
 					case Noun.ball: string += " ball"; break;
 					case Noun.density: string += " density of the"; break;
@@ -66,6 +67,7 @@ const Verb = utilenum(
 
 const Noun = utilenum(
 	"water",
+	"polygon",
 	"rectangle",
 	"ball",
 	"density",
@@ -278,6 +280,7 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 		missions.window.content.innerHTML = "";
 
 		let mission = missions.missions[m];
+		let position = missions.missions.order.indexOf(m);
 
 		let titleContainer = document.createElement("div"); titleContainer.classList.add("title-container");
 		let back = document.createElement("div"); back.classList.add("back");
@@ -301,7 +304,12 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 			objectives.appendChild(subMission);
 		});
 
-		trackButton.addEventListener("click", () => trackMission(m));
+		if (missions.status.complete.includes(position)) {
+			trackButton.setAttribute("disabled", "");
+			xp.innerText = `(completed) ${xp.innerText}`;
+		} else {
+			trackButton.addEventListener("click", () => trackMission(m));
+		}
 
 		missions.window.content.appendChild(titleContainer);
 		missions.window.content.appendChild(objectives);
@@ -559,7 +567,13 @@ document.addEventListener("mouseup", (e) => {
 					{ type: "sub", name: "Appearance", menu: [] },
 					{ type: "sub", name: "Material", menu: [
 						{ type: "title", hidden: body.isStatic, name: "Density" },
-						{ type: "range", hidden: body.isStatic, min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => { if (!body.isStatic) Body.setDensity(body, e.value) } },
+						{ type: "range", hidden: body.isStatic, min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => { if (!body.isStatic) {
+							Body.setDensity(body, e.value);
+
+							if (missions.status.currentObjective == "Change the density of the ball." && body.shape == "circle") completeObjective();
+							if (missions.status.currentObjective == "Change the density of the rectangle." && body.shape == "rectangle") completeObjective();
+							if (missions.status.currentObjective == "Change the density of the polygon." && body.shape == "polygon") completeObjective();
+						} } },
 						{ type: "title", name: "Temperature" },
 						{ type: "range", min: 0, max: 532, step: 2, value: body.temperature + 100, onchange: (e) => body.temperature = e.value - 100 },
 						{ type: "divider" },

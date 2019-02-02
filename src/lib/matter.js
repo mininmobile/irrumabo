@@ -75,6 +75,7 @@
 				parts: [],
 				plugin: {},
 				angle: 0,
+				shape: "polygon",
 				vertices: Vertices.fromPath('L 0 0 L 40 0 L 40 40 L 0 40'),
 				position: { x: 0, y: 0 },
 				force: { x: 0, y: 0 },
@@ -6579,6 +6580,7 @@
 	
 			var rectangle = { 
 				label: 'Rectangle Body',
+				shape: "rectangle",
 				position: { x: x, y: y },
 				vertices: Vertices.fromPath('L 0 0 L ' + width + ' 0 L ' + width + ' ' + height + ' L 0 ' + height)
 			};
@@ -6625,6 +6627,7 @@
 	
 			var trapezoid = { 
 				label: 'Trapezoid Body',
+				shape: "trapezoid",
 				position: { x: x, y: y },
 				vertices: Vertices.fromPath(verticesPath)
 			};
@@ -6656,6 +6659,7 @@
 	
 			var circle = {
 				label: 'Circle Body',
+				shape: "circle",
 				circleRadius: radius
 			};
 			
