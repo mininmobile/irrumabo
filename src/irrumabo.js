@@ -337,6 +337,14 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 		panelObjective.innerText = `${missions.status.currentObjectiveId + 1}/${mission.objectives.length}) ${mission.objectives[missions.status.currentObjectiveId]}`;
 
 		if (missions.status.currentObjectiveId == mission.objectives.length) completeMission();
+
+		{ // doot toot
+			let doottoot = document.createElement("div");
+			doottoot.classList.add("doottoot");
+			document.body.appendChild(doottoot);
+
+			setTimeout(() => doottoot.remove(), 2000);
+		}
 	}
 
 	function completeMission() {
@@ -353,14 +361,6 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 		missions.status.currentObjective = undefined;
 
 		panelObjective.innerText = "press ESC to open settings";
-
-		{ // doot toot
-			let doottoot = document.createElement("div");
-			doottoot.classList.add("doottoot");
-			document.body.appendChild(doottoot);
-
-			setTimeout(() => doottoot.remove(), 2000);
-		}
 	}
 }
 
