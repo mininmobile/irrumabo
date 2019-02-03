@@ -189,11 +189,40 @@ Events.on(engine, "beforeUpdate", (e) => {
 	for (i = 0; i < bodies.length; i++) {
 		var body = bodies[i];
 
-		if (body.label == "water") {
-			if (body.temperature >= 100) {
-				// turn water to steam
-				World.remove(engine.world, body, true);
-			}
+		switch (body.label) {
+			case "water": {
+				if (body.temperature >= 100) {
+					let steam = Bodies.circle(body.position.x, body.position.y, 10, {
+						label: "steam",
+						friction: 0,
+						frictionStatic: 0,
+						temperature: body.temperature,
+						render: { fillStyle: "rgba(200, 200, 200, 0.4)" },
+					});
+	
+					World.add(engine.world, [steam]);
+					World.remove(engine.world, body, true);
+				}
+			} break;
+
+			case "steam": {
+				if (body.temperature <= 99) {
+					let water = Bodies.circle(body.position.x, body.position.y, 10, {
+						label: "water",
+						density: 0.05,
+						friction: 0,
+						frictionStatic: 0,
+						render: { fillStyle: "#00f" },
+					});
+	
+					World.add(engine.world, [water]);
+					World.remove(engine.world, body, true);
+				} else {
+					body.force = { x: 0, y: -0.0003 };
+				}
+			} break;
+
+			default: {}
 		}
 	}
 });
@@ -356,6 +385,8 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 			missions.status.xp += mission.xp;
 		}
 
+		generateSelectedMissionPage(m);
+
 		missions.status.currentMission = undefined;
 		missions.status.currentObjectiveId = undefined;
 		missions.status.currentObjective = undefined;
@@ -414,7 +445,11 @@ Object.keys(Tools).forEach((t) => {
 document.addEventListener("keyup", (e) => {
 	switch (e.code) {
 		case "Space": togglePaused(); break;
-		case "Escape": settings.window.window.classList.toggle("hidden"); break;
+
+		case "KeyN": case "Escape": settings.window.window.classList.toggle("hidden"); break;
+		case "KeyM": missions.window.window.classList.toggle("hidden"); break;
+		case "KeyE": buttonComponents.click(); break;
+		case "KeyQ": buttonTools.click(); break;
 
 		case "Digit1": selectTool(0); break;
 		case "Digit2": selectTool(1); break;
