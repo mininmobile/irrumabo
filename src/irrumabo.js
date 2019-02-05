@@ -77,6 +77,31 @@ const Verb = utilenum(
 );
 
 const Noun = utilenum(
+	"deg0",
+	"deg15",
+	"deg30",
+	"deg45",
+	"deg60",
+	"deg75",
+	"deg90",
+	"deg105",
+	"deg120",
+	"deg135",
+	"deg150",
+	"deg165",
+	"deg180",
+	"deg195",
+	"deg210",
+	"deg225",
+	"deg240",
+	"deg255",
+	"deg270",
+	"deg285",
+	"deg300",
+	"deg315",
+	"deg330",
+	"deg345",
+	"deg360",
 	"water",
 	"steam",
 	"polygon",
@@ -84,7 +109,6 @@ const Noun = utilenum(
 	"ball",
 	"density",
 	"static",
-	"deg15",
 	"true",
 	"false",
 );
@@ -651,6 +675,22 @@ document.addEventListener("mouseup", (e) => {
 							if (!e.value && missions.status.currentObjective == "Set the static property of the polygon to false." && body.shape == "polygon") completeObjective();
 						} }
 					] },
+					{ type: "sub", name: "Position", menu: [
+						{ type: "title", name: "Angle" },
+						{ type: "range", min: 0, max: 360, step: 15, value: toDeg(body.angle), onchange: (e) => {
+							Body.setAngle(body, toRad(e.value));
+
+							if (missions.status.currentObjective) {
+								if (missions.status.currentObjective.args[0] == Verb.rotate) {
+									if (missions.status.currentObjective.args[2] * 15 == e.value) {
+										if (missions.status.currentObjective.args[1] == Noun.circle && body.shape == "circle") completeObjective();
+										if (missions.status.currentObjective.args[1] == Noun.rectangle && body.shape == "rectangle") completeObjective();
+										if (missions.status.currentObjective.args[1] == Noun.polygon && body.shape == "polygon") completeObjective();
+									}
+								}
+							}
+						} }
+					] },
 					{ type: "sub", name: "Collision", menu: [] },
 					{ type: "divider" },
 					{ type: "sub", name: "Info", menu: [] },
@@ -926,6 +966,14 @@ function selectTool(t) {
 			// smth
 		} break;
 	}
+}
+
+function toDeg(rad) {
+	return rad * (180 / Math.PI);
+}
+
+function toRad(deg) {
+	return deg * (Math.PI / 180);
 }
 
 function utilenum(...args) {
