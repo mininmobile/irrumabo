@@ -33,7 +33,8 @@ class Objective {
 			} else {
 				switch (a) {
 					case Noun.water: string += " pool of water"; break;
-					case Noun.steam: string += " fart of steam"; break;
+					case Noun.steam: string += " wisp of steam"; break;
+					case Noun.fire: string += " fire"; break;
 					case Noun.polygon: string += " polygon"; break;
 					case Noun.rectangle: string += " rectangle"; break;
 					case Noun.ball: string += " ball"; break;
@@ -188,27 +189,38 @@ let missions = {
 				new Objective(Verb.create, Noun.ball),
 				new Objective(Verb.unpause),
 				new Objective(Verb.wait, Noun.sec5),
-			]
+			],
 		},
 		"Playing with Fire": {
 			xp: 10,
-			objectives: ["Create a box with water inside", "Use the fire tool to light a flame under it"]
+			objectives: [
+				new Objective(Verb.pause),
+				new Objective(Verb.create, Noun.rectangle),
+				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
+				new Objective(Verb.create, Noun.rectangle),
+				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
+				new Objective(Verb.create, Noun.rectangle),
+				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
+				new Objective(Verb.create, Noun.water),
+				new Objective(Verb.unpause),
+				new Objective(Verb.create, Noun.fire),
+			],
 		},
 		"Reactions": {
 			xp: 25,
-			objectives: ["todo"]
+			objectives: ["todo"],
 		},
 		"Distillation": {
 			xp: 50,
-			objectives: ["todo"]
+			objectives: ["todo"],
 		},
 	},
 	status: {
-		complete: [0],
+		complete: [],
 		currentMission: undefined,
 		currentObjectiveId: undefined,
 		currentObjective: undefined,
-		xp: 10,
+		xp: 0,
 	},
 }
 
