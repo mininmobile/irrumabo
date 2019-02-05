@@ -74,6 +74,7 @@
 				label: 'Body',
 				parts: [],
 				plugin: {},
+				age: 0,
 				angle: 0,
 				shape: "polygon",
 				vertices: Vertices.fromPath('L 0 0 L 40 0 L 40 40 L 0 40'),

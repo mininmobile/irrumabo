@@ -280,7 +280,9 @@ Events.on(engine, "beforeUpdate", (e) => {
 	let bodies = Composite.allBodies(engine.world);
 
 	for (i = 0; i < bodies.length; i++) {
-		var body = bodies[i];
+		let body = bodies[i];
+
+		body.age++;
 
 		switch (body.label) {
 			case "water": {
@@ -290,7 +292,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 						friction: 0,
 						frictionStatic: 0,
 						temperature: body.temperature,
-						render: { fillStyle: "rgba(200, 200, 200, 0.4)" },
+						render: { fillStyle: "rgba(200, 200, 200, 0.6)" },
 					});
 	
 					World.add(engine.world, [steam]);
@@ -305,6 +307,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 						density: 0.05,
 						friction: 0,
 						frictionStatic: 0,
+						temperature: body.temperature,
 						render: { fillStyle: "#00f" },
 					});
 	
@@ -312,6 +315,29 @@ Events.on(engine, "beforeUpdate", (e) => {
 					World.remove(engine.world, body, true);
 				} else {
 					body.force = { x: 0, y: -0.0003 };
+				}
+			} break;
+
+			case "smoke": {
+				if (body.age > 500) World.remove(engine.world, body, true);
+
+				body.force = { x: 0, y: -0.0003 };
+			} break;
+
+			case "fire": {
+				if (body.age > 100) {
+					let smoke = Bodies.circle(body.position.x, body.position.y, 10, {
+						label: "smoke",
+						friction: 0,
+						frictionStatic: 0,
+						temperature: body.temperature,
+						render: { fillStyle: "rgba(155, 155, 155, 0.4)" },
+					});
+	
+					World.add(engine.world, [smoke]);
+					World.remove(engine.world, body, true);
+				} else {
+					body.force = { x: 0, y: -0.0005 };
 				}
 			} break;
 
@@ -564,6 +590,7 @@ document.addEventListener("keyup", (e) => {
 		case "Digit4": selectTool(3); break;
 		case "Digit5": selectTool(4); break;
 		case "Digit6": selectTool(5); break;
+		case "Digit7": selectTool(6); break;
 	}
 });
 
@@ -592,6 +619,22 @@ document.addEventListener("mousedown", (e) => {
 					endY: mouse.absolute.y,
 				}
 			} break;
+
+			case Tools.fire: {
+				drawing = setInterval(() => {
+					let fire = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, {
+						label: "fire",
+						friction: 0,
+						frictionStatic: 0,
+						temperature: 432,
+						render: { fillStyle: "rgba(255, 100, 0)" },
+					});
+	
+					World.add(engine.world, [fire]);
+				}, 50);
+
+				if (missions.status.currentObjective == "Create a fire.") completeObjective();
+			} break;
 			
 			case Tools.eraser: {
 				drawing = true;
@@ -599,7 +642,7 @@ document.addEventListener("mousedown", (e) => {
 				let bodies = Composite.allBodies(engine.world);
 
 				for (i = 0; i < bodies.length; i++) {
-					var body = bodies[i];
+					let body = bodies[i];
 		
 					if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
 						World.remove(engine.world, body, true);
@@ -626,7 +669,7 @@ document.addEventListener("mousemove", (e) => {
 				let bodies = Composite.allBodies(engine.world);
 
 				for (i = 0; i < bodies.length; i++) {
-					var body = bodies[i];
+					let body = bodies[i];
 		
 					if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
 						World.remove(engine.world, body, true);
@@ -645,12 +688,16 @@ document.addEventListener("mousemove", (e) => {
 document.addEventListener("mouseup", (e) => {
 	if (drawing) {
 		switch (tool) {
+			case Tools.fire: {
+				clearInterval(drawing);
+			} break;
+
 			case Tools.liquid: {
 				let water = Composites.stack(
 						drawing.startX,
 						drawing.startY,
-						Math.floor((drawing.endX - drawing.startX) / 20),
-						Math.floor((drawing.endY - drawing.startY) / 20),
+						Math.floor(Math.abs(drawing.endX - drawing.startX) / 20),
+						Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
 						0, 0, (x, y) => {
 					let body = Bodies.circle(x, y, 10, {
 						friction: 0, frictionStatic: 0, density: 0.05, label: "water", render: { fillStyle: "#00f" }
@@ -667,10 +714,10 @@ document.addEventListener("mouseup", (e) => {
 			case Tools.rectangle: {
 				World.add(engine.world, [
 					Bodies.rectangle(
-						drawing.startX + ((drawing.endX - drawing.startX) / 2),
-						drawing.startY + ((drawing.endY - drawing.startY) / 2),
-						(drawing.endX - drawing.startX),
-						(drawing.endY - drawing.startY))
+						drawing.startX + (Math.abs(drawing.endX - drawing.startX) / 2),
+						drawing.startY + (Math.abs(drawing.endY - drawing.startY) / 2),
+						Math.abs(drawing.endX - drawing.startX),
+						Math.abs(drawing.endY - drawing.startY))
 				]);
 
 				if ((drawing.endX - drawing.startX) * (drawing.endY - drawing.startY) > 0 && missions.status.currentObjective == "Create a rectangle.") completeObjective();
@@ -681,7 +728,7 @@ document.addEventListener("mouseup", (e) => {
 					Bodies.circle(
 						drawing.startX,
 						drawing.startY,
-						Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY))
+						Math.max(Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY)))
 				]);
 
 				if (Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY) > 0 && missions.status.currentObjective == "Create a ball.") completeObjective();
@@ -693,7 +740,7 @@ document.addEventListener("mouseup", (e) => {
 		let bodies = Composite.allBodies(engine.world);
 
 		for (i = 0; i < bodies.length; i++) {
-			var body = bodies[i];
+			let body = bodies[i];
 
 			if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
 				contextClick = true;
@@ -837,7 +884,7 @@ ctx.font = "1em Arial";
 		let bodies = Composite.allBodies(engine.world);
 	
 		for (i = 0; i < bodies.length; i++) {
-			var body = bodies[i];
+			let body = bodies[i];
 	
 			if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
 				ctx.fillStyle = "#ddd";
@@ -855,21 +902,21 @@ ctx.font = "1em Arial";
 			ctx.strokeRect(
 				drawing.startX,
 				drawing.startY,
-				Math.floor((drawing.endX - drawing.startX) / 20) * 20,
-				Math.floor((drawing.endY - drawing.startY) / 20) * 20);
+				Math.floor(Math.abs(drawing.endX - drawing.startX) / 20) * 20,
+				Math.floor(Math.abs(drawing.endY - drawing.startY) / 20) * 20);
 			ctx.fillStyle = "#ddd";
 			ctx.fillText(
-				`${Math.floor((drawing.endX - drawing.startX) / 20)}x${Math.floor((drawing.endY - drawing.startY) / 20)}`,
+				`${Math.floor(Math.abs(drawing.endX - drawing.startX) / 20)}x${Math.floor(Math.abs(drawing.endY - drawing.startY) / 20)}`,
 				drawing.startX,
 				drawing.startY - 5);
 		}
 
 		if (tool == Tools.rectangle && drawing) {
 			ctx.strokeStyle = "#ddd";
-			ctx.strokeRect(drawing.startX, drawing.startY, drawing.endX - drawing.startX, drawing.endY - drawing.startY);
+			ctx.strokeRect(drawing.startX, drawing.startY, Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY));
 			ctx.fillStyle = "#ddd";
 			ctx.fillText(
-				`${drawing.endX - drawing.startX}x${drawing.endY - drawing.startY}`,
+				`${Math.abs(drawing.endX - drawing.startX)}x${Math.abs(drawing.endY - drawing.startY)}`,
 				drawing.startX,
 				drawing.startY - 5);
 		}
@@ -880,13 +927,13 @@ ctx.font = "1em Arial";
 			ctx.ellipse(
 				drawing.startX,
 				drawing.startY,
-				Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
-				Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY),
+				Math.max(Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY)),
+				Math.max(Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY)),
 				0, 0, Math.PI * 2);
 			ctx.stroke();
 			ctx.fillStyle = "#ddd";
 			ctx.fillText(
-				`r${Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY)}`,
+				`r${Math.max(Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY))}`,
 				drawing.startX,
 				drawing.startY);
 		}

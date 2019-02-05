@@ -269,7 +269,7 @@ p, h1, h2, h3, h4, h5, h6 {
 
 .tools-panel {
 	width: 5em;
-	height: 25em;
+	height: 29em;
 	max-height: calc(100vh - 10em);
 	background: rgba(255, 255, 255, 0.05);
 	position: absolute;
