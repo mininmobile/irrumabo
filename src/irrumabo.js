@@ -26,6 +26,7 @@ class Objective {
 					case Verb.change: string += "Change the"; break;
 					case Verb.set: string += "Set the"; break;
 					case Verb.rotate: string += "Rotate the"; break;
+					case Verb.wait: string += "Wait for"; break;
 					case Verb.pause: string += "Pause the simulation"; break;
 					case Verb.unpause: string += "Unpause the simulation"; break;
 				}
@@ -38,9 +39,34 @@ class Objective {
 					case Noun.ball: string += " ball"; break;
 					case Noun.density: string += " density of the"; break;
 					case Noun.static: string += " static property of the"; break;
-					case Noun.deg15: string += " to 15 degrees"; break;
 					case Noun.true: string += " to true"; break;
 					case Noun.false: string += " to false"; break;
+					case Noun.sec5: string += " 5 seconds"; break;
+					case Noun.deg0: string += " to 0 degrees"; break;
+					case Noun.deg15: string += " to 15 degrees"; break;
+					case Noun.deg30: string += " to 30 degrees"; break;
+					case Noun.deg45: string += " to 45 degrees"; break;
+					case Noun.deg60: string += " to 60 degrees"; break;
+					case Noun.deg75: string += " to 75 degrees"; break;
+					case Noun.deg90: string += " to 90 degrees"; break;
+					case Noun.deg105: string += " to 105 degrees"; break;
+					case Noun.deg120: string += " to 120 degrees"; break;
+					case Noun.deg135: string += " to 135 degrees"; break;
+					case Noun.deg150: string += " to 150 degrees"; break;
+					case Noun.deg165: string += " to 165 degrees"; break;
+					case Noun.deg180: string += " to 180 degrees"; break;
+					case Noun.deg195: string += " to 195 degrees"; break;
+					case Noun.deg210: string += " to 210 degrees"; break;
+					case Noun.deg225: string += " to 225 degrees"; break;
+					case Noun.deg240: string += " to 240 degrees"; break;
+					case Noun.deg255: string += " to 255 degrees"; break;
+					case Noun.deg270: string += " to 270 degrees"; break;
+					case Noun.deg285: string += " to 285 degrees"; break;
+					case Noun.deg300: string += " to 300 degrees"; break;
+					case Noun.deg315: string += " to 315 degrees"; break;
+					case Noun.deg330: string += " to 330 degrees"; break;
+					case Noun.deg345: string += " to 345 degrees"; break;
+					case Noun.deg360: string += " to 360 degrees"; break;
 				}
 			}
 		});
@@ -109,6 +135,7 @@ const Noun = utilenum(
 	"ball",
 	"density",
 	"static",
+	"sec5",
 	"true",
 	"false",
 );
@@ -160,6 +187,7 @@ let missions = {
 				new Objective(Verb.change, Noun.density, Noun.ball),
 				new Objective(Verb.create, Noun.ball),
 				new Objective(Verb.unpause),
+				new Objective(Verb.wait, Noun.sec5),
 			]
 		},
 		"Playing with Fire": {
@@ -417,6 +445,20 @@ World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
 
 		panelObjective.innerText = `${missions.status.currentObjectiveId + 1}/${mission.objectives.length}) ${mission.objectives[missions.status.currentObjectiveId]}`;
 
+		if (missions.status.currentObjective) switch (missions.status.currentObjective.args[0]) {
+			case Verb.wait: {
+				let duration = 0;
+
+				switch (missions.status.currentObjective.args[1]) {
+					case Noun.sec5: duration = 5000; break;
+				}
+
+				setTimeout(completeObjective, duration);
+			} break;
+
+			default: {}
+		}
+
 		if (missions.status.currentObjectiveId == mission.objectives.length) completeMission();
 
 		{ // doot toot
@@ -612,8 +654,8 @@ document.addEventListener("mouseup", (e) => {
 			case Tools.rectangle: {
 				World.add(engine.world, [
 					Bodies.rectangle(
-						drawing.startX,
-						drawing.startY,
+						drawing.startX + ((drawing.endX - drawing.startX) / 2),
+						drawing.startY + ((drawing.endY - drawing.startY) / 2),
 						(drawing.endX - drawing.startX),
 						(drawing.endY - drawing.startY))
 				]);
