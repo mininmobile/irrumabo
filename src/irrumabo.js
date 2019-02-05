@@ -24,15 +24,23 @@ class Objective {
 				switch (a) {
 					case Verb.create: string += "Create a"; break;
 					case Verb.change: string += "Change the"; break;
+					case Verb.set: string += "Set the"; break;
+					case Verb.rotate: string += "Rotate the"; break;
 					case Verb.pause: string += "Pause the simulation"; break;
+					case Verb.unpause: string += "Unpause the simulation"; break;
 				}
 			} else {
 				switch (a) {
 					case Noun.water: string += " pool of water"; break;
+					case Noun.steam: string += " fart of steam"; break;
 					case Noun.polygon: string += " polygon"; break;
 					case Noun.rectangle: string += " rectangle"; break;
 					case Noun.ball: string += " ball"; break;
 					case Noun.density: string += " density of the"; break;
+					case Noun.static: string += " static property of the"; break;
+					case Noun.deg15: string += " to 15 degrees"; break;
+					case Noun.true: string += " to true"; break;
+					case Noun.false: string += " to false"; break;
 				}
 			}
 		});
@@ -52,7 +60,7 @@ const RenderMode = utilenum(
 
 const Tools = utilenum(
 	"drag",
-	"water",
+	"liquid",
 	"rectangle",
 	"circle",
 	"brush",
@@ -61,16 +69,24 @@ const Tools = utilenum(
 
 const Verb = utilenum(
 	"create",
+	"rotate",
+	"set",
 	"change",
 	"pause",
+	"unpause",
 );
 
 const Noun = utilenum(
 	"water",
+	"steam",
 	"polygon",
 	"rectangle",
 	"ball",
 	"density",
+	"static",
+	"deg15",
+	"true",
+	"false",
 );
 
 let settings = {
@@ -108,7 +124,19 @@ let missions = {
 		},
 		"Rolling Balls": {
 			xp: 10,
-			objectives: ["Pause simulation", "Create a rectangle", "Rotate to 15 degrees", "Set as static in right click menu", "Copy and move copy down beneath the first", "Place two balls on the different slopes", "Set the density of one of them to maximum", "Resume simulation"]
+			objectives: [
+				new Objective(Verb.pause),
+				new Objective(Verb.create, Noun.rectangle),
+				new Objective(Verb.rotate, Noun.rectangle, Noun.deg15),
+				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
+				new Objective(Verb.create, Noun.rectangle),
+				new Objective(Verb.rotate, Noun.rectangle, Noun.deg15),
+				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
+				new Objective(Verb.create, Noun.ball),
+				new Objective(Verb.change, Noun.density, Noun.ball),
+				new Objective(Verb.create, Noun.ball),
+				new Objective(Verb.unpause),
+			]
 		},
 		"Playing with Fire": {
 			xp: 10,
@@ -124,11 +152,11 @@ let missions = {
 		},
 	},
 	status: {
-		complete: [],
+		complete: [0],
 		currentMission: undefined,
 		currentObjectiveId: undefined,
 		currentObjective: undefined,
-		xp: 0,
+		xp: 10,
 	},
 }
 
@@ -458,14 +486,6 @@ document.addEventListener("keyup", (e) => {
 		case "Digit5": selectTool(4); break;
 		case "Digit6": selectTool(5); break;
 	}
-
-	return false;
-});
-
-// support for resizing
-document.addEventListener("resize", () => {
-	canvas.width = document.body.scrollWidth;
-	canvas.height = document.body.scrollHeight;
 });
 
 // add mouse control
@@ -485,7 +505,7 @@ World.add(engine.world, mouseConstraint);
 document.addEventListener("mousedown", (e) => {
 	if (e.button == 0) {
 		switch (tool) {
-			case Tools.water: case Tools.rectangle: case Tools.circle: {
+			case Tools.liquid: case Tools.rectangle: case Tools.circle: {
 				drawing = {
 					startX: mouse.absolute.x,
 					startY: mouse.absolute.y,
@@ -518,7 +538,7 @@ document.addEventListener("mousedown", (e) => {
 document.addEventListener("mousemove", (e) => {
 	if (drawing) {
 		switch (tool) {
-			case Tools.water: case Tools.rectangle: case Tools.circle: {
+			case Tools.liquid: case Tools.rectangle: case Tools.circle: {
 				drawing.endX = mouse.absolute.x;
 				drawing.endY = mouse.absolute.y;
 			} break;
@@ -546,7 +566,7 @@ document.addEventListener("mousemove", (e) => {
 document.addEventListener("mouseup", (e) => {
 	if (drawing) {
 		switch (tool) {
-			case Tools.water: {
+			case Tools.liquid: {
 				let water = Composites.stack(
 						drawing.startX,
 						drawing.startY,
@@ -726,7 +746,7 @@ ctx.font = "1em Arial";
 	}
 
 	{ // show action
-		if (tool == Tools.water && drawing) {
+		if (tool == Tools.liquid && drawing) {
 			ctx.strokeStyle = "#ddd";
 			ctx.strokeRect(
 				drawing.startX,
@@ -883,6 +903,16 @@ function selectTool(t) {
 	for (let i = 0; i < panelTools.children.length; i++) {
 		panelTools.children[i].classList.remove("selected");
 		if (i == t) panelTools.children[i].classList.add("selected");
+	}
+
+	switch (t) {
+		case Tools.liquid: {
+			// smth
+		} break;
+
+		default: {
+			// smth
+		} break;
 	}
 }
 
