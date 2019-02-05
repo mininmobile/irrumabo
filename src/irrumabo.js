@@ -582,7 +582,7 @@ document.addEventListener("mouseup", (e) => {
 
 				World.add(engine.world, [water]);
 
-				if (missions.status.currentObjective == "Create a pool of water.") completeObjective();
+				if (Math.floor((drawing.endX - drawing.startX) / 20) * Math.floor((drawing.endY - drawing.startY) / 20) > 0 && missions.status.currentObjective == "Create a pool of water.") completeObjective();
 			} break;
 
 			case Tools.rectangle: {
@@ -594,7 +594,7 @@ document.addEventListener("mouseup", (e) => {
 						(drawing.endY - drawing.startY))
 				]);
 
-				if (missions.status.currentObjective == "Create a rectangle.") completeObjective();
+				if ((drawing.endX - drawing.startX) * (drawing.endY - drawing.startY) > 0 && missions.status.currentObjective == "Create a rectangle.") completeObjective();
 			} break;
 
 			case Tools.circle: {
@@ -605,7 +605,7 @@ document.addEventListener("mouseup", (e) => {
 						Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY))
 				]);
 
-				if (missions.status.currentObjective == "Create a ball.") completeObjective();
+				if (Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY) > 0 && missions.status.currentObjective == "Create a ball.") completeObjective();
 			} break;
 		}
 
@@ -640,7 +640,16 @@ document.addEventListener("mouseup", (e) => {
 						{ type: "title", name: "Temperature" },
 						{ type: "range", min: 0, max: 532, step: 2, value: body.temperature + 100, onchange: (e) => body.temperature = e.value - 100 },
 						{ type: "divider" },
-						{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => Body.setStatic(body, e.value) }
+						{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => {
+							Body.setStatic(body, e.value);
+
+							if (e.value && missions.status.currentObjective == "Set the static property of the ball to true." && body.shape == "circle") completeObjective();
+							if (e.value && missions.status.currentObjective == "Set the static property of the rectangle to true." && body.shape == "rectangle") completeObjective();
+							if (e.value && missions.status.currentObjective == "Set the static property of the polygon to true." && body.shape == "polygon") completeObjective();
+							if (!e.value && missions.status.currentObjective == "Set the static property of the ball to false." && body.shape == "circle") completeObjective();
+							if (!e.value && missions.status.currentObjective == "Set the static property of the rectangle to false." && body.shape == "rectangle") completeObjective();
+							if (!e.value && missions.status.currentObjective == "Set the static property of the polygon to false." && body.shape == "polygon") completeObjective();
+						} }
 					] },
 					{ type: "sub", name: "Collision", menu: [] },
 					{ type: "divider" },
@@ -890,6 +899,9 @@ function generateContextMenu(menu, items) {
 
 function togglePaused() {
 	paused = !paused;
+
+	if (paused && missions.status.currentObjective == "Pause the simulation.") completeObjective();
+	if (!paused && missions.status.currentObjective == "Unpause the simulation.") completeObjective();
 
 	paused ? document.body.classList.add("paused") : document.body.classList.remove("paused");
 	paused ? buttonPause.setAttribute("tooltip", "play") : buttonPause.setAttribute("tooltip", "pause");
