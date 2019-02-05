@@ -346,14 +346,17 @@ Events.on(engine, "beforeUpdate", (e) => {
 	}
 });
 
-// create example scene
-let ballA = Bodies.circle(200, document.body.scrollHeight / 3 - 300, 40, { density: 0.001 });
-let groundA = Bodies.rectangle(document.body.scrollWidth / 4, document.body.scrollHeight / 3, document.body.scrollWidth / 2, 60, { isStatic: true, angle: Math.PI * 0.1 });
-let ballB = Bodies.circle(200, document.body.scrollHeight / 1.5 - 300, 40, { density: 1 });
-let groundB = Bodies.rectangle(document.body.scrollWidth / 4, document.body.scrollHeight / 1.5, document.body.scrollWidth / 2, 60, { isStatic: true, angle: Math.PI * 0.1 });
-let groundC = Bodies.rectangle(document.body.scrollWidth / 1.5, document.body.scrollHeight / 1.5, document.body.scrollWidth / 2, 60, { isStatic: true, angle: Math.PI * -0.1 });
-
-World.add(engine.world, [ballA, groundA, ballB, groundB, groundC]);
+// create walls
+World.add(engine.world, [
+	// left
+	Bodies.rectangle(-50, document.body.scrollHeight / 2, 100, document.body.scrollHeight, { isStatic: true }),
+	// right
+	Bodies.rectangle(document.body.scrollWidth + 50, document.body.scrollHeight / 2, 100, document.body.scrollHeight, { isStatic: true }),
+	// top
+	Bodies.rectangle(document.body.scrollWidth / 2, -50, document.body.scrollWidth, 100, { isStatic: true }),
+	// bottom
+	Bodies.rectangle(document.body.scrollWidth / 2, document.body.scrollHeight + 50, document.body.scrollWidth, 100, { isStatic: true }),
+]);
 
 // initialize dialogs
 { // missions window
