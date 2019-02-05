@@ -87,6 +87,7 @@ const RenderMode = utilenum(
 
 const Tools = utilenum(
 	"drag",
+	"fire",
 	"liquid",
 	"rectangle",
 	"circle",
