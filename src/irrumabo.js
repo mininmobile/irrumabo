@@ -97,7 +97,7 @@ const MaterialOptions = [
 		friction: 0,
 		frictionStatic: 0,
 		temperature: 100,
-		render: { fillStyle: "rgba(200, 200, 200, 0.6)" },
+		render: { fillStyle: "rgba(255, 255, 255, 0.6)" },
 	},
 ];
 
@@ -340,7 +340,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 						friction: 0,
 						frictionStatic: 0,
 						temperature: body.temperature,
-						render: { fillStyle: "rgba(200, 200, 200, 0.6)" },
+						render: { fillStyle: "rgba(255, 255, 255, 0.6)" },
 					});
 	
 					World.add(engine.world, [steam]);
@@ -1130,11 +1130,19 @@ function selectTool(t) {
 			Object.keys(Materials).forEach((m) => {
 				let button = document.createElement("div");
 				button.classList.add("material", "v");
+				if (toolOptions.liquid.selected == m) button.classList.add("selected");
 				button.setAttribute("tooltip", m.toString());
 
 				button.style.background = MaterialOptions[Materials[m]].render.fillStyle;
 			
-				button.addEventListener("click", () => toolOptions.liquid.selected = m);
+				button.addEventListener("click", () => {
+					toolOptions.liquid.selected = m;
+
+					for (let i = 0; i < panelToolOptions.children.length; i++) {
+						panelToolOptions.children[i].classList.remove("selected");
+						if (i == Materials[toolOptions.liquid.selected]) panelToolOptions.children[i].classList.add("selected");
+					}
+				});
 
 				panelToolOptions.appendChild(button);
 			});

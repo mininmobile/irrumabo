@@ -51,9 +51,10 @@ p, h1, h2, h3, h4, h5, h6 {
 	background: rgba(255, 255, 255, 0.05);
 	position: absolute;
 	left: 4em;
+	z-index: 9999;
 	opacity: 0;
 	border-radius: 2em;
-	transition: opacity 0.2s, left 0.2s, right 0.2s;
+	transition: opacity 0.2s, left 0.2s, right 0.2s, top 0.2s, bottom 0.2s;
 	pointer-events: none;
 }
 
@@ -62,8 +63,10 @@ p, h1, h2, h3, h4, h5, h6 {
 	opacity: 1;
 }
 
-.r[tooltip]::after {  left: unset; right: 4em; }
+.r[tooltip]::after { left: unset; right: 4em; }
 .r[tooltip]:hover::after { left: unset; right: 6em; }
+.v[tooltip]::after { left: unset; bottom: 5em; transform: rotate(270deg); }
+.v[tooltip]:hover::after { left: unset; bottom: 7em; }
 
 .doottoot {
 	width: 2em;
@@ -293,8 +296,7 @@ p, h1, h2, h3, h4, h5, h6 {
 	border-top-left-radius: 3em;
 	border-top-right-radius: 3em;
 	transition: width 0.5s;
-	overflow-y: hidden;
-	overflow-x: auto;
+	overflow: visible;
 }
 
 .components-panel.hidden { height: 0 !important; overflow-y: hidden; }
@@ -348,7 +350,7 @@ p, h1, h2, h3, h4, h5, h6 {
 	content: "";
 	width: 1em;
 	height: 1em;
-	margin-top: 1em;
+	margin-left: 1em;
 	background: white;
 	position: absolute;
 	bottom: -1em;
