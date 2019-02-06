@@ -80,6 +80,7 @@ class Objective {
 
 const Materials = utilenum(
 	"water",
+	"oil",
 	"steam",
 );
 
@@ -91,6 +92,13 @@ const MaterialOptions = [
 		frictionStatic: 0,
 		temperature: 22,
 		render: { fillStyle: "#00f" },
+	},
+	{
+		label: "oil",
+		friction: 1,
+		frictionStatic: 1,
+		temperature: 22,
+		render: { fillStyle: "#000" },
 	},
 	{
 		label: "steam",
@@ -345,6 +353,21 @@ Events.on(engine, "beforeUpdate", (e) => {
 	
 					World.add(engine.world, [steam]);
 					World.remove(engine.world, body, true);
+				}
+			} break;
+
+			case "oil": {
+				if (body.temperature >= 60) {
+					let burn = Bodies.circle(body.position.x, body.position.y, 10, {
+						label: "fire",
+						friction: 0,
+						frictionStatic: 0,
+						temperature: body.temperature,
+						render: { fillStyle: "rgba(255, 100, 0)" },
+					});
+	
+					if (Math.random() >= 0.9) World.add(engine.world, [burn]);
+					if (Math.random() >= 0.9) World.remove(engine.world, body, true);
 				}
 			} break;
 
