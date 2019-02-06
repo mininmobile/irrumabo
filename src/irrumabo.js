@@ -151,6 +151,7 @@ let settings = {
 		gravityEnable: document.getElementById("settings-gravity-enable"),
 		gravityX: document.getElementById("settings-gravity-x"),
 		gravityY: document.getElementById("settings-gravity-y"),
+		bordermodeSelect: document.getElementById("settings-bordermode-select"),
 		rendermodeSelect: document.getElementById("settings-rendermode-select"),
 	},
 	displays: {
@@ -245,6 +246,7 @@ let context = document.getElementById("context");
 
 let tool = Tools.drag;
 let mode = RenderMode.regular;
+let killerWalls = false;
 let paused = false;
 
 let drawing = undefined;
@@ -263,15 +265,27 @@ let runner = Runner.create({
 // extend simulation
 Events.on(engine, "collisionActive", (e) => {
 	e.pairs.forEach((c) => {
-		let tempA = c.bodyA.temperature;
-		let tempB = c.bodyB.temperature;
+		{ // temperature
+			let tempA = c.bodyA.temperature;
+			let tempB = c.bodyB.temperature;
 
-		if (tempA != tempB) {
-			let eqA = tempA > tempB ? tempA - ((tempA - tempB) / 2) : tempA + ((tempB - tempA) / 2);
-			let eqB = tempB > tempA ? tempB - ((tempB - tempA) / 2) : tempB + ((tempA - tempB) / 2);
+			if (tempA != tempB) {
+				let eqA = tempA > tempB ? tempA - ((tempA - tempB) / 2) : tempA + ((tempB - tempA) / 2);
+				let eqB = tempB > tempA ? tempB - ((tempB - tempA) / 2) : tempB + ((tempA - tempB) / 2);
 
-			Body.set(c.bodyA, "temperature", eqA);
-			Body.set(c.bodyB, "temperature", eqB);
+				Body.set(c.bodyA, "temperature", eqA);
+				Body.set(c.bodyB, "temperature", eqB);
+			}
+		}
+
+		switch (c.bodyA.label) {
+			case "wall": {
+				if (killerWalls) {
+					World.remove(engine.world, c.bodyB, true);
+				}
+			} break;
+
+			default: {}
 		}
 	});
 });
@@ -347,16 +361,18 @@ Events.on(engine, "beforeUpdate", (e) => {
 });
 
 // create walls
-World.add(engine.world, [
+let walls = [
 	// left
-	Bodies.rectangle(-50, document.body.scrollHeight / 2, 100, document.body.scrollHeight, { isStatic: true }),
+	Bodies.rectangle(-50, document.body.scrollHeight / 2, 100, document.body.scrollHeight, { isStatic: true, label: "wall" }),
 	// right
-	Bodies.rectangle(document.body.scrollWidth + 50, document.body.scrollHeight / 2, 100, document.body.scrollHeight, { isStatic: true }),
+	Bodies.rectangle(document.body.scrollWidth + 50, document.body.scrollHeight / 2, 100, document.body.scrollHeight, { isStatic: true, label: "wall" }),
 	// top
-	Bodies.rectangle(document.body.scrollWidth / 2, -50, document.body.scrollWidth, 100, { isStatic: true }),
+	Bodies.rectangle(document.body.scrollWidth / 2, -50, document.body.scrollWidth, 100, { isStatic: true, label: "wall" }),
 	// bottom
-	Bodies.rectangle(document.body.scrollWidth / 2, document.body.scrollHeight + 50, document.body.scrollWidth, 100, { isStatic: true }),
-]);
+	Bodies.rectangle(document.body.scrollWidth / 2, document.body.scrollHeight + 50, document.body.scrollWidth, 100, { isStatic: true, label: "wall" }),
+];
+
+World.add(engine.world, walls);
 
 // initialize dialogs
 { // missions window
@@ -538,6 +554,7 @@ World.add(engine.world, [
 
 	settings.inputs.gravityEnable.checked = true;
 	settings.inputs.rendermodeSelect.selectedIndex = 0;
+	settings.inputs.bordermodeSelect.selectedIndex = 0;
 
 	settings.inputs.gravityEnable.addEventListener("change", () => {
 		engine.world.gravity.scale = settings.inputs.gravityEnable.checked ? 0.001 : 0;
@@ -553,6 +570,18 @@ World.add(engine.world, [
 		settings.displays.gravityY.innerText =
 		engine.world.gravity.y =
 		settings.inputs.gravityY.value;
+	});
+
+	settings.inputs.bordermodeSelect.addEventListener("change", () => {
+		switch (settings.inputs.bordermodeSelect.selectedIndex) {
+			case 0: {
+				killerWalls = false;
+			} break;
+
+			case 1: {
+				killerWalls = true;
+			} break;
+		}
 	});
 
 	settings.inputs.rendermodeSelect.addEventListener("change", () => {
