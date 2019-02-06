@@ -78,6 +78,29 @@ class Objective {
 	}
 }
 
+const Materials = utilenum(
+	"water",
+	"steam",
+);
+
+const MaterialOptions = [
+	{
+		label: "water",
+		density: 0.05,
+		friction: 0,
+		frictionStatic: 0,
+		temperature: 22,
+		render: { fillStyle: "#00f" },
+	},
+	{
+		label: "steam",
+		friction: 0,
+		frictionStatic: 0,
+		temperature: 100,
+		render: { fillStyle: "rgba(200, 200, 200, 0.6)" },
+	},
+];
+
 const RenderMode = utilenum(
 	"regular",
 	"colorWireframe",
@@ -245,6 +268,17 @@ document.body.appendChild(canvas);
 let context = document.getElementById("context");
 
 let tool = Tools.drag;
+let toolOptions = {
+	"drag": {},
+	"fire": {},
+	"liquid": {
+		selected: "water",
+	},
+	"rectangle": {},
+	"circle": {},
+	"brush": {},
+	"eraser": {},
+}
 let mode = RenderMode.regular;
 let killerWalls = false;
 let paused = false;
@@ -328,14 +362,14 @@ Events.on(engine, "beforeUpdate", (e) => {
 					World.add(engine.world, [water]);
 					World.remove(engine.world, body, true);
 				} else {
-					body.force = { x: 0, y: -0.0003 };
+					body.force = { x: 0, y: -0.0003 * engine.world.gravity.y };
 				}
 			} break;
 
 			case "smoke": {
 				if (body.age > 500) World.remove(engine.world, body, true);
 
-				body.force = { x: 0, y: -0.0003 };
+				body.force = { x: 0, y: -0.0003 * engine.world.gravity.y };
 			} break;
 
 			case "fire": {
@@ -351,7 +385,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 					World.add(engine.world, [smoke]);
 					World.remove(engine.world, body, true);
 				} else {
-					body.force = { x: 0, y: -0.0005 };
+					body.force = { x: 0, y: -0.0005 * engine.world.gravity.y };
 				}
 			} break;
 
@@ -731,9 +765,7 @@ document.addEventListener("mouseup", (e) => {
 						Math.floor(Math.abs(drawing.endX - drawing.startX) / 20),
 						Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
 						0, 0, (x, y) => {
-					let body = Bodies.circle(x, y, 10, {
-						friction: 0, frictionStatic: 0, density: 0.05, label: "water", render: { fillStyle: "#00f" }
-					});
+					let body = Bodies.circle(x, y, 10, MaterialOptions[Materials[toolOptions.liquid.selected]]);
 				
 					return body;
 				});
@@ -801,7 +833,7 @@ document.addEventListener("mouseup", (e) => {
 						{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => {
 							Body.setStatic(body, e.value);
 
-							if (e.value && missions.status.currentObjective == "Set the static property of the ball to true." && body.shape == "circle") completeObjective();
+						if (e.value && missions.status.currentObjective == "Set the static property of the ball to true." && body.shape == "circle") completeObjective();
 							if (e.value && missions.status.currentObjective == "Set the static property of the rectangle to true." && body.shape == "rectangle") completeObjective();
 							if (e.value && missions.status.currentObjective == "Set the static property of the polygon to true." && body.shape == "polygon") completeObjective();
 							if (!e.value && missions.status.currentObjective == "Set the static property of the ball to false." && body.shape == "circle") completeObjective();
@@ -1093,11 +1125,23 @@ function selectTool(t) {
 
 	switch (t) {
 		case Tools.liquid: {
-			// smth
+			panelToolOptions.innerHTML = "";
+
+			Object.keys(Materials).forEach((m) => {
+				let button = document.createElement("div");
+				button.classList.add("material", "v");
+				button.setAttribute("tooltip", m.toString());
+
+				button.style.background = MaterialOptions[Materials[m]].render.fillStyle;
+			
+				button.addEventListener("click", () => toolOptions.liquid.selected = m);
+
+				panelToolOptions.appendChild(button);
+			});
 		} break;
 
 		default: {
-			// smth
+			panelToolOptions.innerHTML = "";
 		} break;
 	}
 }

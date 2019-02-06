@@ -303,7 +303,7 @@ p, h1, h2, h3, h4, h5, h6 {
 
 /* panel items */
 
-.tools-panel > div, .components-panel > div {
+.tools-panel > div, .tools-option-panel > div, .components-panel > div {
 	width: 3em;
 	height: 3em;
 	margin: 1em;
@@ -333,6 +333,32 @@ p, h1, h2, h3, h4, h5, h6 {
 .tool[tooltip="circle"] { background: url("./img/toolcircle.svg") center / contain; }
 .tool[tooltip="brush"] { background: url("./img/toolbrush.svg") center / contain; }
 .tool[tooltip="eraser"] { background: url("./img/tooleraser.svg") center / contain; }
+
+.material {
+	margin-left: 0 !important;
+	display: inline-block;
+	border-radius: 50%;
+}
+
+.material:first-child {
+	margin-left: 1em !important;
+}
+
+.material::before {
+	content: "";
+	width: 1em;
+	height: 1em;
+	margin-top: 1em;
+	background: white;
+	position: absolute;
+	bottom: -1em;
+	border-radius: 50%;
+	transition: bottom 0.3s;
+}
+
+.material.selected::before {
+	bottom: -0.5em;
+}
 
 /* windows */
 
