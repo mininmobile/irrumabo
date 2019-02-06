@@ -362,7 +362,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 						label: "fire",
 						friction: 0,
 						frictionStatic: 0,
-						temperature: body.temperature,
+						temperature: 432,
 						render: { fillStyle: "rgba(255, 100, 0)" },
 					});
 	
