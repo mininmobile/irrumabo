@@ -122,7 +122,6 @@ const Tools = utilenum(
 	"liquid",
 	"rectangle",
 	"circle",
-	"brush",
 	"eraser",
 );
 

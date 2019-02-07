@@ -272,7 +272,7 @@ p, h1, h2, h3, h4, h5, h6 {
 
 .tools-panel {
 	width: 5em;
-	height: 29em;
+	height: 25em;
 	max-height: calc(100vh - 10em);
 	background: rgba(255, 255, 255, 0.05);
 	position: absolute;
@@ -333,7 +333,6 @@ p, h1, h2, h3, h4, h5, h6 {
 .tool[tooltip="liquid"] { background: url("./img/toolliquid.svg") center / contain; }
 .tool[tooltip="rectangle"] { background: url("./img/toolrectangle.svg") center / contain; }
 .tool[tooltip="circle"] { background: url("./img/toolcircle.svg") center / contain; }
-.tool[tooltip="brush"] { background: url("./img/toolbrush.svg") center / contain; }
 .tool[tooltip="eraser"] { background: url("./img/tooleraser.svg") center / contain; }
 
 .material {
