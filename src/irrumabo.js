@@ -288,6 +288,8 @@ let toolOptions = {
 }
 let mode = RenderMode.regular;
 let killerWalls = false;
+let shift = false;
+let ctrl = false;
 let paused = false;
 
 let drawing = undefined;
@@ -663,11 +665,25 @@ Object.keys(Tools).forEach((t) => {
 });
 
 // add keyboard shortcuts
+document.addEventListener("keydown", (e) => {
+	switch (e.code) {
+		case "ShiftLeft": shift = true; break;
+		case "ShiftRight": shift = true; break;
+		case "ControlLeft": ctrl = true; break;
+		case "ControlRight": ctrl = true; break;
+	}
+});
+
 document.addEventListener("keyup", (e) => {
 	switch (e.code) {
+		case "ShiftLeft": shift = false; break;
+		case "ShiftRight": shift = false; break;
+		case "ControlLeft": ctrl = false; break;
+		case "ControlRight": ctrl = false; break;
+
 		case "Space": togglePaused(); break;
 
-		case "KeyN": case "Escape": settings.window.window.classList.toggle("hidden"); break;
+		case "KeyN": case "Escpe": settings.window.window.classList.toggle("hidden"); break;
 		case "KeyM": missions.window.window.classList.toggle("hidden"); break;
 		case "KeyE": buttonComponents.click(); break;
 		case "KeyQ": buttonTools.click(); break;
