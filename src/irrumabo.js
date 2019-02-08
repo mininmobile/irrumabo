@@ -765,8 +765,15 @@ document.addEventListener("mousemove", (e) => {
 	if (drawing) {
 		switch (tool) {
 			case Tools.liquid: case Tools.rectangle: case Tools.circle: {
-				drawing.endX = mouse.absolute.x;
-				drawing.endY = mouse.absolute.y;
+				if (shift) {
+					let size = Math.max(Math.abs(mouse.absolute.x - drawing.startX), Math.abs(mouse.absolute.y - drawing.startY));
+
+					drawing.endX = drawing.startX + size;
+					drawing.endY = drawing.startY + size;
+				} else {
+					drawing.endX = mouse.absolute.x;
+					drawing.endY = mouse.absolute.y;
+				}
 			} break;
 			
 			case Tools.eraser: {
