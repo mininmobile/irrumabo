@@ -725,7 +725,7 @@ document.addEventListener("mousedown", (e) => {
 			} break;
 
 			case Tools.fire: {
-				drawing = setInterval(() => {
+				let interval = setInterval(() => {
 					let fire = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, {
 						label: "fire",
 						friction: 0,
@@ -736,6 +736,14 @@ document.addEventListener("mousedown", (e) => {
 	
 					World.add(engine.world, [fire]);
 				}, 50);
+
+				drawing = {
+					interval: interval,
+					startX: -1,
+					startY: -1,
+					endX: -1,
+					endY: -1,
+				}
 
 				if (missions.status.currentObjective == "Create a fire.") completeObjective();
 			} break;
@@ -775,6 +783,25 @@ document.addEventListener("mousemove", (e) => {
 					drawing.endY = mouse.absolute.y;
 				}
 			} break;
+
+			case Tools.fire: {
+				if (ctrl) {
+					if (drawing.startX == -1) {
+						drawing.startX = mouse.absolute.x;
+						drawing.startY = mouse.absolute.y;
+						drawing.endX = mouse.absolute.x;
+						drawing.endY = mouse.absolute.y;
+					} else {
+						drawing.endX = mouse.absolute.x;
+						drawing.endY = mouse.absolute.y;
+					}
+				} else {
+					drawing.startX = -1
+					drawing.startY = -1
+					drawing.endX = -1
+					drawing.endY = -1
+				}
+			} break;
 			
 			case Tools.eraser: {
 				let bodies = Composite.allBodies(engine.world);
@@ -800,7 +827,7 @@ document.addEventListener("mouseup", (e) => {
 	if (drawing) {
 		switch (tool) {
 			case Tools.fire: {
-				clearInterval(drawing);
+				clearInterval(drawing.interval);
 			} break;
 
 			case Tools.liquid: {
@@ -1006,6 +1033,22 @@ ctx.font = "1em Arial";
 	}
 
 	{ // show action
+		if (tool == Tools.fire && drawing) {
+			if (drawing.startX != -1) {
+				ctx.strokeStyle = "#ddd";
+				ctx.strokeRect(
+					drawing.startX,
+					drawing.startY,
+					Math.floor(Math.abs(drawing.endX - drawing.startX) / 20) * 20,
+					Math.floor(Math.abs(drawing.endY - drawing.startY) / 20) * 20);
+				ctx.fillStyle = "#ddd";
+				ctx.fillText(
+					`${Math.floor(Math.abs(drawing.endX - drawing.startX) / 20)}x${Math.floor(Math.abs(drawing.endY - drawing.startY) / 20)}`,
+					drawing.startX,
+					drawing.startY - 5);
+			}
+		}
+
 		if (tool == Tools.liquid && drawing) {
 			ctx.strokeStyle = "#ddd";
 			ctx.strokeRect(
