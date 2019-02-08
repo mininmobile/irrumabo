@@ -648,7 +648,7 @@ World.add(engine.world, walls);
 }
 
 // add button actions
-buttonPause.addEventListener("click", togglePaused);
+buttonPause.addEventListener("click", () => { togglePaused() });
 buttonMissions.addEventListener("click", () => { missions.window.window.classList.toggle("hidden") });
 buttonTools.addEventListener("click", () => { panelTools.classList.toggle("hidden"); panelToolOptions.classList.toggle("hidden") });
 buttonComponents.addEventListener("click", () => { panelComponents.classList.toggle("hidden") });
@@ -1148,8 +1148,8 @@ function generateContextMenu(menu, items) {
 	});
 }
 
-function togglePaused() {
-	paused = !paused;
+function togglePaused(o) {
+	paused = o || !paused;
 
 	if (paused && missions.status.currentObjective == "Pause the simulation.") completeObjective();
 	if (!paused && missions.status.currentObjective == "Unpause the simulation.") completeObjective();
