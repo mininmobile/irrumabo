@@ -13,7 +13,13 @@ let Bodies = Matter.Bodies;
 
 class Objective {
 	constructor(...args) {
-		this.args = args;
+		if (!isNaN(args[0])) {
+			this.hint = undefined;
+			this.args = args;
+		} else {
+			this.hint = args.shift();
+			this.args = args;
+		}
 	}
 
 	toString() {
@@ -215,8 +221,8 @@ let missions = {
 		"Intro to Density": {
 			xp: 10,
 			objectives: [
-				new Objective(Verb.create, Noun.ball),
-				new Objective(Verb.create, Noun.water),
+				new Objective({ x: 50, y: 100, w: 50, h: 50, round: true }, Verb.create, Noun.ball),
+				new Objective({ x: 25, y: 25, w: 100, h: 50, balls: true }, Verb.create, Noun.water),
 				new Objective(Verb.change, Noun.density, Noun.ball),
 			],
 		},
@@ -301,7 +307,6 @@ let toolOptions = {
 	},
 	"rectangle": {},
 	"circle": {},
-	"brush": {},
 	"eraser": {},
 }
 let mode = RenderMode.regular;
@@ -567,6 +572,12 @@ World.add(engine.world, walls);
 		missions.status.currentObjective = mission.objectives[0];
 
 		panelObjective.innerText = `${0 + 1}/${mission.objectives.length}) ${mission.objectives[0]}`;
+
+		if (missions.status.currentObjective.hint) {
+			let hint = { angle: 0, round: false, balls: false, ...missions.status.currentObjective.hint };
+
+			showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
+		}
 	}
 
 	function completeObjective() {
@@ -591,6 +602,12 @@ World.add(engine.world, walls);
 			} break;
 
 			default: {}
+		}
+
+		if (missions.status.currentObjective.hint) {
+			let hint = { angle: 0, round: false, balls: false, ...missions.status.currentObjective.hint };
+
+			showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
 		}
 
 		if (missions.status.currentObjectiveId == mission.objectives.length) completeMission();
@@ -620,6 +637,8 @@ World.add(engine.world, walls);
 		missions.status.currentObjective = undefined;
 
 		panelObjective.innerText = "press ESC to open settings";
+
+		hideHint();
 	}
 }
 
@@ -1326,6 +1345,28 @@ function selectTool(t) {
 	}
 }
 
+function showHint(x, y, w, h, angle = 0, round = false, balls = false) {
+	hintObjective.classList.remove("hidden");
+
+	let rectangle = document.createElement("div");
+	rectangle.classList.add("hint");
+	if (round && !balls) rectangle.classList.add("round");
+	if (balls) rectangle.classList.add("balls");
+
+	rectangle.style.left = x + "px";
+	rectangle.style.top = y + "px";
+	rectangle.style.width = w + "px";
+	rectangle.style.height = h + "px";
+	rectangle.style.transform = `rotate(${angle}deg)`
+
+	hintObjective.appendChild(rectangle);
+}
+
+function hideHint() {
+	hintObjective.classList.add("hidden");
+	hintObjective.innerHTML = "";
+}
+
 function togglePaused(o) {
 	paused = o || !paused;
 
@@ -1354,27 +1395,4 @@ function utilenum(...args) {
 	});
 
 	return enumerator;
-}
-
-function showHint(x, y, w, h) {
-	hintObjective.classList.remove("hidden");
-
-	let rectangle = document.createElement("div");
-	rectangle.classList.add("hint");
-
-	rectangle.style.left = x + "px";
-	rectangle.style.top = y + "px";
-	rectangle.style.width = w + "px";
-	rectangle.style.height = h + "px";
-
-	hintObjective.appendChild(rectangle);
-}
-
-function hideHint() {
-	hintObjective.classList.add("hidden");
-	hintObjective.innerHTML = "";
-}
-
-{ // debug
-	showHint(50, 50, 100, 50);
 }

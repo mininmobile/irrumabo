@@ -257,15 +257,27 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 .objective-hint {
-	width: 100%;
 	position: absolute;
 	top: 5em;
 	opacity: 0.5;
+	pointer-events: none;
+}
+
+.objective-hint.hidden {
+	display: none;
 }
 
 .objective-hint .hint {
 	background: white;
 	position: absolute;
+}
+
+.objective-hint .hint.round {
+	border-radius: 50%;
+}
+
+.objective-hint .hint.balls {
+	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="white"><circle cx="5" cy="5" r="5"></circle></svg>');
 }
 
 .components-panel {
