@@ -707,6 +707,8 @@ document.addEventListener("keyup", (e) => {
 		case "ControlLeft": ctrl = false; break;
 		case "ControlRight": ctrl = false; break;
 
+		case "KeyR": if (ctrl) window.location.reload(); break;
+
 		case "Space": togglePaused(); break;
 
 		case "KeyN": case "Escape": settings.window.window.classList.toggle("hidden"); break;
@@ -1352,4 +1354,27 @@ function utilenum(...args) {
 	});
 
 	return enumerator;
+}
+
+function showHint(x, y, w, h) {
+	hintObjective.classList.remove("hidden");
+
+	let rectangle = document.createElement("div");
+	rectangle.classList.add("hint");
+
+	rectangle.style.left = x + "px";
+	rectangle.style.top = y + "px";
+	rectangle.style.width = w + "px";
+	rectangle.style.height = h + "px";
+
+	hintObjective.appendChild(rectangle);
+}
+
+function hideHint() {
+	hintObjective.classList.add("hidden");
+	hintObjective.innerHTML = "";
+}
+
+{ // debug
+	showHint(50, 50, 100, 50);
 }

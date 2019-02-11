@@ -224,10 +224,11 @@ p, h1, h2, h3, h4, h5, h6 {
 /* panels */
 
 .objective-panel-container {
-	height: 5em;
+	height: 100vh;
 	width: calc(100vw - 10em);
 	display: flex;
-	justify-content: center;
+	align-items: center;
+	flex-direction: column;
 	position: absolute;
 	top: 0;
 	left: 5em;
@@ -253,6 +254,18 @@ p, h1, h2, h3, h4, h5, h6 {
 
 .objective-panel span {
 	font-size: 1.25em;
+}
+
+.objective-hint {
+	width: 100%;
+	position: absolute;
+	top: 5em;
+	opacity: 0.5;
+}
+
+.objective-hint .hint {
+	background: white;
+	position: absolute;
 }
 
 .components-panel {
