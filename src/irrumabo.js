@@ -230,7 +230,7 @@ let missions = {
 			xp: 10,
 			objectives: [
 				new Objective(Verb.pause),
-				new Objective(Verb.create, Noun.rectangle),
+				new Objective({ x: 25, y: 50, w: 150, h: 25, angle: 15 }, Verb.create, Noun.rectangle),
 				new Objective(Verb.rotate, Noun.rectangle, Noun.deg15),
 				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
 				new Objective(Verb.create, Noun.rectangle),
