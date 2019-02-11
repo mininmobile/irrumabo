@@ -81,8 +81,11 @@ class Objective {
 const Materials = utilenum(
 	"water",
 	"oil",
-	"steam",
+);
+
+const Gasses = utilenum(
 	"fire",
+	"steam",
 );
 
 const MaterialOptions = [
@@ -101,19 +104,22 @@ const MaterialOptions = [
 		temperature: 22,
 		render: { fillStyle: "#000" },
 	},
-	{
-		label: "steam",
-		friction: 0,
-		frictionStatic: 0,
-		temperature: 100,
-		render: { fillStyle: "rgba(255, 255, 255, 0.6)" },
-	},
+];
+
+const GasOptions = [
 	{
 		label: "fire",
 		friction: 0,
 		frictionStatic: 0,
 		temperature: 432,
 		render: { fillStyle: "rgba(255, 100, 0)" },
+	},
+	{
+		label: "steam",
+		friction: 0,
+		frictionStatic: 0,
+		temperature: 100,
+		render: { fillStyle: "rgba(255, 255, 255, 0.6)" },
 	},
 ];
 
@@ -285,7 +291,9 @@ let context = document.getElementById("context");
 let tool = Tools.drag;
 let toolOptions = {
 	"drag": {},
-	"fire": {},
+	"gas": {
+		selected: "fire",
+	},
 	"liquid": {
 		selected: "water",
 	},
@@ -735,15 +743,9 @@ document.addEventListener("mousedown", (e) => {
 			case Tools.gas: {
 				let interval = setInterval(() => {
 					if (!ctrl) {
-						let fire = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, {
-							label: "fire",
-							friction: 0,
-							frictionStatic: 0,
-							temperature: 432,
-							render: { fillStyle: "rgba(255, 100, 0)" },
-						});
+						let gas = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
 		
-						World.add(engine.world, [fire]);
+						World.add(engine.world, [gas]);
 					}
 				}, 50);
 
@@ -847,18 +849,18 @@ document.addEventListener("mouseup", (e) => {
 				clearInterval(drawing.interval);
 
 				if (ctrl) {
-					let fire = Composites.stack(
+					let gas = Composites.stack(
 							drawing.startX,
 							drawing.startY,
 							Math.floor(Math.abs(drawing.endX - drawing.startX) / 20),
 							Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
 							0, 0, (x, y) => {
-						let body = Bodies.circle(x, y, 10, MaterialOptions[Materials.fire]);
+						let body = Bodies.circle(x, y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
 					
 						return body;
 					});
 	
-					World.add(engine.world, [fire]);
+					World.add(engine.world, [gas]);
 				}
 			} break;
 
@@ -1244,12 +1246,34 @@ function selectTool(t) {
 	}
 
 	switch (t) {
+		case Tools.gas: {
+			panelToolOptions.innerHTML = "";
+
+			Object.keys(Gasses).forEach((m) => {
+				let button = document.createElement("div");
+				button.classList.add("material", "v");
+				if (toolOptions.gas.selected == m) button.classList.add("selected");
+				button.setAttribute("tooltip", m.toString());
+
+				button.style.background = GasOptions[Gasses[m]].render.fillStyle;
+			
+				button.addEventListener("click", () => {
+					toolOptions.gas.selected = m;
+
+					for (let i = 0; i < panelToolOptions.children.length; i++) {
+						panelToolOptions.children[i].classList.remove("selected");
+						if (i == Gasses[toolOptions.gas.selected]) panelToolOptions.children[i].classList.add("selected");
+					}
+				});
+
+				panelToolOptions.appendChild(button);
+			});
+		} break;
+
 		case Tools.liquid: {
 			panelToolOptions.innerHTML = "";
 
 			Object.keys(Materials).forEach((m) => {
-				if (m == "fire") return;
-
 				let button = document.createElement("div");
 				button.classList.add("material", "v");
 				if (toolOptions.liquid.selected == m) button.classList.add("selected");
