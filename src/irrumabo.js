@@ -288,6 +288,8 @@ document.body.appendChild(canvas);
 
 let context = document.getElementById("context");
 
+let hintObjective = document.getElementById("objective-hint");
+
 let tool = Tools.drag;
 let toolOptions = {
 	"drag": {},
@@ -681,13 +683,21 @@ Object.keys(Tools).forEach((t) => {
 });
 
 // add keyboard shortcuts
+document.addEventListener("keypress", (e) => {
+	e.preventDefault();
+});
+
 document.addEventListener("keydown", (e) => {
 	switch (e.code) {
 		case "ShiftLeft": shift = true; break;
 		case "ShiftRight": shift = true; break;
 		case "ControlLeft": ctrl = true; break;
 		case "ControlRight": ctrl = true; break;
+
+		case "Tab": panelTools.classList.remove("hidden"); panelToolOptions.classList.remove("hidden"); break;
 	}
+
+	e.preventDefault();
 });
 
 document.addEventListener("keyup", (e) => {
@@ -699,10 +709,11 @@ document.addEventListener("keyup", (e) => {
 
 		case "Space": togglePaused(); break;
 
-		case "KeyN": case "Escpe": settings.window.window.classList.toggle("hidden"); break;
+		case "KeyN": case "Escape": settings.window.window.classList.toggle("hidden"); break;
+		case "Tab": panelTools.classList.add("hidden"); panelToolOptions.classList.add("hidden"); break;
+
 		case "KeyM": missions.window.window.classList.toggle("hidden"); break;
 		case "KeyE": buttonComponents.click(); break;
-		case "KeyQ": buttonTools.click(); break;
 
 		case "Digit1": selectTool(0); break;
 		case "Digit2": selectTool(1); break;
@@ -712,6 +723,8 @@ document.addEventListener("keyup", (e) => {
 		case "Digit6": selectTool(5); break;
 		case "Digit7": selectTool(6); break;
 	}
+
+	e.preventDefault();
 });
 
 // add mouse control
