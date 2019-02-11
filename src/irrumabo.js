@@ -82,6 +82,7 @@ const Materials = utilenum(
 	"water",
 	"oil",
 	"steam",
+	"fire",
 );
 
 const MaterialOptions = [
@@ -107,6 +108,13 @@ const MaterialOptions = [
 		temperature: 100,
 		render: { fillStyle: "rgba(255, 255, 255, 0.6)" },
 	},
+	{
+		label: "fire",
+		friction: 0,
+		frictionStatic: 0,
+		temperature: 432,
+		render: { fillStyle: "rgba(255, 100, 0)" },
+	},
 ];
 
 const RenderMode = utilenum(
@@ -118,7 +126,7 @@ const RenderMode = utilenum(
 
 const Tools = utilenum(
 	"drag",
-	"fire",
+	"gas",
 	"liquid",
 	"rectangle",
 	"circle",
@@ -724,17 +732,19 @@ document.addEventListener("mousedown", (e) => {
 				}
 			} break;
 
-			case Tools.fire: {
+			case Tools.gas: {
 				let interval = setInterval(() => {
-					let fire = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, {
-						label: "fire",
-						friction: 0,
-						frictionStatic: 0,
-						temperature: 432,
-						render: { fillStyle: "rgba(255, 100, 0)" },
-					});
-	
-					World.add(engine.world, [fire]);
+					if (!ctrl) {
+						let fire = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, {
+							label: "fire",
+							friction: 0,
+							frictionStatic: 0,
+							temperature: 432,
+							render: { fillStyle: "rgba(255, 100, 0)" },
+						});
+		
+						World.add(engine.world, [fire]);
+					}
 				}, 50);
 
 				drawing = {
@@ -784,7 +794,7 @@ document.addEventListener("mousemove", (e) => {
 				}
 			} break;
 
-			case Tools.fire: {
+			case Tools.gas: {
 				if (ctrl) {
 					if (drawing.startX == -1) {
 						drawing.startX = mouse.absolute.x;
@@ -833,8 +843,23 @@ document.addEventListener("mousemove", (e) => {
 document.addEventListener("mouseup", (e) => {
 	if (drawing) {
 		switch (tool) {
-			case Tools.fire: {
+			case Tools.gas: {
 				clearInterval(drawing.interval);
+
+				if (ctrl) {
+					let fire = Composites.stack(
+							drawing.startX,
+							drawing.startY,
+							Math.floor(Math.abs(drawing.endX - drawing.startX) / 20),
+							Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
+							0, 0, (x, y) => {
+						let body = Bodies.circle(x, y, 10, MaterialOptions[Materials.fire]);
+					
+						return body;
+					});
+	
+					World.add(engine.world, [fire]);
+				}
 			} break;
 
 			case Tools.liquid: {
@@ -1040,7 +1065,7 @@ ctx.font = "1em Arial";
 	}
 
 	{ // show action
-		if (tool == Tools.fire && drawing) {
+		if (tool == Tools.gas && drawing) {
 			if (drawing.startX != -1) {
 				ctx.strokeStyle = "#ddd";
 				ctx.strokeRect(
@@ -1223,6 +1248,8 @@ function selectTool(t) {
 			panelToolOptions.innerHTML = "";
 
 			Object.keys(Materials).forEach((m) => {
+				if (m == "fire") return;
+
 				let button = document.createElement("div");
 				button.classList.add("material", "v");
 				if (toolOptions.liquid.selected == m) button.classList.add("selected");

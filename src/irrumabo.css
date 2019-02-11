@@ -329,7 +329,7 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 .tool[tooltip="drag"] { background: url("./img/tooldrag.svg") center / contain; }
-.tool[tooltip="fire"] { background: url("./img/toolfire.svg") center / contain; }
+.tool[tooltip="gas"] { background: url("./img/toolgas.svg") center / contain; }
 .tool[tooltip="liquid"] { background: url("./img/toolliquid.svg") center / contain; }
 .tool[tooltip="rectangle"] { background: url("./img/toolrectangle.svg") center / contain; }
 .tool[tooltip="circle"] { background: url("./img/toolcircle.svg") center / contain; }
