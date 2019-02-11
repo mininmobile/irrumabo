@@ -757,7 +757,14 @@ document.addEventListener("mousedown", (e) => {
 					endY: -1,
 				}
 
-				if (missions.status.currentObjective == "Create a fire.") completeObjective();
+				if (!ctrl) {
+					if (missions.status.currentObjective) {
+						if (missions.status.currentObjective.args[0] == Verb.create) {
+							if (missions.status.currentObjective.args[1] == Noun.fire && toolOptions.gas.selected == "fire") completeObjective();
+							if (missions.status.currentObjective.args[1] == Noun.steam && toolOptions.gas.selected == "steam") completeObjective();
+						}
+					}
+				}
 			} break;
 			
 			case Tools.eraser: {
@@ -861,6 +868,15 @@ document.addEventListener("mouseup", (e) => {
 					});
 	
 					World.add(engine.world, [gas]);
+
+					if (Math.floor((drawing.endX - drawing.startX) / 20) * Math.floor((drawing.endY - drawing.startY) / 20) > 0) {
+						if (missions.status.currentObjective) {
+							if (missions.status.currentObjective.args[0] == Verb.create) {
+								if (missions.status.currentObjective.args[1] == Noun.fire && toolOptions.gas.selected == "fire") completeObjective();
+								if (missions.status.currentObjective.args[1] == Noun.steam && toolOptions.gas.selected == "steam") completeObjective();
+							}
+						}
+					}
 				}
 			} break;
 
@@ -878,7 +894,14 @@ document.addEventListener("mouseup", (e) => {
 
 				World.add(engine.world, [water]);
 
-				if (Math.floor((drawing.endX - drawing.startX) / 20) * Math.floor((drawing.endY - drawing.startY) / 20) > 0 && missions.status.currentObjective == "Create a pool of water.") completeObjective();
+				if (Math.floor((drawing.endX - drawing.startX) / 20) * Math.floor((drawing.endY - drawing.startY) / 20) > 0) {
+					if (missions.status.currentObjective) {
+						if (missions.status.currentObjective.args[0] == Verb.create) {
+							if (missions.status.currentObjective.args[1] == Noun.water && toolOptions.liquid.selected == "water") completeObjective();
+							if (missions.status.currentObjective.args[1] == Noun.oil && toolOptions.liquid.selected == "oil") completeObjective();
+						}
+					}
+				}
 			} break;
 
 			case Tools.rectangle: {
@@ -1225,18 +1248,6 @@ function generateContextMenu(menu, items) {
 	});
 }
 
-function togglePaused(o) {
-	paused = o || !paused;
-
-	if (paused && missions.status.currentObjective == "Pause the simulation.") completeObjective();
-	if (!paused && missions.status.currentObjective == "Unpause the simulation.") completeObjective();
-
-	paused ? document.body.classList.add("paused") : document.body.classList.remove("paused");
-	paused ? buttonPause.setAttribute("tooltip", "play") : buttonPause.setAttribute("tooltip", "pause");
-
-	runner.enabled = !paused;
-}
-
 function selectTool(t) {
 	tool = t;
 
@@ -1298,6 +1309,18 @@ function selectTool(t) {
 			panelToolOptions.innerHTML = "";
 		} break;
 	}
+}
+
+function togglePaused(o) {
+	paused = o || !paused;
+
+	if (paused && missions.status.currentObjective == "Pause the simulation.") completeObjective();
+	if (!paused && missions.status.currentObjective == "Unpause the simulation.") completeObjective();
+
+	paused ? document.body.classList.add("paused") : document.body.classList.remove("paused");
+	paused ? buttonPause.setAttribute("tooltip", "play") : buttonPause.setAttribute("tooltip", "pause");
+
+	runner.enabled = !paused;
 }
 
 function toDeg(rad) {
