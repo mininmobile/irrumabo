@@ -150,6 +150,7 @@ const Verb = utilenum(
 	"rotate",
 	"set",
 	"change",
+	"wait",
 	"pause",
 	"unpause",
 );
@@ -230,15 +231,15 @@ let missions = {
 			xp: 10,
 			objectives: [
 				new Objective(Verb.pause),
-				new Objective({ x: 25, y: 50, w: 150, h: 25, angle: 15 }, Verb.create, Noun.rectangle),
+				new Objective({ x: 25, y: 50, w: 150, h: 15, angle: 15 }, Verb.create, Noun.rectangle),
 				new Objective(Verb.rotate, Noun.rectangle, Noun.deg15),
 				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
-				new Objective(Verb.create, Noun.rectangle),
+				new Objective({ x: 25, y: 125, w: 150, h: 15, angle: 15 }, Verb.create, Noun.rectangle),
 				new Objective(Verb.rotate, Noun.rectangle, Noun.deg15),
 				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
-				new Objective(Verb.create, Noun.ball),
+				new Objective({ x: 50, y: 10, w: 25, h: 25, round: true }, Verb.create, Noun.ball),
 				new Objective(Verb.change, Noun.density, Noun.ball),
-				new Objective(Verb.create, Noun.ball),
+				new Objective({ x: 50, y: 85, w: 25, h: 25, round: true }, Verb.create, Noun.ball),
 				new Objective(Verb.unpause),
 				new Objective(Verb.wait, Noun.sec5),
 			],
@@ -247,13 +248,13 @@ let missions = {
 			xp: 10,
 			objectives: [
 				new Objective(Verb.pause),
-				new Objective(Verb.create, Noun.rectangle),
+				new Objective({ x: 25, y: 25, w: 15, h: 100 }, Verb.create, Noun.rectangle),
 				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
-				new Objective(Verb.create, Noun.rectangle),
+				new Objective({ x: 25, y: 110, w: 100, h: 15 }, Verb.create, Noun.rectangle),
 				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
-				new Objective(Verb.create, Noun.rectangle),
+				new Objective({ x: 125, y: 25, w: 15, h: 100 }, Verb.create, Noun.rectangle),
 				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
-				new Objective(Verb.create, Noun.water),
+				new Objective({ x: 47, y: 32, w: 70, h: 70, balls: true }, Verb.create, Noun.water),
 				new Objective(Verb.unpause),
 				new Objective(Verb.create, Noun.fire),
 			],
@@ -604,10 +605,12 @@ World.add(engine.world, walls);
 			default: {}
 		}
 
-		if (missions.status.currentObjective.hint) {
-			let hint = { angle: 0, round: false, balls: false, ...missions.status.currentObjective.hint };
-
-			showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
+		if (missions.status.currentObjective) {
+			if (missions.status.currentObjective.hint) {
+				let hint = { angle: 0, round: false, balls: false, ...missions.status.currentObjective.hint };
+	
+				showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
+			}
 		}
 
 		if (missions.status.currentObjectiveId == mission.objectives.length) completeMission();
