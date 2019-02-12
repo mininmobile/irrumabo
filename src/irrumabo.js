@@ -1181,6 +1181,16 @@ ctx.font = "1em Arial";
 			}
 		}
 	}
+	if (componentDrag) {
+		componentDrag.parts.forEach((p) => {
+			switch (p.type) {
+				case "rectangle": {
+					ctx.strokeStyle = "#ddd";
+					ctx.strokeRect(p.x + mouse.absolute.x, p.y + mouse.absolute.y, p.w, p.h);
+				} break;
+			}
+		});
+	}
 
 	{ // show action
 		if (tool == Tools.gas && drawing) {
