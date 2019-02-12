@@ -133,9 +133,9 @@ const MyComponents = [
 	{
 		name: "Beaker",
 		parts: [
-			{ type: "rectangle", x: 0, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.6)" } } },
-			{ type: "rectangle", x: 0, y: 250, w: 200, h: 50, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.6)" } } },
-			{ type: "rectangle", x: 150, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.6)" } } },
+			{ type: "rectangle", x: 0, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
+			{ type: "rectangle", x: 0, y: 250, w: 200, h: 50, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
+			{ type: "rectangle", x: 150, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
 		],
 	},
 ];
@@ -323,6 +323,7 @@ let toolOptions = {
 	"circle": {},
 	"eraser": {},
 }
+
 let mode = RenderMode.regular;
 let killerWalls = false;
 let shift = false;
@@ -333,6 +334,7 @@ let drawing = undefined;
 let componentDrag = undefined;
 let contextClick = false;
 let contextBegin = false;
+let hoverUi = false;
 
 // create enviroment
 let engine = Engine.create();
@@ -744,22 +746,6 @@ MyComponents.forEach((c) => {
 	panelComponents.appendChild(button);
 });
 
-document.addEventListener("mouseup", (e) => {
-	if (componentDrag) {
-		componentDrag.parts.forEach((p) => {
-			switch (p.type) {
-				case "rectangle": {
-					let body = Bodies.rectangle(p.x + e.clientX + (p.w / 2), p.y + e.clientY + (p.h / 2), p.w, p.h, p.options);
-
-					World.add(engine.world, [body]);
-				} break;
-			}
-		});
-
-		componentDrag = undefined;
-	}
-});
-
 // add keyboard shortcuts
 document.addEventListener("keypress", (e) => {
 	e.preventDefault();
@@ -801,7 +787,6 @@ document.addEventListener("keyup", (e) => {
 		case "Digit4": selectTool(3); break;
 		case "Digit5": selectTool(4); break;
 		case "Digit6": selectTool(5); break;
-		case "Digit7": selectTool(6); break;
 	}
 
 	e.preventDefault();
@@ -821,60 +806,65 @@ let mouseConstraint = MouseConstraint.create(engine, {
 
 World.add(engine.world, mouseConstraint);
 
+panelComponents.onmouseenter = panelTools.onmouseenter = panelToolOptions.onmouseenter = () => hoverUi = true;
+panelComponents.onmouseleave = panelTools.onmouseleave = panelToolOptions.onmouseleave = () => hoverUi = false;
+
 document.addEventListener("mousedown", (e) => {
 	if (e.button == 0) {
-		switch (tool) {
-			case Tools.liquid: case Tools.rectangle: case Tools.circle: {
-				drawing = {
-					startX: mouse.absolute.x,
-					startY: mouse.absolute.y,
-					endX: mouse.absolute.x,
-					endY: mouse.absolute.y,
-				}
-			} break;
-
-			case Tools.gas: {
-				let interval = setInterval(() => {
-					if (!ctrl) {
-						let gas = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
-		
-						World.add(engine.world, [gas]);
+		if (!hoverUi) {
+			switch (tool) {
+				case Tools.liquid: case Tools.rectangle: case Tools.circle: {
+					drawing = {
+						startX: mouse.absolute.x,
+						startY: mouse.absolute.y,
+						endX: mouse.absolute.x,
+						endY: mouse.absolute.y,
 					}
-				}, 50);
-
-				drawing = {
-					interval: interval,
-					startX: -1,
-					startY: -1,
-					endX: -1,
-					endY: -1,
-				}
-
-				if (!ctrl) {
-					if (missions.status.currentObjective) {
-						if (missions.status.currentObjective.args[0] == Verb.create) {
-							if (missions.status.currentObjective.args[1] == Noun.fire && toolOptions.gas.selected == "fire") completeObjective();
-							if (missions.status.currentObjective.args[1] == Noun.steam && toolOptions.gas.selected == "steam") completeObjective();
+				} break;
+	
+				case Tools.gas: {
+					let interval = setInterval(() => {
+						if (!ctrl) {
+							let gas = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
+			
+							World.add(engine.world, [gas]);
+						}
+					}, 50);
+	
+					drawing = {
+						interval: interval,
+						startX: -1,
+						startY: -1,
+						endX: -1,
+						endY: -1,
+					}
+	
+					if (!ctrl) {
+						if (missions.status.currentObjective) {
+							if (missions.status.currentObjective.args[0] == Verb.create) {
+								if (missions.status.currentObjective.args[1] == Noun.fire && toolOptions.gas.selected == "fire") completeObjective();
+								if (missions.status.currentObjective.args[1] == Noun.steam && toolOptions.gas.selected == "steam") completeObjective();
+							}
 						}
 					}
-				}
-			} break;
+				} break;
+				
+				case Tools.eraser: {
+					drawing = true;
+	
+					let bodies = Composite.allBodies(engine.world);
+	
+					for (i = 0; i < bodies.length; i++) {
+						let body = bodies[i];
 			
-			case Tools.eraser: {
-				drawing = true;
-
-				let bodies = Composite.allBodies(engine.world);
-
-				for (i = 0; i < bodies.length; i++) {
-					let body = bodies[i];
-		
-					if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
-						World.remove(engine.world, body, true);
-
-						break;
+						if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
+							World.remove(engine.world, body, true);
+	
+							break;
+						}
 					}
-				}
-			} break;
+				} break;
+			}
 		}
 	} else if (e.button == 2) {
 		contextBegin = true;
@@ -1104,6 +1094,22 @@ document.addEventListener("mouseup", (e) => {
 				c.classList.add("hidden");
 			}
 		}
+	}
+
+	if (componentDrag) {
+		if (!hoverUi) {
+			componentDrag.parts.forEach((p) => {
+				switch (p.type) {
+					case "rectangle": {
+						let body = Bodies.rectangle(p.x + e.clientX + (p.w / 2), p.y + e.clientY + (p.h / 2), p.w, p.h, p.options);
+	
+						World.add(engine.world, [body]);
+					} break;
+				}
+			});
+		}
+
+		componentDrag = undefined;
 	}
 });
 
