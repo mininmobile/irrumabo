@@ -330,6 +330,7 @@ let ctrl = false;
 let paused = false;
 
 let drawing = undefined;
+let componentDrag = undefined;
 let contextClick = false;
 let contextBegin = false;
 
@@ -736,9 +737,27 @@ MyComponents.forEach((c) => {
 		componentTooltip.style.top = e.clientY - componentTooltip.clientHeight + "px";
 	})
 
-	button.addEventListener("click", () => {});
+	button.addEventListener("mousedown", () => {
+		componentDrag = c;
+	});
 
 	panelComponents.appendChild(button);
+});
+
+document.addEventListener("mouseup", (e) => {
+	if (componentDrag) {
+		componentDrag.parts.forEach((p) => {
+			switch (p.type) {
+				case "rectangle": {
+					let body = Bodies.rectangle(p.x + e.clientX + (p.w / 2), p.y + e.clientY + (p.h / 2), p.w, p.h, p.options);
+
+					World.add(engine.world, [body]);
+				} break;
+			}
+		});
+
+		componentDrag = undefined;
+	}
 });
 
 // add keyboard shortcuts
