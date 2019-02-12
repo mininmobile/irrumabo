@@ -25,58 +25,76 @@ class Objective {
 	toString() {
 		let string = "";
 
-		this.args.forEach((a, i) => {
-			if (i == 0) {
-				switch (a) {
-					case Verb.create: string += "Create a"; break;
-					case Verb.change: string += "Change the"; break;
-					case Verb.set: string += "Set the"; break;
-					case Verb.rotate: string += "Rotate the"; break;
-					case Verb.wait: string += "Wait for"; break;
-					case Verb.pause: string += "Pause the simulation"; break;
-					case Verb.unpause: string += "Unpause the simulation"; break;
+		if (this.args[0] == Verb.component) {
+			string += "Drag in a";
+
+			if (this.args[1][0] == "A" ||
+				this.args[1][0] == "E" ||
+				this.args[1][0] == "I" ||
+				this.args[1][0] == "O" ||
+				this.args[1][0] == "U") {
+					string += "n";
 				}
-			} else {
-				switch (a) {
-					case Noun.water: string += " pool of water"; break;
-					case Noun.steam: string += " wisp of steam"; break;
-					case Noun.fire: string += " fire"; break;
-					case Noun.polygon: string += " polygon"; break;
-					case Noun.rectangle: string += " rectangle"; break;
-					case Noun.ball: string += " ball"; break;
-					case Noun.density: string += " density of the"; break;
-					case Noun.static: string += " static property of the"; break;
-					case Noun.true: string += " to true"; break;
-					case Noun.false: string += " to false"; break;
-					case Noun.sec5: string += " 5 seconds"; break;
-					case Noun.deg0: string += " to 0 degrees"; break;
-					case Noun.deg15: string += " to 15 degrees"; break;
-					case Noun.deg30: string += " to 30 degrees"; break;
-					case Noun.deg45: string += " to 45 degrees"; break;
-					case Noun.deg60: string += " to 60 degrees"; break;
-					case Noun.deg75: string += " to 75 degrees"; break;
-					case Noun.deg90: string += " to 90 degrees"; break;
-					case Noun.deg105: string += " to 105 degrees"; break;
-					case Noun.deg120: string += " to 120 degrees"; break;
-					case Noun.deg135: string += " to 135 degrees"; break;
-					case Noun.deg150: string += " to 150 degrees"; break;
-					case Noun.deg165: string += " to 165 degrees"; break;
-					case Noun.deg180: string += " to 180 degrees"; break;
-					case Noun.deg195: string += " to 195 degrees"; break;
-					case Noun.deg210: string += " to 210 degrees"; break;
-					case Noun.deg225: string += " to 225 degrees"; break;
-					case Noun.deg240: string += " to 240 degrees"; break;
-					case Noun.deg255: string += " to 255 degrees"; break;
-					case Noun.deg270: string += " to 270 degrees"; break;
-					case Noun.deg285: string += " to 285 degrees"; break;
-					case Noun.deg300: string += " to 300 degrees"; break;
-					case Noun.deg315: string += " to 315 degrees"; break;
-					case Noun.deg330: string += " to 330 degrees"; break;
-					case Noun.deg345: string += " to 345 degrees"; break;
-					case Noun.deg360: string += " to 360 degrees"; break;
+
+			string += " ";
+
+			string += this.args[1];
+
+			string += " component";
+		} else {
+			this.args.forEach((a, i) => {
+				if (i == 0) {
+					switch (a) {
+						case Verb.create: string += "Create a"; break;
+						case Verb.change: string += "Change the"; break;
+						case Verb.set: string += "Set the"; break;
+						case Verb.rotate: string += "Rotate the"; break;
+						case Verb.wait: string += "Wait for"; break;
+						case Verb.pause: string += "Pause the simulation"; break;
+						case Verb.unpause: string += "Unpause the simulation"; break;
+					}
+				} else {
+					switch (a) {
+						case Noun.water: string += " pool of water"; break;
+						case Noun.steam: string += " wisp of steam"; break;
+						case Noun.fire: string += " fire"; break;
+						case Noun.polygon: string += " polygon"; break;
+						case Noun.rectangle: string += " rectangle"; break;
+						case Noun.ball: string += " ball"; break;
+						case Noun.density: string += " density of the"; break;
+						case Noun.static: string += " static property of the"; break;
+						case Noun.true: string += " to true"; break;
+						case Noun.false: string += " to false"; break;
+						case Noun.sec5: string += " 5 seconds"; break;
+						case Noun.deg0: string += " to 0 degrees"; break;
+						case Noun.deg15: string += " to 15 degrees"; break;
+						case Noun.deg30: string += " to 30 degrees"; break;
+						case Noun.deg45: string += " to 45 degrees"; break;
+						case Noun.deg60: string += " to 60 degrees"; break;
+						case Noun.deg75: string += " to 75 degrees"; break;
+						case Noun.deg90: string += " to 90 degrees"; break;
+						case Noun.deg105: string += " to 105 degrees"; break;
+						case Noun.deg120: string += " to 120 degrees"; break;
+						case Noun.deg135: string += " to 135 degrees"; break;
+						case Noun.deg150: string += " to 150 degrees"; break;
+						case Noun.deg165: string += " to 165 degrees"; break;
+						case Noun.deg180: string += " to 180 degrees"; break;
+						case Noun.deg195: string += " to 195 degrees"; break;
+						case Noun.deg210: string += " to 210 degrees"; break;
+						case Noun.deg225: string += " to 225 degrees"; break;
+						case Noun.deg240: string += " to 240 degrees"; break;
+						case Noun.deg255: string += " to 255 degrees"; break;
+						case Noun.deg270: string += " to 270 degrees"; break;
+						case Noun.deg285: string += " to 285 degrees"; break;
+						case Noun.deg300: string += " to 300 degrees"; break;
+						case Noun.deg315: string += " to 315 degrees"; break;
+						case Noun.deg330: string += " to 330 degrees"; break;
+						case Noun.deg345: string += " to 345 degrees"; break;
+						case Noun.deg360: string += " to 360 degrees"; break;
+					}
 				}
-			}
-		});
+			});
+		}
 
 		string += ".";
 
@@ -131,11 +149,11 @@ const GasOptions = [
 
 const MyComponents = [
 	{
-		name: "Beaker",
+		name: "beaker",
 		parts: [
 			{ type: "rectangle", x: 0, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
-			{ type: "rectangle", x: 0, y: 250, w: 200, h: 50, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
-			{ type: "rectangle", x: 150, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
+			{ type: "rectangle", x: 0, y: 250, w: 300, h: 50, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
+			{ type: "rectangle", x: 250, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
 		],
 	},
 ];
@@ -158,6 +176,7 @@ const Tools = utilenum(
 
 const Verb = utilenum(
 	"create",
+	"component",
 	"rotate",
 	"set",
 	"change",
@@ -258,15 +277,8 @@ let missions = {
 		"Playing with Fire": {
 			xp: 10,
 			objectives: [
-				new Objective(Verb.pause),
-				new Objective({ x: 25, y: 25, w: 15, h: 100 }, Verb.create, Noun.rectangle),
-				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
-				new Objective({ x: 25, y: 110, w: 100, h: 15 }, Verb.create, Noun.rectangle),
-				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
-				new Objective({ x: 125, y: 25, w: 15, h: 100 }, Verb.create, Noun.rectangle),
-				new Objective(Verb.set, Noun.static, Noun.rectangle, Noun.true),
+				new Objective([{ x: 25, y: 25, w: 15, h: 100 }, { x: 25, y: 110, w: 100, h: 15 }, { x: 125, y: 25, w: 15, h: 100 }], Verb.component, "beaker"),
 				new Objective({ x: 47, y: 32, w: 70, h: 70, balls: true }, Verb.create, Noun.water),
-				new Objective(Verb.unpause),
 				new Objective(Verb.create, Noun.fire),
 			],
 		},
@@ -591,9 +603,16 @@ World.add(engine.world, walls);
 		panelObjective.innerText = `${0 + 1}/${mission.objectives.length}) ${mission.objectives[0]}`;
 
 		if (missions.status.currentObjective.hint) {
-			let hint = { angle: 0, round: false, balls: false, ...missions.status.currentObjective.hint };
+			let x = [missions.status.currentObjective.hint];
 
-			showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
+			if (missions.status.currentObjective.hint[0])
+				x = missions.status.currentObjective.hint;
+
+			x.forEach((y) => {
+				let hint = { angle: 0, round: false, balls: false, ...y };
+	
+				showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
+			});
 		}
 	}
 
@@ -623,9 +642,16 @@ World.add(engine.world, walls);
 
 		if (missions.status.currentObjective) {
 			if (missions.status.currentObjective.hint) {
-				let hint = { angle: 0, round: false, balls: false, ...missions.status.currentObjective.hint };
-	
-				showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
+				let x = [missions.status.currentObjective.hint];
+
+				if (missions.status.currentObjective.hint[0])
+					x = missions.status.currentObjective.hint;
+
+				x.forEach((y) => {
+					let hint = { angle: 0, round: false, balls: false, ...y };
+		
+					showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
+				});
 			}
 		}
 
@@ -1107,6 +1133,12 @@ document.addEventListener("mouseup", (e) => {
 					} break;
 				}
 			});
+
+			if (missions.status.currentObjective) {
+				if (missions.status.currentObjective.args[0] == Verb.component) {
+					if (missions.status.currentObjective.args[1] == componentDrag.name) completeObjective();
+				}
+			}
 		}
 
 		componentDrag = undefined;
