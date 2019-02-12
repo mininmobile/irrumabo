@@ -129,6 +129,17 @@ const GasOptions = [
 	},
 ];
 
+const MyComponents = [
+	{
+		name: "Beaker",
+		parts: [
+			{ type: "rectangle", x: 0, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.6)" } } },
+			{ type: "rectangle", x: 0, y: 250, w: 200, h: 50, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.6)" } } },
+			{ type: "rectangle", x: 150, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.6)" } } },
+		],
+	},
+];
+
 const RenderMode = utilenum(
 	"regular",
 	"colorWireframe",
@@ -296,6 +307,8 @@ document.body.appendChild(canvas);
 let context = document.getElementById("context");
 
 let hintObjective = document.getElementById("objective-hint");
+
+let componentTooltip = document.getElementById("component-tooltip");
 
 let tool = Tools.drag;
 let toolOptions = {
@@ -702,6 +715,30 @@ Object.keys(Tools).forEach((t) => {
 	button.addEventListener("click", () => selectTool(Tools[t]));
 
 	panelTools.appendChild(button);
+});
+
+// add components
+MyComponents.forEach((c) => {
+	let button = document.createElement("div");
+	button.classList.add("component", "r");
+
+	button.addEventListener("mouseenter", (e) => {
+		componentTooltip.innerText = c.name;
+		componentTooltip.classList.remove("hidden");
+		componentTooltip.style.top = e.clientY - componentTooltip.clientHeight + "px";
+	});
+
+	button.addEventListener("mouseleave", () => {
+		componentTooltip.classList.add("hidden");
+	});
+
+	button.addEventListener("mousemove", (e) => {
+		componentTooltip.style.top = e.clientY - componentTooltip.clientHeight + "px";
+	})
+
+	button.addEventListener("click", () => {});
+
+	panelComponents.appendChild(button);
 });
 
 // add keyboard shortcuts

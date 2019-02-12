@@ -295,6 +295,27 @@ p, h1, h2, h3, h4, h5, h6 {
 	overflow-x: hidden;
 }
 
+.components-panel .component {
+	background: white;
+	border-radius: 50%;
+}
+
+.component-tooltip {
+	padding: 0.5em 0.75em;
+	margin-top: 0.5em;
+	background: rgba(255, 255, 255, 0.05);
+	position: absolute;
+	right: 6em;
+	z-index: 9999;
+	border-radius: 2em;
+	transition: opacity 0.2s;
+	pointer-events: none;
+}
+
+.component-tooltip.hidden {
+	opacity: 0;
+}
+
 .tools-panel {
 	width: 5em;
 	height: 25em;
