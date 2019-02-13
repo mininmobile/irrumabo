@@ -360,7 +360,7 @@ let runner = Runner.create({
 // extend simulation
 Events.on(engine, "collisionActive", (e) => {
 	e.pairs.forEach((c) => {
-		{ // temperature
+		if (!c.bodyA.isCloner && !c.bodyB.isCloner) { // temperature
 			let tempA = c.bodyA.temperature;
 			let tempB = c.bodyB.temperature;
 
@@ -459,6 +459,8 @@ Events.on(engine, "beforeUpdate", (e) => {
 					});
 	
 					World.add(engine.world, [smoke]);
+					World.remove(engine.world, body, true);
+				} else if (body.temperature < 100) {
 					World.remove(engine.world, body, true);
 				} else {
 					body.force = { x: 0, y: -0.0005 * engine.world.gravity.y };
@@ -1067,17 +1069,6 @@ document.addEventListener("mouseup", (e) => {
 						} } },
 						{ type: "title", name: "Temperature" },
 						{ type: "range", min: 0, max: 532, step: 2, value: body.temperature + 100, onchange: (e) => body.temperature = e.value - 100 },
-						{ type: "divider" },
-						{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => {
-							Body.setStatic(body, e.value);
-
-						if (e.value && missions.status.currentObjective == "Set the static property of the ball to true." && body.shape == "circle") completeObjective();
-							if (e.value && missions.status.currentObjective == "Set the static property of the rectangle to true." && body.shape == "rectangle") completeObjective();
-							if (e.value && missions.status.currentObjective == "Set the static property of the polygon to true." && body.shape == "polygon") completeObjective();
-							if (!e.value && missions.status.currentObjective == "Set the static property of the ball to false." && body.shape == "circle") completeObjective();
-							if (!e.value && missions.status.currentObjective == "Set the static property of the rectangle to false." && body.shape == "rectangle") completeObjective();
-							if (!e.value && missions.status.currentObjective == "Set the static property of the polygon to false." && body.shape == "polygon") completeObjective();
-						} }
 					] },
 					{ type: "sub", name: "Position", menu: [
 						{ type: "title", name: "Angle" },
@@ -1093,9 +1084,21 @@ document.addEventListener("mouseup", (e) => {
 									}
 								}
 							}
-						} }
+						} },
+						{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => {
+							Body.setStatic(body, e.value);
+
+							if (e.value && missions.status.currentObjective == "Set the static property of the ball to true." && body.shape == "circle") completeObjective();
+							if (e.value && missions.status.currentObjective == "Set the static property of the rectangle to true." && body.shape == "rectangle") completeObjective();
+							if (e.value && missions.status.currentObjective == "Set the static property of the polygon to true." && body.shape == "polygon") completeObjective();
+							if (!e.value && missions.status.currentObjective == "Set the static property of the ball to false." && body.shape == "circle") completeObjective();
+							if (!e.value && missions.status.currentObjective == "Set the static property of the rectangle to false." && body.shape == "rectangle") completeObjective();
+							if (!e.value && missions.status.currentObjective == "Set the static property of the polygon to false." && body.shape == "polygon") completeObjective();
+						} },
 					] },
-					{ type: "sub", name: "Collision", menu: [] },
+					{ type: "sub", name: "Collision", menu: [
+						{ type: "check", name: "Cloner", value: body.isCloner, onchange: (e) => body.isCloner = e.value },
+					] },
 					{ type: "divider" },
 					{ type: "sub", name: "Info", menu: [] },
 					{ type: "sub", name: "Behavior", menu: [] },
@@ -1219,6 +1222,7 @@ ctx.font = "1em Arial";
 			}
 		}
 	}
+
 	if (componentDrag) {
 		componentDrag.parts.forEach((p) => {
 			switch (p.type) {
