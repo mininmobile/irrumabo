@@ -373,6 +373,32 @@ Events.on(engine, "collisionActive", (e) => {
 			}
 		}
 
+		if (c.bodyA.isCloner || c.bodyB.isCloner) {
+			let cloner = undefined;
+			let clonerBody = undefined;
+
+			if (c.bodyA.isCloner) {
+				cloner = c.bodyA;
+				clonerBody = c.bodyB;
+			} else if (c.bodyB.isCloner) {
+				cloner = c.bodyB;
+				clonerBody = c.bodyA;
+			}
+
+			if ((cloner && clonerBody) && cloner.clonerBody == undefined) {
+				clearInterval(cloner.clonerInterval);
+
+				if (Object.keys(Materials).includes(clonerBody.label) ||
+					Object.keys(Gasses).includes(clonerBody.label)) {
+						// smth
+				}
+
+				cloner.clonerInterval = setInterval(() => {
+					World.add(engine.world, [cb]);
+				}, 100);
+			}
+		}
+
 		switch (c.bodyA.label) {
 			case "wall": {
 				if (killerWalls) {
@@ -765,7 +791,7 @@ MyComponents.forEach((c) => {
 
 	button.addEventListener("mousemove", (e) => {
 		componentTooltip.style.top = e.clientY - componentTooltip.clientHeight + "px";
-	})
+	});
 
 	button.addEventListener("mousedown", () => {
 		componentDrag = c;
