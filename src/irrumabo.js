@@ -102,7 +102,7 @@ class Objective {
 	}
 }
 
-const Materials = utilenum(
+const Liquids = utilenum(
 	"water",
 	"oil",
 );
@@ -112,7 +112,7 @@ const Gasses = utilenum(
 	"steam",
 );
 
-const MaterialOptions = [
+const LiquidOptions = [
 	{
 		label: "water",
 		density: 0.05,
@@ -386,15 +386,25 @@ Events.on(engine, "collisionActive", (e) => {
 			}
 
 			if ((cloner && clonerBody) && cloner.clonerBody == undefined) {
-				clearInterval(cloner.clonerInterval);
-
-				if (Object.keys(Materials).includes(clonerBody.label) ||
-					Object.keys(Gasses).includes(clonerBody.label)) {
-						// smth
+				cloner.clonerBody = {
+					label: clonerBody.label,
+					density: clonerBody.density,
+					friction: clonerBody.friction,
+					frictionStatic: clonerBody.frictionStatic,
+					frictionAir: clonerBody.frictionAir,
+					temperature: clonerBody.temperature,
+					vertices: clonerBody.vertices,
+					render: clonerBody.render,
 				}
 
+				cloner.clonerPosition = { ...clonerBody.position }
+
 				cloner.clonerInterval = setInterval(() => {
-					World.add(engine.world, [cb]);
+					cloner.clonerBody.position = cloner.clonerPosition;
+
+					let body = Body.create(cloner.clonerBody);
+
+					World.add(engine.world, [body]);
 				}, 100);
 			}
 		}
@@ -1024,7 +1034,7 @@ document.addEventListener("mouseup", (e) => {
 						Math.floor(Math.abs(drawing.endX - drawing.startX) / 20),
 						Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
 						0, 0, (x, y) => {
-					let body = Bodies.circle(x, y, 10, MaterialOptions[Materials[toolOptions.liquid.selected]]);
+					let body = Bodies.circle(x, y, 10, LiquidOptions[Liquids[toolOptions.liquid.selected]]);
 				
 					return body;
 				});
@@ -1455,20 +1465,20 @@ function selectTool(t) {
 		case Tools.liquid: {
 			panelToolOptions.innerHTML = "";
 
-			Object.keys(Materials).forEach((m) => {
+			Object.keys(Liquids).forEach((m) => {
 				let button = document.createElement("div");
 				button.classList.add("material", "v");
 				if (toolOptions.liquid.selected == m) button.classList.add("selected");
 				button.setAttribute("tooltip", m.toString());
 
-				button.style.background = MaterialOptions[Materials[m]].render.fillStyle;
+				button.style.background = LiquidOptions[Liquids[m]].render.fillStyle;
 			
 				button.addEventListener("click", () => {
 					toolOptions.liquid.selected = m;
 
 					for (let i = 0; i < panelToolOptions.children.length; i++) {
 						panelToolOptions.children[i].classList.remove("selected");
-						if (i == Materials[toolOptions.liquid.selected]) panelToolOptions.children[i].classList.add("selected");
+						if (i == Liquids[toolOptions.liquid.selected]) panelToolOptions.children[i].classList.add("selected");
 					}
 				});
 
