@@ -926,6 +926,86 @@ World.add(engine.world, walls);
 				container.appendChild(title);
 		}
 
+		{ // add button
+			let c = { red: 250, green: 250, blue: 250, alpha: 1 }
+
+			let color = document.createElement("div");
+				color.classList.add("color");
+				settings.window.content.appendChild(color);
+
+			let preview = document.createElement("div");
+				preview.classList.add("preview");
+				preview.style.background = objecToRgba(c);
+				color.appendChild(preview);
+
+			{ // spacer
+				let spacer = document.createElement("span");
+					color.appendChild(spacer);
+			}
+
+			{ // color options
+				let redTitle = document.createElement("div");
+					redTitle.innerText = "Red";
+					color.appendChild(redTitle);
+
+				let redInput = document.createElement("input");
+					redInput.type = "text";
+					redInput.value = c.red;
+					redInput.addEventListener("focus", () => typing = true);
+					redInput.addEventListener("blur", () => typing = false);
+					redInput.addEventListener("change", () => { c.red = redInput.value; preview.style.background = objecToRgba(c) });
+					color.appendChild(redInput);
+				
+				let greenTitle = document.createElement("div");
+					greenTitle.innerText = "Green";
+					color.appendChild(greenTitle);
+
+				let greenInput = document.createElement("input");
+					greenInput.type = "text";
+					greenInput.value = c.green;
+					greenInput.addEventListener("focus", () => typing = true);
+					greenInput.addEventListener("blur", () => typing = false);
+					greenInput.addEventListener("change", () => { c.green = greenInput.value; preview.style.background = objecToRgba(c) });
+					color.appendChild(greenInput);
+				
+				let blueTitle = document.createElement("div");
+					blueTitle.innerText = "Blue";
+					color.appendChild(blueTitle);
+
+				let blueInput = document.createElement("input");
+					blueInput.type = "text";
+					blueInput.value = c.blue;
+					blueInput.addEventListener("focus", () => typing = true);
+					blueInput.addEventListener("blur", () => typing = false);
+					blueInput.addEventListener("change", () => { c.blue = blueInput.value; preview.style.background = objecToRgba(c) });
+					color.appendChild(blueInput);
+			}
+
+			{ // spacer
+				let spacer = document.createElement("span");
+					color.appendChild(spacer);
+			}
+
+			let add = document.createElement("div");
+				add.classList.add("add");
+				add.addEventListener("click", () => {
+					defaultColors.push({
+						red: c.red,
+						green: c.green,
+						blue: c.blue,
+						alpha: c.alpha,
+					});
+
+					generateDefaultColorsSettingsPage();
+				});
+				color.appendChild(add);
+		}
+
+		{ // divider
+			let divider = document.createElement("hr");
+				settings.window.content.appendChild(divider);
+		}
+
 		{ // generate list
 			defaultColors.forEach((c, i) => {
 				let color = document.createElement("div");

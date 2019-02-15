@@ -18,7 +18,12 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 hr {
-
+	width: 50%;
+	height: 1px;
+	margin: 0.5em 0;
+	margin-left: 25%;
+	background: white;
+	border: none;
 }
 
 input {
@@ -508,11 +513,11 @@ input {
 }
 
 .color {
-	width: 100%;
+	width: calc(100% - 1em);
 	height: 1.4em;
 	padding: 0.5em;
 	margin: 0.5em 0;
-	background: rgba(0, 0, 0, 0.4);
+	background: rgba(255, 255, 255, 0.3);
 	display: flex;
 	align-items: center;
 	border-radius: 1.2em;
@@ -548,14 +553,23 @@ input {
 	width: 1.4em;
 	height: 1.4em;
 	background-color: white;
-	-webkit-mask: url("./img/tooleraser.svg") center / contain;
-	        mask: url("./img/tooleraser.svg") center / contain;
+	-webkit-mask: url("./img/remove.svg") center / contain;
+	        mask: url("./img/remove.svg") center / contain;
 	cursor: pointer;
 	transition: background-color 0.2s;
 }
 
 .color .remove:hover {
 	background-color: #d55;
+}
+
+.color .add {
+	width: 1.4em;
+	height: 1.4em;
+	background-color: white;
+	-webkit-mask: url("./img/add.svg") center / contain;
+	        mask: url("./img/add.svg") center / contain;
+	cursor: pointer;
 }
 
 /* missions window */
