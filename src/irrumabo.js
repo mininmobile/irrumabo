@@ -119,14 +119,14 @@ const LiquidOptions = [
 		friction: 0,
 		frictionStatic: 0,
 		temperature: 22,
-		render: { fillStyle: "#00f" },
+		render: { color: { red: 5, green: 50, blue: 255, alpha: 1 } },
 	},
 	{
 		label: "oil",
 		friction: 1,
 		frictionStatic: 1,
 		temperature: 22,
-		render: { fillStyle: "#000" },
+		render: { color: { red: 0, green: 0, blue: 0, alpha: 1 } },
 	},
 ];
 
@@ -136,14 +136,14 @@ const GasOptions = [
 		friction: 0,
 		frictionStatic: 0,
 		temperature: 432,
-		render: { fillStyle: "rgba(255, 100, 0)" },
+		render: { color: { red: 255, green: 100, blue: 20, alpha: 1 } },
 	},
 	{
 		label: "steam",
 		friction: 0,
 		frictionStatic: 0,
 		temperature: 100,
-		render: { fillStyle: "rgba(255, 255, 255, 0.6)" },
+		render: { color: { red: 255, green: 255, blue: 255, alpha: 0.6 } },
 	},
 ];
 
@@ -151,9 +151,9 @@ const MyComponents = [
 	{
 		name: "beaker",
 		parts: [
-			{ type: "rectangle", x: 0, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
-			{ type: "rectangle", x: 0, y: 250, w: 300, h: 50, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
-			{ type: "rectangle", x: 250, y: 0, w: 50, h: 300, options: { isStatic: true, render: { fillStyle: "rgba(255, 255, 255, 0.1)" } } },
+			{ type: "rectangle", x: 0, y: 0, w: 50, h: 300, options: { isStatic: true, render: { color: { red: 255, green: 255, blue: 255, alpha: 0.1 } } } },
+			{ type: "rectangle", x: 0, y: 250, w: 300, h: 50, options: { isStatic: true, render: { color: { red: 255, green: 255, blue: 255, alpha: 0.1 } } } },
+			{ type: "rectangle", x: 250, y: 0, w: 50, h: 300, options: { isStatic: true, render: { color: { red: 255, green: 255, blue: 255, alpha: 0.1 } } } },
 		],
 	},
 ];
@@ -1093,7 +1093,20 @@ document.addEventListener("mouseup", (e) => {
 				generateContextMenu(context, [
 					{ type: "button", name: "Erase", action: () => World.remove(engine.world, body, true) },
 					{ type: "divider" },
-					{ type: "sub", name: "Appearance", menu: [] },
+					{ type: "sub", name: "Appearance", menu: [
+						{ type: "title", name: "Red" },
+						{ type: "range", min: 0, max: 255, step: 1, value: body.render.color.red, onchange: (e) => {
+							body.render.color.red = e.value; body.render.fillStyle = getFillStyle(body) } },
+						{ type: "title", name: "Green" },
+						{ type: "range", min: 0, max: 255, step: 1, value: body.render.color.green, onchange: (e) => {
+							body.render.color.green = e.value; body.render.fillStyle = getFillStyle(body) } },
+						{ type: "title", name: "Blue" },
+						{ type: "range", min: 0, max: 255, step: 1, value: body.render.color.blue, onchange: (e) => {
+							body.render.color.blue = e.value; body.render.fillStyle = getFillStyle(body) } },
+						{ type: "title", name: "Alpha (Opacity)" },
+						{ type: "range", min: 0, max: 1, step: 0.05, value: body.render.color.blue, onchange: (e) => {
+							body.render.color.alpha = e.value; body.render.fillStyle = getFillStyle(body) } },
+					] },
 					{ type: "sub", name: "Material", menu: [
 						{ type: "title", hidden: body.isStatic, name: "Density" },
 						{ type: "range", hidden: body.isStatic, min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => { if (!body.isStatic) {
@@ -1447,7 +1460,7 @@ function selectTool(t) {
 				if (toolOptions.gas.selected == m) button.classList.add("selected");
 				button.setAttribute("tooltip", m.toString());
 
-				button.style.background = GasOptions[Gasses[m]].render.fillStyle;
+				button.style.background = getFillStyle(GasOptions[Gasses[m]]);
 			
 				button.addEventListener("click", () => {
 					toolOptions.gas.selected = m;
@@ -1471,7 +1484,7 @@ function selectTool(t) {
 				if (toolOptions.liquid.selected == m) button.classList.add("selected");
 				button.setAttribute("tooltip", m.toString());
 
-				button.style.background = LiquidOptions[Liquids[m]].render.fillStyle;
+				button.style.background = getFillStyle(LiquidOptions[Liquids[m]]);
 			
 				button.addEventListener("click", () => {
 					toolOptions.liquid.selected = m;
@@ -1524,6 +1537,10 @@ function togglePaused(o) {
 	paused ? buttonPause.setAttribute("tooltip", "play") : buttonPause.setAttribute("tooltip", "pause");
 
 	runner.enabled = !paused;
+}
+
+function getFillStyle(body) {
+	return `rgba(${body.render.color.red}, ${body.render.color.green}, ${body.render.color.blue}, ${body.render.color.alpha})`;
 }
 
 function toDeg(rad) {

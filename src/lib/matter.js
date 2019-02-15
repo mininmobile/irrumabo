@@ -119,7 +119,8 @@
 						xOffset: 0,
 						yOffset: 0
 					},
-					lineWidth: 0
+					lineWidth: 0,
+					color: undefined
 				}
 			};
 	
@@ -191,10 +192,24 @@
 			});
 	
 			// render properties
-			var defaultFillStyle = (body.isStatic ? '#2e2b44' : Common.choose(['#006BA6', '#0496FF', '#FFBC42', '#D81159', '#8F2D56'])),
-				defaultStrokeStyle = '#000';
-			body.render.fillStyle = body.render.fillStyle || defaultFillStyle;
-			body.render.strokeStyle = body.render.strokeStyle || defaultStrokeStyle;
+			if (!body.render.color) {
+				if (body.isStatic) {
+					body.render.color = { red: 46, green: 43, blue: 68, alpha: 1 }
+				} else {
+					body.render.color = Common.choose([
+						{ red: 0, green: 107, blue: 166, alpha: 1 },
+						{ red: 4, green: 150, blue: 255, alpha: 1 },
+						{ red: 255, green: 188, blue: 66, alpha: 1 },
+						{ red: 216, green: 17, blue: 89, alpha: 1 },
+						{ red: 143, green: 45, blue: 86, alpha: 1 },
+					]);
+				}
+			}
+
+			body.render.fillStyle = `rgba(${body.render.color.red}, ${body.render.color.green}, ${body.render.color.blue}, ${body.render.color.alpha})`;
+
+			body.render.strokeStyle = body.render.strokeStyle || "#fff";
+
 			body.render.sprite.xOffset += -(body.bounds.min.x - body.position.x) / (body.bounds.max.x - body.bounds.min.x);
 			body.render.sprite.yOffset += -(body.bounds.min.y - body.position.y) / (body.bounds.max.y - body.bounds.min.y);
 		};
