@@ -875,6 +875,117 @@ World.add(engine.world, walls);
 					container.appendChild(display);
 			}
 		}
+
+		{ // divider
+			let divider = document.createElement("hr");
+				settings.window.content.appendChild(divider);
+		}
+
+		{ // default options
+			{ // default colors button
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					container.appendChild(title);
+
+				let input = document.createElement("input");
+					input.type = "button";
+					input.value = "Default Colors"
+					input.addEventListener("click", () => {
+						generateDefaultColorsSettingsPage();
+					});
+					container.appendChild(input);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+			}
+		}
+	}
+
+	function generateDefaultColorsSettingsPage() {
+		settings.window.content.innerHTML = "";
+
+		{ // title
+			let container = document.createElement("div");
+				container.classList.add("title-container");
+				settings.window.content.appendChild(container);
+
+			let back = document.createElement("div");
+				back.classList.add("back");
+				back.addEventListener("click", () => {
+					generateSettingsList();
+				});
+				container.appendChild(back);
+
+			let title = document.createElement("div");
+				title.classList.add("title");
+				title.innerText = "Default Colors";
+				container.appendChild(title);
+		}
+
+		{ // generate list
+			defaultColors.forEach((c, i) => {
+				let color = document.createElement("div");
+					color.classList.add("color");
+					settings.window.content.appendChild(color);
+
+				let preview = document.createElement("div");
+					preview.classList.add("preview");
+					preview.style.background = objecToRgba(c);
+					color.appendChild(preview);
+
+				{ // spacer
+					let spacer = document.createElement("span");
+						color.appendChild(spacer);
+				}
+
+				{ // color options
+					let redTitle = document.createElement("div");
+						redTitle.innerText = "Red";
+						color.appendChild(redTitle);
+
+					let redInput = document.createElement("input");
+						redInput.type = "text";
+						redInput.value = c.red;
+						redInput.addEventListener("change", () => { defaultColors[i].red = redInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
+						color.appendChild(redInput);
+					
+					let greenTitle = document.createElement("div");
+						greenTitle.innerText = "Green";
+						color.appendChild(greenTitle);
+
+					let greenInput = document.createElement("input");
+						greenInput.type = "text";
+						greenInput.value = c.green;
+						greenInput.addEventListener("change", () => { defaultColors[i].green = greenInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
+						color.appendChild(greenInput);
+					
+					let blueTitle = document.createElement("div");
+						blueTitle.innerText = "Blue";
+						color.appendChild(blueTitle);
+
+					let blueInput = document.createElement("input");
+						blueInput.type = "text";
+						blueInput.value = c.blue;
+						blueInput.addEventListener("change", () => { defaultColors[i].blue = blueInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
+						color.appendChild(blueInput);
+				}
+
+				{ // spacer
+					let spacer = document.createElement("span");
+						color.appendChild(spacer);
+				}
+
+				let remove = document.createElement("div");
+					remove.classList.add("remove");
+					remove.addEventListener("click", () => {
+						// smth
+					});
+					color.appendChild(remove);
+			});
+		}
 	}
 }
 
@@ -1651,7 +1762,11 @@ function togglePaused(o) {
 }
 
 function getFillStyle(body) {
-	return `rgba(${body.render.color.red}, ${body.render.color.green}, ${body.render.color.blue}, ${body.render.color.alpha})`;
+	return objecToRgba(body.render.color);
+}
+
+function objecToRgba(o) {
+	return `rgba(${o.red}, ${o.green}, ${o.blue}, ${o.alpha})`;
 }
 
 function toDeg(rad) {
