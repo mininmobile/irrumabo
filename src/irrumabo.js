@@ -110,6 +110,7 @@ const Liquids = utilenum(
 const Gasses = utilenum(
 	"fire",
 	"steam",
+	"smoke",
 );
 
 const LiquidOptions = [
@@ -144,6 +145,13 @@ const GasOptions = [
 		frictionStatic: 0,
 		temperature: 100,
 		render: { color: { red: 255, green: 255, blue: 255, alpha: 0.6 } },
+	},
+	{
+		label: "smoke",
+		friction: 0,
+		frictionStatic: 0,
+		temperature: 432,
+		render: { color: { red: 155, green: 155, blue: 155, alpha: 0.4 } },
 	},
 ];
 
@@ -431,13 +439,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 		switch (body.label) {
 			case "water": {
 				if (body.temperature >= 100) {
-					let steam = Bodies.circle(body.position.x, body.position.y, 10, {
-						label: "steam",
-						friction: 0,
-						frictionStatic: 0,
-						temperature: body.temperature,
-						render: { fillStyle: "rgba(255, 255, 255, 0.6)" },
-					});
+					let steam = Bodies.circle(body.position.x, body.position.y, 10, { ...GasOptions[Gasses.steam], temperature: body.temperature });
 
 					World.add(engine.world, [steam]);
 					World.remove(engine.world, body, true);
@@ -446,13 +448,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 
 			case "oil": {
 				if (body.temperature >= 60) {
-					let burn = Bodies.circle(body.position.x, body.position.y, 10, {
-						label: "fire",
-						friction: 0,
-						frictionStatic: 0,
-						temperature: 432,
-						render: { fillStyle: "rgba(255, 100, 0)" },
-					});
+					let burn = Bodies.circle(body.position.x, body.position.y, 10, GasOptions[Gasses.fire]);
 
 					if (Math.random() >= 0.9) World.add(engine.world, [burn]);
 					if (Math.random() >= 0.9) World.remove(engine.world, body, true);
@@ -461,14 +457,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 
 			case "steam": {
 				if (body.temperature <= 99) {
-					let water = Bodies.circle(body.position.x, body.position.y, 10, {
-						label: "water",
-						density: 0.05,
-						friction: 0,
-						frictionStatic: 0,
-						temperature: body.temperature,
-						render: { fillStyle: "#00f" },
-					});
+					let water = Bodies.circle(body.position.x, body.position.y, 10, { ...LiquidOptions[Liquids.water], temperature: body.temperature });
 
 					World.add(engine.world, [water]);
 					World.remove(engine.world, body, true);
@@ -485,13 +474,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 
 			case "fire": {
 				if (body.age > 100) {
-					let smoke = Bodies.circle(body.position.x, body.position.y, 10, {
-						label: "smoke",
-						friction: 0,
-						frictionStatic: 0,
-						temperature: body.temperature,
-						render: { fillStyle: "rgba(155, 155, 155, 0.4)" },
-					});
+					let smoke = Bodies.circle(body.position.x, body.position.y, 10, { ...GasOptions[Gasses.smoke] });
 
 					World.add(engine.world, [smoke]);
 					World.remove(engine.world, body, true);
@@ -1082,6 +1065,15 @@ World.add(engine.world, walls);
 						});
 
 						defaultColors = x;
+
+						if (defaultColors.length == 0) {
+							defaultColors.push({
+								red: 250,
+								green: 250,
+								blue: 250,
+								alpha: 1,
+							});
+						}
 
 						generateDefaultColorsSettingsPage();
 					});
