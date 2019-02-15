@@ -223,21 +223,19 @@ const Noun = utilenum(
 	"false",
 );
 
+let defaultColors = [
+	{ red: 0,	green: 107,	blue: 166,	alpha: 1 },
+	{ red: 4,	green: 150,	blue: 255,	alpha: 1 },
+	{ red: 255,	green: 188,	blue: 66,	alpha: 1 },
+	{ red: 216,	green: 17,	blue: 89,	alpha: 1 },
+	{ red: 143,	green: 45,	blue: 86,	alpha: 1 },
+];
+
 let settings = {
 	window: {
 		window: document.getElementById("settings-window"),
 		close: document.getElementById("settings-close"),
-	},
-	inputs: {
-		gravityEnable: document.getElementById("settings-gravity-enable"),
-		gravityX: document.getElementById("settings-gravity-x"),
-		gravityY: document.getElementById("settings-gravity-y"),
-		bordermodeSelect: document.getElementById("settings-bordermode-select"),
-		rendermodeSelect: document.getElementById("settings-rendermode-select"),
-	},
-	displays: {
-		gravityX: document.getElementById("settings-display-gravity-x"),
-		gravityY: document.getElementById("settings-display-gravity-y"),
+		content: document.getElementById("settings-content"),
 	},
 }
 
@@ -439,7 +437,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 						temperature: body.temperature,
 						render: { fillStyle: "rgba(255, 255, 255, 0.6)" },
 					});
-	
+
 					World.add(engine.world, [steam]);
 					World.remove(engine.world, body, true);
 				}
@@ -454,7 +452,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 						temperature: 432,
 						render: { fillStyle: "rgba(255, 100, 0)" },
 					});
-	
+
 					if (Math.random() >= 0.9) World.add(engine.world, [burn]);
 					if (Math.random() >= 0.9) World.remove(engine.world, body, true);
 				}
@@ -470,7 +468,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 						temperature: body.temperature,
 						render: { fillStyle: "#00f" },
 					});
-	
+
 					World.add(engine.world, [water]);
 					World.remove(engine.world, body, true);
 				} else {
@@ -493,7 +491,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 						temperature: body.temperature,
 						render: { fillStyle: "rgba(155, 155, 155, 0.4)" },
 					});
-	
+
 					World.add(engine.world, [smoke]);
 					World.remove(engine.world, body, true);
 				} else if (body.temperature < 100) {
@@ -648,7 +646,7 @@ World.add(engine.world, walls);
 
 			x.forEach((y) => {
 				let hint = { angle: 0, round: false, balls: false, ...y };
-	
+
 				showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
 			});
 		}
@@ -687,7 +685,7 @@ World.add(engine.world, walls);
 
 				x.forEach((y) => {
 					let hint = { angle: 0, round: false, balls: false, ...y };
-		
+
 					showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
 				});
 			}
@@ -730,41 +728,154 @@ World.add(engine.world, walls);
 	settings.window.window.style.top = `${document.body.scrollHeight / 4}px`;
 	settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") });
 
-	settings.inputs.gravityEnable.checked = true;
-	settings.inputs.rendermodeSelect.selectedIndex = 0;
-	settings.inputs.bordermodeSelect.selectedIndex = 0;
+	{ // update settings
+		generateSettingsList();
+	}
 
-	settings.inputs.gravityEnable.addEventListener("change", () => {
-		engine.world.gravity.scale = settings.inputs.gravityEnable.checked ? 0.001 : 0;
-	});
+	function generateSettingsList() {
+		settings.window.content.innerHTML = "";
 
-	settings.inputs.gravityX.addEventListener("mousemove", () => {
-		settings.displays.gravityX.innerText =
-		engine.world.gravity.x =
-		settings.inputs.gravityX.value;
-	});
+		{ // gravity options
+			{ // gravity enable
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
 
-	settings.inputs.gravityY.addEventListener("mousemove", () => {
-		settings.displays.gravityY.innerText =
-		engine.world.gravity.y =
-		settings.inputs.gravityY.value;
-	});
+				let title = document.createElement("span");
+					title.innerText = "Gravity Enabled";
+					container.appendChild(title);
 
-	settings.inputs.bordermodeSelect.addEventListener("change", () => {
-		switch (settings.inputs.bordermodeSelect.selectedIndex) {
-			case 0: {
-				killerWalls = false;
-			} break;
+				let input = document.createElement("input");
+					input.type = "checkbox";
+					input.checked = true;
+					input.addEventListener("change", () => {
+						engine.world.gravity.scale = input.checked ? 0.001 : 0;
+					});
+					container.appendChild(input);
 
-			case 1: {
-				killerWalls = true;
-			} break;
+				let display = document.createElement("span");
+					container.appendChild(display);
+			}
+
+			{ // gravity scale x
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Gravity Scale X";
+					container.appendChild(title);
+
+				let display = document.createElement("span");
+					display.innerText = "0";
+
+				let input = document.createElement("input");
+					input.type = "range";
+					input.min = "-1";
+					input.max = "1";
+					input.step = "0.25";
+					input.value = "0";
+					input.addEventListener("mousemove", () => {
+						display.innerText = engine.world.gravity.x = input.value;
+					});
+					container.appendChild(input);
+
+					container.appendChild(display);
+			}
+
+			{ // gravity scale y
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Gravity Scale Y";
+					container.appendChild(title);
+
+				let display = document.createElement("span");
+					display.innerText = "1";
+
+				let input = document.createElement("input");
+					input.type = "range";
+					input.min = "-1";
+					input.max = "1";
+					input.step = "0.25";
+					input.value = "1";
+					input.addEventListener("mousemove", () => {
+						display.innerText = engine.world.gravity.y = input.value;
+					});
+					container.appendChild(input);
+
+					container.appendChild(display);
+			}
 		}
-	});
 
-	settings.inputs.rendermodeSelect.addEventListener("change", () => {
-		mode = settings.inputs.rendermodeSelect.selectedIndex;
-	});
+		{ // divider
+			let divider = document.createElement("hr");
+				settings.window.content.appendChild(divider);
+		}
+
+		{ // border options
+			{ // border mode
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Border Mode";
+					container.appendChild(title);
+
+				let input = document.createElement("select");
+					input.options.add(new Option("Solid", 0));
+					input.options.add(new Option("Killer", 1));
+					input.selectedIndex = 0;
+					input.addEventListener("change", () => {
+						switch (input.selectedIndex) {
+							case 0: {
+								killerWalls = false;
+							} break;
+			
+							case 1: {
+								killerWalls = true;
+							} break;
+						}
+					});
+					container.appendChild(input);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+			}
+		}
+
+		{ // divider
+			let divider = document.createElement("hr");
+				settings.window.content.appendChild(divider);
+		}
+
+		{ // render options
+			{ // render mode
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Border Mode";
+					container.appendChild(title);
+
+				let input = document.createElement("select");
+					input.options.add(new Option("Regular", 0));
+					input.options.add(new Option("Color Wireframe", 1));
+					input.options.add(new Option("Wireframe", 2));
+					input.options.add(new Option("Heat", 3));
+					input.selectedIndex = 0;
+					input.addEventListener("change", () => mode = input.selectedIndex);
+					container.appendChild(input);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+			}
+		}
+	}
 }
 
 // add button actions
@@ -885,16 +996,16 @@ document.addEventListener("mousedown", (e) => {
 						endY: mouse.absolute.y,
 					}
 				} break;
-	
+
 				case Tools.gas: {
 					let interval = setInterval(() => {
 						if (!ctrl) {
 							let gas = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
-			
+
 							World.add(engine.world, [gas]);
 						}
 					}, 50);
-	
+
 					drawing = {
 						interval: interval,
 						startX: -1,
@@ -902,7 +1013,7 @@ document.addEventListener("mousedown", (e) => {
 						endX: -1,
 						endY: -1,
 					}
-	
+
 					if (!ctrl) {
 						if (missions.status.currentObjective) {
 							if (missions.status.currentObjective.args[0] == Verb.create) {
@@ -912,18 +1023,18 @@ document.addEventListener("mousedown", (e) => {
 						}
 					}
 				} break;
-				
+
 				case Tools.eraser: {
 					drawing = true;
-	
+
 					let bodies = Composite.allBodies(engine.world);
-	
+
 					for (i = 0; i < bodies.length; i++) {
 						let body = bodies[i];
-			
+
 						if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
 							World.remove(engine.world, body, true);
-	
+
 							break;
 						}
 					}
@@ -960,7 +1071,7 @@ document.addEventListener("mousemove", (e) => {
 					} else {
 						if (shift) {
 							let size = Math.max(Math.abs(mouse.absolute.x - drawing.startX), Math.abs(mouse.absolute.y - drawing.startY));
-		
+
 							drawing.endX = drawing.startX + size;
 							drawing.endY = drawing.startY + size;
 						} else {
@@ -975,13 +1086,13 @@ document.addEventListener("mousemove", (e) => {
 					drawing.endY = -1
 				}
 			} break;
-			
+
 			case Tools.eraser: {
 				let bodies = Composite.allBodies(engine.world);
 
 				for (i = 0; i < bodies.length; i++) {
 					let body = bodies[i];
-		
+
 					if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
 						World.remove(engine.world, body, true);
 
@@ -1010,10 +1121,10 @@ document.addEventListener("mouseup", (e) => {
 							Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
 							0, 0, (x, y) => {
 						let body = Bodies.circle(x, y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
-					
+
 						return body;
 					});
-	
+
 					World.add(engine.world, [gas]);
 
 					if (Math.floor((drawing.endX - drawing.startX) / 20) * Math.floor((drawing.endY - drawing.startY) / 20) > 0) {
@@ -1035,7 +1146,7 @@ document.addEventListener("mouseup", (e) => {
 						Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
 						0, 0, (x, y) => {
 					let body = Bodies.circle(x, y, 10, LiquidOptions[Liquids[toolOptions.liquid.selected]]);
-				
+
 					return body;
 				});
 
@@ -1180,7 +1291,7 @@ document.addEventListener("mouseup", (e) => {
 				switch (p.type) {
 					case "rectangle": {
 						let body = Bodies.rectangle(p.x + e.clientX + (p.w / 2), p.y + e.clientY + (p.h / 2), p.w, p.h, p.options);
-	
+
 						World.add(engine.world, [body]);
 					} break;
 				}
@@ -1258,10 +1369,10 @@ ctx.font = "1em Arial";
 
 	if (mode == RenderMode.heat) {
 		let bodies = Composite.allBodies(engine.world);
-	
+
 		for (i = 0; i < bodies.length; i++) {
 			let body = bodies[i];
-	
+
 			if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
 				ctx.fillStyle = "#ddd";
 				ctx.fillText(
@@ -1371,11 +1482,11 @@ function generateContextMenu(menu, items) {
 			case "range": {
 				let range = document.createElement("input");
 				range.classList.add("range");
-				range.setAttribute("type", "range");
-				range.setAttribute("min", item.min);
-				range.setAttribute("max", item.max);
-				range.setAttribute("step", item.step);
-				range.setAttribute("value", item.value);
+				input.type = "range";
+				input.min = item.min;
+				input.max = item.max;
+				input.step = item.step;
+				input.value = item.value;
 				range.addEventListener("mousedown", () => contextClick = true);
 				range.addEventListener("mousemove", () => {
 					item.onchange({
@@ -1395,7 +1506,7 @@ function generateContextMenu(menu, items) {
 				check.setAttribute("type", "checkbox");
 				check.checked = item.value;
 				c.appendChild(check);
-				
+
 				let label = document.createElement("span");
 				label.innerText = item.name;
 				c.appendChild(label);
@@ -1461,7 +1572,7 @@ function selectTool(t) {
 				button.setAttribute("tooltip", m.toString());
 
 				button.style.background = getFillStyle(GasOptions[Gasses[m]]);
-			
+
 				button.addEventListener("click", () => {
 					toolOptions.gas.selected = m;
 
@@ -1485,7 +1596,7 @@ function selectTool(t) {
 				button.setAttribute("tooltip", m.toString());
 
 				button.style.background = getFillStyle(LiquidOptions[Liquids[m]]);
-			
+
 				button.addEventListener("click", () => {
 					toolOptions.liquid.selected = m;
 
