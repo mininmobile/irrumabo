@@ -344,6 +344,7 @@ let drawing = undefined;
 let componentDrag = undefined;
 let contextClick = false;
 let contextBegin = false;
+let typing = false;
 let hoverUi = false;
 
 // create enviroment
@@ -949,6 +950,8 @@ World.add(engine.world, walls);
 					let redInput = document.createElement("input");
 						redInput.type = "text";
 						redInput.value = c.red;
+						redInput.addEventListener("focus", () => typing = true);
+						redInput.addEventListener("blur", () => typing = false);
 						redInput.addEventListener("change", () => { defaultColors[i].red = redInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
 						color.appendChild(redInput);
 					
@@ -959,6 +962,8 @@ World.add(engine.world, walls);
 					let greenInput = document.createElement("input");
 						greenInput.type = "text";
 						greenInput.value = c.green;
+						greenInput.addEventListener("focus", () => typing = true);
+						greenInput.addEventListener("blur", () => typing = false);
 						greenInput.addEventListener("change", () => { defaultColors[i].green = greenInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
 						color.appendChild(greenInput);
 					
@@ -969,6 +974,8 @@ World.add(engine.world, walls);
 					let blueInput = document.createElement("input");
 						blueInput.type = "text";
 						blueInput.value = c.blue;
+						blueInput.addEventListener("focus", () => typing = true);
+						blueInput.addEventListener("blur", () => typing = false);
 						blueInput.addEventListener("change", () => { defaultColors[i].blue = blueInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
 						color.appendChild(blueInput);
 				}
@@ -981,7 +988,22 @@ World.add(engine.world, walls);
 				let remove = document.createElement("div");
 					remove.classList.add("remove");
 					remove.addEventListener("click", () => {
-						// smth
+						let x = [];
+
+						defaultColors.forEach((col) => {
+							if (c.red	== col.red &&
+								c.green	== col.green &&
+								c.blue	== col.blue &&
+								c.alpha	== col.alpha) {
+									// ignore, color is effectively removed
+								} else {
+									x.push(col);
+								}
+						});
+
+						defaultColors = x;
+
+						generateDefaultColorsSettingsPage();
 					});
 					color.appendChild(remove);
 			});
@@ -1034,48 +1056,54 @@ MyComponents.forEach((c) => {
 
 // add keyboard shortcuts
 document.addEventListener("keypress", (e) => {
-	e.preventDefault();
+	if (!typing) {
+		e.preventDefault();
+	}
 });
 
 document.addEventListener("keydown", (e) => {
-	switch (e.code) {
-		case "ShiftLeft": shift = true; break;
-		case "ShiftRight": shift = true; break;
-		case "ControlLeft": ctrl = true; break;
-		case "ControlRight": ctrl = true; break;
+	if (!typing) {
+		switch (e.code) {
+			case "ShiftLeft": shift = true; break;
+			case "ShiftRight": shift = true; break;
+			case "ControlLeft": ctrl = true; break;
+			case "ControlRight": ctrl = true; break;
 
-		case "Tab": panelTools.classList.remove("hidden"); panelToolOptions.classList.remove("hidden"); break;
+			case "Tab": panelTools.classList.remove("hidden"); panelToolOptions.classList.remove("hidden"); break;
+		}
+
+		e.preventDefault();
 	}
-
-	e.preventDefault();
 });
 
 document.addEventListener("keyup", (e) => {
-	switch (e.code) {
-		case "ShiftLeft": shift = false; break;
-		case "ShiftRight": shift = false; break;
-		case "ControlLeft": ctrl = false; break;
-		case "ControlRight": ctrl = false; break;
+	if (!typing) {
+		switch (e.code) {
+			case "ShiftLeft": shift = false; break;
+			case "ShiftRight": shift = false; break;
+			case "ControlLeft": ctrl = false; break;
+			case "ControlRight": ctrl = false; break;
 
-		case "KeyR": if (ctrl) window.location.reload(); break;
+			case "KeyR": if (ctrl) window.location.reload(); break;
 
-		case "Space": togglePaused(); break;
+			case "Space": togglePaused(); break;
 
-		case "KeyN": case "Escape": settings.window.window.classList.toggle("hidden"); break;
-		case "Tab": panelTools.classList.add("hidden"); panelToolOptions.classList.add("hidden"); break;
+			case "KeyN": case "Escape": settings.window.window.classList.toggle("hidden"); break;
+			case "Tab": panelTools.classList.add("hidden"); panelToolOptions.classList.add("hidden"); break;
 
-		case "KeyM": missions.window.window.classList.toggle("hidden"); break;
-		case "KeyE": buttonComponents.click(); break;
+			case "KeyM": missions.window.window.classList.toggle("hidden"); break;
+			case "KeyE": buttonComponents.click(); break;
 
-		case "Digit1": selectTool(0); break;
-		case "Digit2": selectTool(1); break;
-		case "Digit3": selectTool(2); break;
-		case "Digit4": selectTool(3); break;
-		case "Digit5": selectTool(4); break;
-		case "Digit6": selectTool(5); break;
+			case "Digit1": selectTool(0); break;
+			case "Digit2": selectTool(1); break;
+			case "Digit3": selectTool(2); break;
+			case "Digit4": selectTool(3); break;
+			case "Digit5": selectTool(4); break;
+			case "Digit6": selectTool(5); break;
+		}
+
+		e.preventDefault();
 	}
-
-	e.preventDefault();
 });
 
 // add mouse control
