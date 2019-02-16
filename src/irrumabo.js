@@ -467,22 +467,36 @@ Events.on(engine, "beforeUpdate", (e) => {
 			} break;
 
 			case "smoke": {
-				if (body.age > 500) World.remove(engine.world, body, true);
+				if (body.render.color.alpha <= 0) {
+					World.remove(engine.world, body, true);
+				} else if (body.age > 200) {
+					body.render.color.alpha -= 0.001;
+					body.render.fillStyle = getFillStyle(body);
+				}
 
 				body.force = { x: 0, y: -0.0003 * engine.world.gravity.y };
 			} break;
 
 			case "fire": {
-				if (body.age > 100) {
+				if (body.render.color.red == 155) {
+					console.log(body.render.color)
 					let smoke = Bodies.circle(body.position.x, body.position.y, 10, { ...GasOptions[Gasses.smoke] });
 
 					World.add(engine.world, [smoke]);
 					World.remove(engine.world, body, true);
-				} else if (body.temperature < 100) {
-					World.remove(engine.world, body, true);
-				} else {
-					body.force = { x: 0, y: -0.0005 * engine.world.gravity.y };
+				} else if (body.age > 50) {
+					body.render.color.red -= 1;
+					body.render.color.green += 0.55;
+					body.render.color.blue += 1.35;
+					body.render.color.alpha -= 0.006;
+					body.render.fillStyle = getFillStyle(body);
 				}
+				
+				if (body.temperature < 100) {
+					World.remove(engine.world, body, true);
+				}
+
+				body.force = { x: 0, y: -0.0005 * engine.world.gravity.y };
 			} break;
 
 			default: {}
@@ -1693,11 +1707,11 @@ function generateContextMenu(menu, items) {
 			case "range": {
 				let range = document.createElement("input");
 				range.classList.add("range");
-				input.type = "range";
-				input.min = item.min;
-				input.max = item.max;
-				input.step = item.step;
-				input.value = item.value;
+				range.type = "range";
+				range.min = item.min;
+				range.max = item.max;
+				range.step = item.step;
+				range.value = item.value;
 				range.addEventListener("mousedown", () => contextClick = true);
 				range.addEventListener("mousemove", () => {
 					item.onchange({

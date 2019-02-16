@@ -323,11 +323,12 @@ input {
 	right: 6em;
 	z-index: 9999;
 	border-radius: 2em;
-	transition: opacity 0.2s;
+	transition: opacity 0.2s, right 0.2s;
 	pointer-events: none;
 }
 
 .component-tooltip.hidden {
+	right: 4em;
 	opacity: 0;
 }
 
