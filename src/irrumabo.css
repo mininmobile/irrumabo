@@ -18,18 +18,107 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 hr {
-	width: 50%;
+	width: 90%;
 	height: 1px;
 	margin: 0.5em 0;
-	margin-left: 25%;
-	background: white;
+	margin-left: 5%;
+	background: rgba(255, 255, 255, 0.4);
 	border: none;
 }
 
 input {
+	border: none !important;
+	outline: none !important;
 	-webkit-appearance: none;
 	   -moz-appearance: none;
 	        appearance: none;
+}
+
+input[type="text"], input[type="password"] {
+	height: 1.4em;
+	padding: 0 0.5em;
+	background: rgba(0, 0, 0, 0.5);
+	color: rgba(255, 255, 255, 0.75);
+	border-radius: 0.7em;
+	transition: background 0.2s;
+}
+
+input[type="button"] {
+	height: 2.1em;
+	padding: 0.25em 0.75em;
+	background: rgba(0, 0, 0, 0.5);
+	color: rgba(255, 255, 255, 0.75);
+	cursor: pointer;
+	border-radius: 1.05em;
+	transition: background 0.2s;
+}
+
+input[type="text"]:hover, input[type="text"]:active, input[type="text"]:focus,
+input[type="password"]:hover, input[type="password"]:active, input[type="password"]:focus,
+input[type="button"]:hover, input[type="button"]:active, input[type="button"]:focus {
+	background: rgba(255, 255, 255, 0.1)
+}
+
+.checkbox-container {
+	width: 100%;
+	display: flex;
+	align-items: center;
+}
+
+input[type="checkbox"] {
+	height: 1.4em;
+	width: 2.4em;
+	padding: 0 0.2em;
+	background: rgba(0, 0, 0, 0.5);
+	color: #ddd;
+	position: relative;
+	left: 0.5em;
+	cursor: pointer;
+	border-radius: 0.7em;
+}
+
+input[type="checkbox"] + .handle {
+	width: 0.8em;
+	height: 0.8em;
+	background: rgba(255, 255, 255, 0.1);
+	display: inline-block;
+	position: relative;
+	right: 1.6em;
+	border-radius: 50%;
+	pointer-events: none;
+	transition: right 0.2s;
+}
+
+input[type="checkbox"]:checked + .handle {
+	right: 0.8em;
+}
+
+input[type="range"] {
+	height: 1.4em;
+	padding: 0 0.2em;
+	background: rgba(0, 0, 0, 0.5);
+	cursor: ew-resize;
+	border-radius: 0.7em;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	width: 1em;
+	height: 1em;
+	background: rgba(255, 255, 255, 0.1);
+	border: none;
+	outline: none;
+	border-radius: 50%;
+	-webkit-appearance: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+	width: 1em;
+	height: 1em;
+	background: rgba(255, 255, 255, 0.1);
+	border: none;
+	outline: none;
+	border-radius: 50%;
+	-webkit-appearance: none;
 }
 
 @media (pointer:none), (pointer:coarse) {
@@ -159,6 +248,11 @@ input {
 	width: 1em;
 	left: 0.2em;
 	opacity: 1;
+}
+
+.context input[type="range"] {
+	width: 70%;
+	margin-left: 15%;
 }
 
 /* buttons */
@@ -534,13 +628,6 @@ input {
 
 .color input {
 	width: 2em;
-	height: 1.4em;
-	padding: 0 0.5em;
-	background: rgba(0, 0, 0, 0.5);
-	color: white;
-	border: none;
-	outline: none;
-	border-radius: 0.7em;
 }
 
 .color .preview {

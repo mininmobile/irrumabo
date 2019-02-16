@@ -5,6 +5,7 @@ let Events = Matter.Events;
 let Bounds = Matter.Bounds;
 let Mouse = Matter.Mouse;
 let Vertices = Matter.Vertices;
+let Vector = Matter.Vector;
 let MouseConstraint = Matter.MouseConstraint;
 let Composite = Matter.Composite;
 let Body = Matter.Body;
@@ -401,18 +402,15 @@ Events.on(engine, "collisionActive", (e) => {
 					frictionAir: clonerBody.frictionAir,
 					temperature: clonerBody.temperature,
 					vertices: clonerBody.vertices,
+					position: Vector.clone(clonerBody.position),
 					render: clonerBody.render,
 				}
 
-				cloner.clonerPosition = { ...clonerBody.position }
-
 				cloner.clonerInterval = setInterval(() => {
-					cloner.clonerBody.position = cloner.clonerPosition;
-
-					let body = Body.create(cloner.clonerBody);
+					let body = Body.create({ ...cloner.clonerBody });
 
 					World.add(engine.world, [body]);
-				}, 100);
+				}, 50);
 			}
 		}
 
@@ -746,10 +744,12 @@ World.add(engine.world, walls);
 				let input = document.createElement("input");
 					input.type = "checkbox";
 					input.checked = true;
-					input.addEventListener("change", () => {
-						engine.world.gravity.scale = input.checked ? 0.001 : 0;
-					});
+					input.addEventListener("change", () => engine.world.gravity.scale = input.checked ? 0.001 : 0);
 					container.appendChild(input);
+
+				let inputHandle = document.createElement("div");
+					inputHandle.classList.add("handle");
+					container.appendChild(inputHandle);
 
 				let display = document.createElement("span");
 					container.appendChild(display);
@@ -890,7 +890,7 @@ World.add(engine.world, walls);
 
 				let input = document.createElement("input");
 					input.type = "button";
-					input.value = "Default Colors"
+					input.value = "Edit Default Colors"
 					input.addEventListener("click", () => {
 						generateDefaultColorsSettingsPage();
 					});
@@ -1706,13 +1706,16 @@ function generateContextMenu(menu, items) {
 
 			case "range": {
 				let range = document.createElement("input");
-				range.classList.add("range");
+
 				range.type = "range";
+
 				range.min = item.min;
 				range.max = item.max;
 				range.step = item.step;
 				range.value = item.value;
+
 				range.addEventListener("mousedown", () => contextClick = true);
+
 				range.addEventListener("mousemove", () => {
 					item.onchange({
 						value: range.value,
@@ -1724,28 +1727,30 @@ function generateContextMenu(menu, items) {
 			} break;
 
 			case "check": {
-				let c = document.createElement("div");
-				c.classList.add("check");
+				let container = document.createElement("div");
+					container.classList.add("checkbox-container");
+					container.addEventListener("mousedown", () => contextClick = true);
+					menu.appendChild(container);
 
 				let check = document.createElement("input");
-				check.setAttribute("type", "checkbox");
-				check.checked = item.value;
-				c.appendChild(check);
+					check.type = "checkbox";
+					check.checked = item.value;
+					check.addEventListener("change", () => {
+						item.onchange({
+							value: check.checked,
+							source: check,
+						});
+					});
+					container.appendChild(check);
+
+				let checkhandle = document.createElement("span");
+					checkhandle.classList.add("handle");
+					container.appendChild(checkhandle);
 
 				let label = document.createElement("span");
-				label.innerText = item.name;
-				c.appendChild(label);
-
-				c.addEventListener("mousedown", () => contextClick = true);
-				label.addEventListener("mouseup", () => check.click());
-				check.addEventListener("change", () => {
-					item.onchange({
-						value: check.checked,
-						source: check,
-					});
-				});
-
-				menu.appendChild(c);
+					label.innerText = item.name;
+					label.addEventListener("mouseup", () => check.click());
+					container.appendChild(label);
 			} break;
 
 			case "sub": {

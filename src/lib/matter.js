@@ -89,7 +89,6 @@
 				velocity: { x: 0, y: 0 },
 				angularVelocity: 0,
 				clonerBody: undefined,
-				clonerPosition: undefined,
 				clonerInterval: undefined,
 				isCloner: false,
 				isSensor: false,
