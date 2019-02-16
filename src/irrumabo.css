@@ -37,7 +37,7 @@ input {
 input[type="text"], input[type="password"] {
 	height: 1.4em;
 	padding: 0 0.5em;
-	background: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.5);
 	color: rgba(255, 255, 255, 0.75);
 	border-radius: 0.7em;
 	transition: background 0.2s;
@@ -46,17 +46,42 @@ input[type="text"], input[type="password"] {
 input[type="button"] {
 	height: 2.1em;
 	padding: 0.25em 0.75em;
-	background: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.5);
 	color: rgba(255, 255, 255, 0.75);
 	cursor: pointer;
 	border-radius: 1.05em;
 	transition: background 0.2s;
 }
 
-input[type="text"]:hover, input[type="text"]:active, input[type="text"]:focus,
-input[type="password"]:hover, input[type="password"]:active, input[type="password"]:focus,
-input[type="button"]:hover, input[type="button"]:active, input[type="button"]:focus {
-	background: rgba(255, 255, 255, 0.1)
+select {
+	height: 2.1em;
+	padding: 0.25em 0.75em;
+	padding-right: 1.75em;
+	background-color: rgba(0, 0, 0, 0.5);
+	background-image: url("./img/down.svg");
+	background-size: 1em;
+	background-position: calc(100% - 0.75em);
+	background-repeat: no-repeat;
+	color: rgba(255, 255, 255, 0.75);
+	cursor: pointer;
+	border: none !important;
+	outline: none !important;
+	border-radius: 1.05em;
+	-webkit-appearance: none;
+	   -moz-appearance: none;
+	        appearance: none;
+	transition: background 0.2s;
+}
+
+select:focus {
+	color: black;
+}
+
+input[type="text"]:hover,     input[type="text"]:focus,
+input[type="password"]:hover, input[type="password"]:focus,
+input[type="button"]:hover,   input[type="button"]:focus,
+select:hover,                 select:focus {
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 .checkbox-container {
@@ -86,7 +111,11 @@ input[type="checkbox"] + .handle {
 	right: 1.6em;
 	border-radius: 50%;
 	pointer-events: none;
-	transition: right 0.2s;
+	transition: right 0.2s, background 0.2s;
+}
+
+input[type="checkbox"]:hover + .handle {
+	background: rgba(255, 255, 255, 0.3);
 }
 
 input[type="checkbox"]:checked + .handle {
@@ -109,6 +138,11 @@ input[type="range"]::-webkit-slider-thumb {
 	outline: none;
 	border-radius: 50%;
 	-webkit-appearance: none;
+	transition: background 0.2s;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+	background: rgba(255, 255, 255, 0.3);
 }
 
 input[type="range"]::-moz-range-thumb {
@@ -118,7 +152,11 @@ input[type="range"]::-moz-range-thumb {
 	border: none;
 	outline: none;
 	border-radius: 50%;
-	-webkit-appearance: none;
+	transition: background 0.2s;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+	background: rgba(255, 255, 255, 0.3);
 }
 
 @media (pointer:none), (pointer:coarse) {
@@ -253,6 +291,10 @@ input[type="range"]::-moz-range-thumb {
 .context input[type="range"] {
 	width: 70%;
 	margin-left: 15%;
+}
+
+.context .checkbox-container {
+	margin-right: 1.4em;
 }
 
 /* buttons */
@@ -658,6 +700,11 @@ input[type="range"]::-moz-range-thumb {
 	-webkit-mask: url("./img/add.svg") center / contain;
 	        mask: url("./img/add.svg") center / contain;
 	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.color .add:hover {
+	background-color: #7f7;
 }
 
 /* missions window */
