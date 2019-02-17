@@ -12,6 +12,14 @@ let Body = Matter.Body;
 let Composites = Matter.Composites;
 let Bodies = Matter.Bodies;
 
+let defaultColors = [
+	{ red: 0,	green: 107,	blue: 166,	alpha: 1 },
+	{ red: 4,	green: 150,	blue: 255,	alpha: 1 },
+	{ red: 255,	green: 188,	blue: 66,	alpha: 1 },
+	{ red: 216,	green: 17,	blue: 89,	alpha: 1 },
+	{ red: 143,	green: 45,	blue: 86,	alpha: 1 },
+];
+
 class Objective {
 	constructor(...args) {
 		if (!isNaN(args[0])) {
@@ -165,6 +173,18 @@ const MyComponents = [
 			{ type: "rectangle", x: 250, y: 0, w: 50, h: 300, options: { isStatic: true, render: { color: { red: 255, green: 255, blue: 255, alpha: 0.1 } } } },
 		],
 	},
+	{
+		name: "bunson burner",
+		parts: [
+			{ type: "rectangle", x: 50, y: 0, w: 25, h: 220, options: { isStatic: true, render: { color: { red: 0, green: 50, blue: 150, alpha: 1 } } } },
+			{ type: "rectangle", x: 125, y: 0, w: 25, h: 220, options: { isStatic: true, render: { color: { red: 0, green: 50, blue: 150, alpha: 1 } } } },
+			{ type: "rectangle", x: 2, y: 225, w: 75, h: 25, options: { angle: toRad(135), isStatic: true, render: { color: { red: 0, green: 50, blue: 150, alpha: 1 } } } },
+			{ type: "rectangle", x: 122, y: 225, w: 75, h: 25, options: { angle: toRad(45), isStatic: true, render: { color: { red: 0, green: 50, blue: 150, alpha: 1 } } } },
+			{ type: "rectangle", x: 4, y: 255, w: 191, h: 25, options: { isStatic: true, render: { color: { red: 0, green: 50, blue: 150, alpha: 1 } } } },
+			{ type: "rectangle", x: 75, y: 220, w: 50, h: 15, options: { isStatic: true,
+				clonerBody: { ...GasOptions[Gasses.fire], vertices: Bodies.circle(0, 0, 10).vertices, position: { x: 100, y: 210 } }, render: { visible: false } } }
+		],
+	},
 ];
 
 const RenderMode = utilenum(
@@ -231,14 +251,6 @@ const Noun = utilenum(
 	"true",
 	"false",
 );
-
-let defaultColors = [
-	{ red: 0,	green: 107,	blue: 166,	alpha: 1 },
-	{ red: 4,	green: 150,	blue: 255,	alpha: 1 },
-	{ red: 255,	green: 188,	blue: 66,	alpha: 1 },
-	{ red: 216,	green: 17,	blue: 89,	alpha: 1 },
-	{ red: 143,	green: 45,	blue: 86,	alpha: 1 },
-];
 
 let settings = {
 	window: {
