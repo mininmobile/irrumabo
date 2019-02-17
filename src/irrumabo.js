@@ -343,6 +343,10 @@ let toolOptions = {
 	"eraser": {},
 }
 
+let announcerOptions = {
+	"enabled": false,
+}
+
 let mode = RenderMode.regular;
 let killerWalls = false;
 let shift = false;
@@ -637,6 +641,9 @@ World.add(engine.world, walls);
 
 		panelObjective.innerText = `${0 + 1}/${mission.objectives.length}) ${mission.objectives[0]}`;
 
+		if (announcerOptions.enabled)
+			window.speechSynthesis.speak(new SpeechSynthesisUtterance(mission.objectives[0]));
+
 		if (missions.status.currentObjective.hint) {
 			let x = [missions.status.currentObjective.hint];
 
@@ -661,21 +668,10 @@ World.add(engine.world, walls);
 
 		panelObjective.innerText = `${missions.status.currentObjectiveId + 1}/${mission.objectives.length}) ${mission.objectives[missions.status.currentObjectiveId]}`;
 
-		if (missions.status.currentObjective) switch (missions.status.currentObjective.args[0]) {
-			case Verb.wait: {
-				let duration = 0;
-
-				switch (missions.status.currentObjective.args[1]) {
-					case Noun.sec5: duration = 5000; break;
-				}
-
-				setTimeout(completeObjective, duration);
-			} break;
-
-			default: {}
-		}
-
 		if (missions.status.currentObjective) {
+			if (announcerOptions.enabled)
+				window.speechSynthesis.speak(new SpeechSynthesisUtterance(mission.objectives[missions.status.currentObjectiveId]));
+
 			if (missions.status.currentObjective.hint) {
 				let x = [missions.status.currentObjective.hint];
 
@@ -688,9 +684,24 @@ World.add(engine.world, walls);
 					showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
 				});
 			}
+
+			switch (missions.status.currentObjective.args[0]) {
+				case Verb.wait: {
+					let duration = 0;
+
+					switch (missions.status.currentObjective.args[1]) {
+						case Noun.sec5: duration = 5000; break;
+					}
+
+					setTimeout(completeObjective, duration);
+				} break;
+
+				default: {}
+			}
 		}
 
-		if (missions.status.currentObjectiveId == mission.objectives.length) completeMission();
+		if (missions.status.currentObjectiveId == mission.objectives.length)
+			completeMission();
 
 		{ // doot toot
 			let doottoot = document.createElement("div");
@@ -733,6 +744,101 @@ World.add(engine.world, walls);
 
 	function generateSettingsList() {
 		settings.window.content.innerHTML = "";
+		{ // mission options
+			{ // announcer enable
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Narrator Enabled";
+					container.appendChild(title);
+
+				let input = document.createElement("input");
+					input.type = "checkbox";
+					input.checked = false;
+					input.addEventListener("change", () => announcerOptions.enabled = input.checked);
+					container.appendChild(input);
+
+				let inputHandle = document.createElement("div");
+					inputHandle.classList.add("handle");
+					container.appendChild(inputHandle);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+			}
+		}
+
+		{ // divider
+			let divider = document.createElement("hr");
+				settings.window.content.appendChild(divider);
+		}
+
+		{ // border options
+			{ // border mode
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Border Mode";
+					container.appendChild(title);
+
+				let input = document.createElement("select");
+					input.options.add(new Option("Solid", 0));
+					input.options.add(new Option("Killer", 1));
+					input.selectedIndex = 0;
+					input.addEventListener("change", () => {
+						switch (input.selectedIndex) {
+							case 0: {
+								killerWalls = false;
+							} break;
+			
+							case 1: {
+								killerWalls = true;
+							} break;
+						}
+					});
+					container.appendChild(input);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+			}
+		}
+
+		{ // divider
+			let divider = document.createElement("hr");
+				settings.window.content.appendChild(divider);
+		}
+
+		{ // render options
+			{ // render mode
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Border Mode";
+					container.appendChild(title);
+
+				let input = document.createElement("select");
+					input.options.add(new Option("Regular", 0));
+					input.options.add(new Option("Color Wireframe", 1));
+					input.options.add(new Option("Wireframe", 2));
+					input.options.add(new Option("Heat", 3));
+					input.selectedIndex = 0;
+					input.addEventListener("change", () => mode = input.selectedIndex);
+					container.appendChild(input);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+			}
+		}
+
+		{ // divider
+			let divider = document.createElement("hr");
+				settings.window.content.appendChild(divider);
+		}
 
 		{ // gravity options
 			{ // gravity enable
@@ -807,72 +913,6 @@ World.add(engine.world, walls);
 					});
 					container.appendChild(input);
 
-					container.appendChild(display);
-			}
-		}
-
-		{ // divider
-			let divider = document.createElement("hr");
-				settings.window.content.appendChild(divider);
-		}
-
-		{ // border options
-			{ // border mode
-				let container = document.createElement("div");
-					container.classList.add("option");
-					settings.window.content.appendChild(container);
-
-				let title = document.createElement("span");
-					title.innerText = "Border Mode";
-					container.appendChild(title);
-
-				let input = document.createElement("select");
-					input.options.add(new Option("Solid", 0));
-					input.options.add(new Option("Killer", 1));
-					input.selectedIndex = 0;
-					input.addEventListener("change", () => {
-						switch (input.selectedIndex) {
-							case 0: {
-								killerWalls = false;
-							} break;
-			
-							case 1: {
-								killerWalls = true;
-							} break;
-						}
-					});
-					container.appendChild(input);
-
-				let display = document.createElement("span");
-					container.appendChild(display);
-			}
-		}
-
-		{ // divider
-			let divider = document.createElement("hr");
-				settings.window.content.appendChild(divider);
-		}
-
-		{ // render options
-			{ // render mode
-				let container = document.createElement("div");
-					container.classList.add("option");
-					settings.window.content.appendChild(container);
-
-				let title = document.createElement("span");
-					title.innerText = "Border Mode";
-					container.appendChild(title);
-
-				let input = document.createElement("select");
-					input.options.add(new Option("Regular", 0));
-					input.options.add(new Option("Color Wireframe", 1));
-					input.options.add(new Option("Wireframe", 2));
-					input.options.add(new Option("Heat", 3));
-					input.selectedIndex = 0;
-					input.addEventListener("change", () => mode = input.selectedIndex);
-					container.appendChild(input);
-
-				let display = document.createElement("span");
 					container.appendChild(display);
 			}
 		}
