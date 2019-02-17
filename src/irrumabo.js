@@ -767,6 +767,29 @@ World.add(engine.world, walls);
 				let display = document.createElement("span");
 					container.appendChild(display);
 			}
+
+			{ // hints enabled
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Hints Enabled";
+					container.appendChild(title);
+
+				let input = document.createElement("input");
+					input.type = "checkbox";
+					input.checked = true;
+					input.addEventListener("change", () => input.checked ? hintObjective.classList.remove("disabled") : hintObjective.classList.add("disabled"));
+					container.appendChild(input);
+
+				let inputHandle = document.createElement("div");
+					inputHandle.classList.add("handle");
+					container.appendChild(inputHandle);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+			}
 		}
 
 		{ // divider
@@ -818,7 +841,7 @@ World.add(engine.world, walls);
 					settings.window.content.appendChild(container);
 
 				let title = document.createElement("span");
-					title.innerText = "Border Mode";
+					title.innerText = "Render Mode";
 					container.appendChild(title);
 
 				let input = document.createElement("select");
@@ -985,7 +1008,7 @@ World.add(engine.world, walls);
 
 			{ // color options
 				let redTitle = document.createElement("div");
-					redTitle.innerText = "Red";
+					redTitle.innerText = "R";
 					color.appendChild(redTitle);
 
 				let redInput = document.createElement("input");
@@ -997,7 +1020,7 @@ World.add(engine.world, walls);
 					color.appendChild(redInput);
 				
 				let greenTitle = document.createElement("div");
-					greenTitle.innerText = "Green";
+					greenTitle.innerText = "G";
 					color.appendChild(greenTitle);
 
 				let greenInput = document.createElement("input");
@@ -1009,7 +1032,7 @@ World.add(engine.world, walls);
 					color.appendChild(greenInput);
 				
 				let blueTitle = document.createElement("div");
-					blueTitle.innerText = "Blue";
+					blueTitle.innerText = "B";
 					color.appendChild(blueTitle);
 
 				let blueInput = document.createElement("input");
@@ -1019,6 +1042,18 @@ World.add(engine.world, walls);
 					blueInput.addEventListener("blur", () => typing = false);
 					blueInput.addEventListener("change", () => { c.blue = blueInput.value; preview.style.background = objecToRgba(c) });
 					color.appendChild(blueInput);
+
+				let alphaTitle = document.createElement("div");
+					alphaTitle.innerText = "A";
+					color.appendChild(alphaTitle);
+
+				let alphaInput = document.createElement("input");
+					alphaInput.type = "text";
+					alphaInput.value = c.alpha;
+					alphaInput.addEventListener("focus", () => typing = true);
+					alphaInput.addEventListener("blur", () => typing = false);
+					alphaInput.addEventListener("change", () => { c.alpha = alphaInput.value; preview.style.background = objecToRgba(c) });
+					color.appendChild(alphaInput);
 			}
 
 			{ // spacer
@@ -1064,7 +1099,7 @@ World.add(engine.world, walls);
 
 				{ // color options
 					let redTitle = document.createElement("div");
-						redTitle.innerText = "Red";
+						redTitle.innerText = "R";
 						color.appendChild(redTitle);
 
 					let redInput = document.createElement("input");
@@ -1076,7 +1111,7 @@ World.add(engine.world, walls);
 						color.appendChild(redInput);
 					
 					let greenTitle = document.createElement("div");
-						greenTitle.innerText = "Green";
+						greenTitle.innerText = "G";
 						color.appendChild(greenTitle);
 
 					let greenInput = document.createElement("input");
@@ -1088,7 +1123,7 @@ World.add(engine.world, walls);
 						color.appendChild(greenInput);
 					
 					let blueTitle = document.createElement("div");
-						blueTitle.innerText = "Blue";
+						blueTitle.innerText = "B";
 						color.appendChild(blueTitle);
 
 					let blueInput = document.createElement("input");
@@ -1098,6 +1133,18 @@ World.add(engine.world, walls);
 						blueInput.addEventListener("blur", () => typing = false);
 						blueInput.addEventListener("change", () => { defaultColors[i].blue = blueInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
 						color.appendChild(blueInput);
+				
+					let alphaTitle = document.createElement("div");
+						alphaTitle.innerText = "A";
+						color.appendChild(alphaTitle);
+	
+					let alphaInput = document.createElement("input");
+						alphaInput.type = "text";
+						alphaInput.value = c.alpha;
+						alphaInput.addEventListener("focus", () => typing = true);
+						alphaInput.addEventListener("blur", () => typing = false);
+						alphaInput.addEventListener("change", () => { defaultColors[i].alpha = alphaInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
+						color.appendChild(alphaInput);
 				}
 
 				{ // spacer

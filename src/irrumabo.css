@@ -186,6 +186,10 @@ input[type="range"]:hover::-moz-range-thumb {
 	pointer-events: none;
 }
 
+.disabled {
+	display: none;
+}
+
 [tooltip]::after {
 	content: attr(tooltip);
 	padding: 0.5em 0.75em;
