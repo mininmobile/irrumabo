@@ -393,7 +393,7 @@ Events.on(engine, "collisionActive", (e) => {
 				clonerBody = c.bodyA;
 			}
 
-			if ((cloner && clonerBody) && cloner.clonerBody == undefined) {
+			if (cloner && clonerBody && !clonerBody.isStatic && cloner.clonerBody == undefined) {
 				cloner.clonerBody = {
 					label: clonerBody.label,
 					density: clonerBody.density,
@@ -405,12 +405,6 @@ Events.on(engine, "collisionActive", (e) => {
 					position: Vector.clone(clonerBody.position),
 					render: clonerBody.render,
 				}
-
-				cloner.clonerInterval = setInterval(() => {
-					let body = Body.create({ ...cloner.clonerBody });
-
-					World.add(engine.world, [body]);
-				}, 50);
 			}
 		}
 
@@ -433,6 +427,16 @@ Events.on(engine, "beforeUpdate", (e) => {
 		let body = bodies[i];
 
 		body.age++;
+
+		if (body.clonerBody && body.clonerInterval == undefined) {
+			body.clonerInterval = setInterval(() => {
+				let x = Body.create({ ...body.clonerBody });
+
+				World.add(engine.world, [x]);
+			}, 50);
+
+			body.event.remove = () => clearInterval(body.clonerInterval);
+		}
 
 		switch (body.label) {
 			case "water": {
@@ -477,7 +481,6 @@ Events.on(engine, "beforeUpdate", (e) => {
 
 			case "fire": {
 				if (body.render.color.red == 155) {
-					console.log(body.render.color)
 					let smoke = Bodies.circle(body.position.x, body.position.y, 10, { ...GasOptions[Gasses.smoke] });
 
 					World.add(engine.world, [smoke]);

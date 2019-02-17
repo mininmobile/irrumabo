@@ -120,6 +120,10 @@
 					},
 					lineWidth: 0,
 					color: undefined
+				},
+				event: {
+					tick: undefined,
+					remove: undefined
 				}
 			};
 
@@ -1484,6 +1488,8 @@
 					Composite.removeBody(composite.composites[i], body, true);
 				}
 			}
+
+			if (body.event.remove) body.event.remove(body);
 
 			return composite;
 		};
