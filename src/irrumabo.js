@@ -1652,9 +1652,12 @@ ctx.font = "1em Arial";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	for (let i = 0; i < bodies.length; i += 1) {
+		let body = bodies[i];
+
+		if (!body.render.visible) continue;
+
 		ctx.beginPath();
 
-		let body = bodies[i];
 		let vertices = body.vertices;
 
 		ctx.moveTo(vertices[0].x, vertices[0].y);
