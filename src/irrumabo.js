@@ -18,7 +18,17 @@ let defaultColors = [
 	{ red: 255,	green: 188,	blue: 66,	alpha: 1 },
 	{ red: 216,	green: 17,	blue: 89,	alpha: 1 },
 	{ red: 143,	green: 45,	blue: 86,	alpha: 1 },
-];
+]
+
+let options = {
+	narrator: false,
+	hints: false,
+	borderMode: 0,
+	renderMode: 0,
+	gravity: true,
+	gravityX: 0,
+	gravityY: 1,
+}
 
 class Objective {
 	constructor(...args) {
