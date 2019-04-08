@@ -756,6 +756,7 @@ World.add(engine.world, walls);
 
 	function generateSettingsList() {
 		settings.window.content.innerHTML = "";
+
 		{ // mission options
 			{ // announcer enable
 				let container = document.createElement("div");
@@ -1276,10 +1277,20 @@ document.addEventListener("keyup", (e) => {
 
 			case "Space": togglePaused(); break;
 
-			case "KeyN": case "Escape": settings.window.window.classList.toggle("hidden"); break;
-			case "Tab": panelTools.classList.add("hidden"); panelToolOptions.classList.add("hidden"); break;
+			case "Escape": {
+				if (!missions.window.window.classList.contains("hidden")) {
+					missions.window.window.classList.add("hidden");
+				}
 
-			case "KeyM": missions.window.window.classList.toggle("hidden"); break;
+				settings.window.window.classList.toggle("hidden");
+			} break;
+
+			case "KeyM": {
+				settings.window.window.classList.add("hidden");
+				missions.window.window.classList.toggle("hidden");
+			} break;
+
+			case "Tab": panelTools.classList.add("hidden"); panelToolOptions.classList.add("hidden"); break;
 			case "KeyE": buttonComponents.click(); break;
 
 			case "Digit1": selectTool(0); break;

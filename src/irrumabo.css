@@ -73,10 +73,6 @@ select {
 	transition: background 0.2s;
 }
 
-select:focus {
-	color: black;
-}
-
 input[type="text"]:hover,     input[type="text"]:focus,
 input[type="password"]:hover, input[type="password"]:focus,
 input[type="button"]:hover,   input[type="button"]:focus,
