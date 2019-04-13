@@ -48,8 +48,9 @@ input[type="button"] {
 	padding: 0.25em 0.75em;
 	background-color: rgba(0, 0, 0, 0.5);
 	color: rgba(255, 255, 255, 0.75);
-	cursor: pointer;
 	border-radius: 1.05em;
+	cursor: pointer;
+	font-weight: normal;
 	transition: background 0.2s;
 }
 

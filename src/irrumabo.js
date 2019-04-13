@@ -21,8 +21,8 @@ let defaultColors = [
 ]
 
 let options = {
-	narrator: false,
-	hints: false,
+	announcer: false,
+	hints: true,
 	borderMode: 0,
 	renderMode: 0,
 	gravity: true,
@@ -769,6 +769,13 @@ World.add(engine.world, walls);
 
 		{ // mission options
 			{ // announcer enable
+				let set = (state) => {
+					input.checked = state;
+					options.announcer = state;
+
+					announcerOptions.enabled = state;
+				}
+
 				let container = document.createElement("div");
 					container.classList.add("option");
 					settings.window.content.appendChild(container);
@@ -779,8 +786,7 @@ World.add(engine.world, walls);
 
 				let input = document.createElement("input");
 					input.type = "checkbox";
-					input.checked = false;
-					input.addEventListener("change", () => announcerOptions.enabled = input.checked);
+					input.addEventListener("change", () => set(input.checked));
 					container.appendChild(input);
 
 				let inputHandle = document.createElement("div");
@@ -789,9 +795,22 @@ World.add(engine.world, walls);
 
 				let display = document.createElement("span");
 					container.appendChild(display);
+
+				set(options.announcer);
 			}
 
 			{ // hints enabled
+				let set = (state) => {
+					input.checked = state;
+					options.hints = state;
+
+					if (state) {
+						hintObjective.classList.remove("disabled");
+					} else {
+						hintObjective.classList.add("disabled");
+					}
+				}
+
 				let container = document.createElement("div");
 					container.classList.add("option");
 					settings.window.content.appendChild(container);
@@ -802,8 +821,8 @@ World.add(engine.world, walls);
 
 				let input = document.createElement("input");
 					input.type = "checkbox";
-					input.checked = true;
-					input.addEventListener("change", () => input.checked ? hintObjective.classList.remove("disabled") : hintObjective.classList.add("disabled"));
+					input.checked = options.hints;
+					input.addEventListener("change", () => set(input.checked));
 					container.appendChild(input);
 
 				let inputHandle = document.createElement("div");
@@ -812,6 +831,8 @@ World.add(engine.world, walls);
 
 				let display = document.createElement("span");
 					container.appendChild(display);
+
+				set(options.hints);
 			}
 		}
 
@@ -822,6 +843,21 @@ World.add(engine.world, walls);
 
 		{ // border options
 			{ // border mode
+				let set = (state) => {
+					input.selectedIndex = state;
+					options.borderMode = state;
+
+					switch (state) {
+						case 0: {
+							killerWalls = false;
+						} break;
+		
+						case 1: {
+							killerWalls = true;
+						} break;
+					}
+				}
+
 				let container = document.createElement("div");
 					container.classList.add("option");
 					settings.window.content.appendChild(container);
@@ -833,22 +869,13 @@ World.add(engine.world, walls);
 				let input = document.createElement("select");
 					input.options.add(new Option("Solid", 0));
 					input.options.add(new Option("Killer", 1));
-					input.selectedIndex = 0;
-					input.addEventListener("change", () => {
-						switch (input.selectedIndex) {
-							case 0: {
-								killerWalls = false;
-							} break;
-			
-							case 1: {
-								killerWalls = true;
-							} break;
-						}
-					});
+					input.addEventListener("change", () => set(input.selectedIndex));
 					container.appendChild(input);
 
 				let display = document.createElement("span");
 					container.appendChild(display);
+
+				set(options.borderMode);
 			}
 		}
 
@@ -859,6 +886,13 @@ World.add(engine.world, walls);
 
 		{ // render options
 			{ // render mode
+				let set = (state) => {
+					input.selectedIndex = state;
+					options.renderMode = state;
+
+					mode = state;
+				}
+
 				let container = document.createElement("div");
 					container.classList.add("option");
 					settings.window.content.appendChild(container);
@@ -872,12 +906,13 @@ World.add(engine.world, walls);
 					input.options.add(new Option("Color Wireframe", 1));
 					input.options.add(new Option("Wireframe", 2));
 					input.options.add(new Option("Heat", 3));
-					input.selectedIndex = 0;
-					input.addEventListener("change", () => mode = input.selectedIndex);
+					input.addEventListener("change", () => set(input.selectedIndex));
 					container.appendChild(input);
 
 				let display = document.createElement("span");
 					container.appendChild(display);
+
+				set(options.renderMode);
 			}
 		}
 
@@ -888,6 +923,13 @@ World.add(engine.world, walls);
 
 		{ // gravity options
 			{ // gravity enable
+				let set = (state) => {
+					input.checked = state;
+					options.gravity = state;
+
+					engine.world.gravity.scale = input.checked ? 0.001 : 0
+				}
+
 				let container = document.createElement("div");
 					container.classList.add("option");
 					settings.window.content.appendChild(container);
@@ -898,8 +940,7 @@ World.add(engine.world, walls);
 
 				let input = document.createElement("input");
 					input.type = "checkbox";
-					input.checked = true;
-					input.addEventListener("change", () => engine.world.gravity.scale = input.checked ? 0.001 : 0);
+					input.addEventListener("change", () => set(input.checked));
 					container.appendChild(input);
 
 				let inputHandle = document.createElement("div");
@@ -908,9 +949,20 @@ World.add(engine.world, walls);
 
 				let display = document.createElement("span");
 					container.appendChild(display);
+
+				set(options.gravity);
 			}
 
 			{ // gravity scale x
+				let set = (_state) => {
+					let state = parseFloat(_state);
+
+					input.value = state;
+					options.gravityX = state;
+
+					display.innerText = engine.world.gravity.x = state;
+				}
+
 				let container = document.createElement("div");
 					container.classList.add("option");
 					settings.window.content.appendChild(container);
@@ -919,24 +971,31 @@ World.add(engine.world, walls);
 					title.innerText = "Gravity Scale X";
 					container.appendChild(title);
 
-				let display = document.createElement("span");
-					display.innerText = "0";
-
 				let input = document.createElement("input");
 					input.type = "range";
 					input.min = "-1";
 					input.max = "1";
 					input.step = "0.25";
-					input.value = "0";
-					input.addEventListener("mousemove", () => {
-						display.innerText = engine.world.gravity.x = input.value;
-					});
+					input.addEventListener("mousemove", () => set(input.value));
 					container.appendChild(input);
 
+				let display = document.createElement("span");
+					display.innerText = input.value;
 					container.appendChild(display);
+
+				set(options.gravityX);
 			}
 
 			{ // gravity scale y
+				let set = (_state) => {
+					let state = parseFloat(_state);
+
+					input.value = state;
+					options.gravityY = state;
+
+					display.innerText = engine.world.gravity.y = state;
+				}
+
 				let container = document.createElement("div");
 					container.classList.add("option");
 					settings.window.content.appendChild(container);
@@ -945,21 +1004,19 @@ World.add(engine.world, walls);
 					title.innerText = "Gravity Scale Y";
 					container.appendChild(title);
 
-				let display = document.createElement("span");
-					display.innerText = "1";
-
 				let input = document.createElement("input");
 					input.type = "range";
 					input.min = "-1";
 					input.max = "1";
 					input.step = "0.25";
-					input.value = "1";
-					input.addEventListener("mousemove", () => {
-						display.innerText = engine.world.gravity.y = input.value;
-					});
+					input.addEventListener("mousemove", () => set(input.value));
 					container.appendChild(input);
 
+				let display = document.createElement("span");
+					display.innerText = input.value;
 					container.appendChild(display);
+
+				set(options.gravityY)
 			}
 		}
 
