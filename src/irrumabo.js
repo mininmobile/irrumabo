@@ -20,14 +20,20 @@ let defaultColors = [
 	{ red: 143,	green: 45,	blue: 86,	alpha: 1 },
 ]
 
-let options = {
-	announcer: false,
-	hints: true,
-	borderMode: 0,
-	renderMode: 0,
-	gravity: true,
-	gravityX: 0,
-	gravityY: 1,
+let options = JSON.parse(localStorage.getItem("options"));
+
+if (!options) {
+	options = {
+		announcer: false,
+		hints: true,
+		borderMode: 0,
+		renderMode: 0,
+		gravity: true,
+		gravityX: 0,
+		gravityY: 1,
+	}
+
+	localStorage.setItem("options", JSON.stringify(options))
 }
 
 class Objective {
@@ -774,6 +780,8 @@ World.add(engine.world, walls);
 					options.announcer = state;
 
 					announcerOptions.enabled = state;
+
+					saveProgress();
 				}
 
 				let container = document.createElement("div");
@@ -809,6 +817,8 @@ World.add(engine.world, walls);
 					} else {
 						hintObjective.classList.add("disabled");
 					}
+
+					saveProgress();
 				}
 
 				let container = document.createElement("div");
@@ -856,6 +866,8 @@ World.add(engine.world, walls);
 							killerWalls = true;
 						} break;
 					}
+
+					saveProgress();
 				}
 
 				let container = document.createElement("div");
@@ -891,6 +903,8 @@ World.add(engine.world, walls);
 					options.renderMode = state;
 
 					mode = state;
+
+					saveProgress();
 				}
 
 				let container = document.createElement("div");
@@ -927,7 +941,9 @@ World.add(engine.world, walls);
 					input.checked = state;
 					options.gravity = state;
 
-					engine.world.gravity.scale = input.checked ? 0.001 : 0
+					engine.world.gravity.scale = input.checked ? 0.001 : 0;
+
+					saveProgress();
 				}
 
 				let container = document.createElement("div");
@@ -961,6 +977,8 @@ World.add(engine.world, walls);
 					options.gravityX = state;
 
 					display.innerText = engine.world.gravity.x = state;
+
+					saveProgress();
 				}
 
 				let container = document.createElement("div");
@@ -994,6 +1012,8 @@ World.add(engine.world, walls);
 					options.gravityY = state;
 
 					display.innerText = engine.world.gravity.y = state;
+
+					saveProgress();
 				}
 
 				let container = document.createElement("div");
@@ -2082,6 +2102,11 @@ function togglePaused(o) {
 	paused ? buttonPause.setAttribute("tooltip", "play") : buttonPause.setAttribute("tooltip", "pause");
 
 	runner.enabled = !paused;
+}
+
+function saveProgress() {
+	localStorage.setItem("options", JSON.stringify(options));
+	localStorage.setItem("homosexual", JSON.stringify({ local: true }));
 }
 
 function getFillStyle(body) {
