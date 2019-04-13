@@ -1037,8 +1037,29 @@ World.add(engine.world, walls);
 				let input = document.createElement("input");
 					input.type = "button";
 					input.value = "Edit Default Colors"
+					input.addEventListener("click", () => generateDefaultColorsSettingsPage());
+					container.appendChild(input);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+			}
+
+			{ // clear settings button
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					container.appendChild(title);
+
+				let input = document.createElement("input");
+					input.type = "button";
+					input.value = "Reset Settings"
 					input.addEventListener("click", () => {
-						generateDefaultColorsSettingsPage();
+						if (confirm("are you sure you want to perform this action? you will lose all progress!")) {
+							localStorage.clear();
+							location.reload();
+						}
 					});
 					container.appendChild(input);
 
