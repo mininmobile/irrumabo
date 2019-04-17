@@ -33,7 +33,7 @@ if (!options) {
 		gravityY: 1,
 	}
 
-	localStorage.setItem("options", JSON.stringify(options))
+	localStorage.setItem("options", JSON.stringify(options));
 }
 
 class Objective {
@@ -326,13 +326,20 @@ let missions = {
 			objectives: ["todo"],
 		},
 	},
-	status: {
+}
+
+missions.status = JSON.parse(localStorage.getItem("progression"));
+
+if (!missions.status) {
+	missions.status = {
 		complete: [],
 		currentMission: undefined,
 		currentObjectiveId: undefined,
 		currentObjective: undefined,
 		xp: 0,
-	},
+	}
+
+	localStorage.setItem("progression", JSON.stringify(missions.status));
 }
 
 // get buttons
@@ -684,6 +691,8 @@ World.add(engine.world, walls);
 				showHint(hint.x, hint.y, hint.w, hint.h, hint.angle, hint.round, hint.balls);
 			});
 		}
+
+		saveProgress();
 	}
 
 	function completeObjective() {
@@ -726,6 +735,8 @@ World.add(engine.world, walls);
 
 				default: {}
 			}
+
+			saveProgress();
 		}
 
 		if (missions.status.currentObjectiveId == mission.objectives.length)
@@ -758,6 +769,8 @@ World.add(engine.world, walls);
 		panelObjective.innerText = "press ESC to open settings";
 
 		hideHint();
+
+		saveProgress();
 	}
 }
 
@@ -2106,6 +2119,7 @@ function togglePaused(o) {
 
 function saveProgress() {
 	localStorage.setItem("options", JSON.stringify(options));
+	localStorage.setItem("progression", JSON.stringify(missions.status));
 	localStorage.setItem("homosexual", JSON.stringify({ local: true }));
 }
 
