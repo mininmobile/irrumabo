@@ -1322,10 +1322,19 @@ World.add(engine.world, walls);
 }
 
 // add button actions
-buttonPause.addEventListener("click", () => { togglePaused() });
-buttonMissions.addEventListener("click", () => { missions.window.window.classList.toggle("hidden") });
-buttonTools.addEventListener("click", () => { panelTools.classList.toggle("hidden"); panelToolOptions.classList.toggle("hidden") });
-buttonComponents.addEventListener("click", () => { panelComponents.classList.toggle("hidden") });
+buttonPause.addEventListener("click", () => togglePaused());
+buttonComponents.addEventListener("click", () => panelComponents.classList.toggle("hidden"));
+
+buttonMissions.addEventListener("click", () => {
+	settings.window.window.classList.add("hidden");
+	missions.window.window.classList.toggle("hidden");
+});
+
+buttonTools.addEventListener("click", () => {
+	panelTools.classList.toggle("hidden");
+	panelToolOptions.classList.toggle("hidden");
+});
+
 
 Object.keys(Tools).forEach((t) => {
 	let button = document.createElement("div");
