@@ -386,6 +386,12 @@ input[type="range"]:hover::-moz-range-thumb {
 	left: 5em;
 	z-index: 9;
 	pointer-events: none;
+	transition: top 0.3s, opacity 0.3s;
+}
+
+.objective-panel-container.hidden {
+	top: -5em;
+	opacity: 0;
 }
 
 .objective-panel {

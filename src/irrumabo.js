@@ -24,6 +24,7 @@ let options = JSON.parse(localStorage.getItem("options"));
 
 if (!options) {
 	options = {
+		missions: true,
 		announcer: false,
 		hints: true,
 		borderMode: 0,
@@ -360,6 +361,7 @@ document.body.appendChild(canvas);
 
 let context = document.getElementById("context");
 
+let wrapperObjective = document.getElementById("objective-wrapper");
 let hintObjective = document.getElementById("objective-hint");
 
 let componentTooltip = document.getElementById("component-tooltip");
@@ -787,7 +789,44 @@ World.add(engine.world, walls);
 		settings.window.content.innerHTML = "";
 
 		{ // mission options
-			{ // announcer enable
+			{ // missions toggle
+				let set = (state) => {
+					input.checked = state;
+					options.missions = state;
+
+					if (state) {
+						wrapperObjective.classList.remove("hidden");
+					} else {
+						wrapperObjective.classList.add("hidden");
+					}
+
+					saveProgress();
+				}
+
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Missions Enabled";
+					container.appendChild(title);
+
+				let input = document.createElement("input");
+					input.type = "checkbox";
+					input.addEventListener("change", () => set(input.checked));
+					container.appendChild(input);
+
+				let inputHandle = document.createElement("div");
+					inputHandle.classList.add("handle");
+					container.appendChild(inputHandle);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+
+				set(options.missions);
+			}
+
+			{ // announcer toggle
 				let set = (state) => {
 					input.checked = state;
 					options.announcer = state;
@@ -820,7 +859,7 @@ World.add(engine.world, walls);
 				set(options.announcer);
 			}
 
-			{ // hints enabled
+			{ // hints toggle
 				let set = (state) => {
 					input.checked = state;
 					options.hints = state;
@@ -1449,8 +1488,13 @@ let mouseConstraint = MouseConstraint.create(engine, {
 
 World.add(engine.world, mouseConstraint);
 
-panelComponents.onmouseenter = panelTools.onmouseenter = panelToolOptions.onmouseenter = () => hoverUi = true;
-panelComponents.onmouseleave = panelTools.onmouseleave = panelToolOptions.onmouseleave = () => hoverUi = false;
+panelComponents.onmouseenter =
+	panelTools.onmouseenter =
+	panelToolOptions.onmouseenter = () => hoverUi = true;
+
+panelComponents.onmouseleave =
+	panelTools.onmouseleave =
+	panelToolOptions.onmouseleave = () => hoverUi = false;
 
 document.addEventListener("mousedown", (e) => {
 	if (e.button == 0) {
