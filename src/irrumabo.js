@@ -1587,6 +1587,9 @@ document.addEventListener("mousemove", (e) => {
 					drawing.endX = mouse.absolute.x;
 					drawing.endY = mouse.absolute.y;
 				}
+
+				drawing.reverseX = mouse.absolute.x < drawing.startX;
+				drawing.reverseY = mouse.absolute.y < drawing.startY;
 			} break;
 
 			case Tools.gas: {
@@ -1606,6 +1609,9 @@ document.addEventListener("mousemove", (e) => {
 							drawing.endX = mouse.absolute.x;
 							drawing.endY = mouse.absolute.y;
 						}
+
+						drawing.reverseX = mouse.absolute.x < drawing.startX;
+						drawing.reverseY = mouse.absolute.y < drawing.startY;
 					}
 				} else {
 					drawing.startX = -1
@@ -1640,6 +1646,20 @@ document.addEventListener("mouseup", (e) => {
 		switch (tool) {
 			case Tools.gas: {
 				if (ctrl) {
+					if (drawing.reverseX) {
+						let size = drawing.startX - drawing.endX;
+
+						drawing.startX -= size;
+						drawing.endX -= size;
+					}
+
+					if (drawing.reverseY) {
+						let size = drawing.startY - drawing.endY;
+
+						drawing.startY -= size;
+						drawing.endY -= size;
+					}
+
 					let gas = Composites.stack(
 							drawing.startX,
 							drawing.startY,
@@ -1665,6 +1685,20 @@ document.addEventListener("mouseup", (e) => {
 			} break;
 
 			case Tools.liquid: {
+				if (drawing.reverseX) {
+					let size = drawing.startX - drawing.endX;
+
+					drawing.startX -= size;
+					drawing.endX -= size;
+				}
+
+				if (drawing.reverseY) {
+					let size = drawing.startY - drawing.endY;
+
+					drawing.startY -= size;
+					drawing.endY -= size;
+				}
+
 				let water = Composites.stack(
 						drawing.startX,
 						drawing.startY,
@@ -1689,6 +1723,20 @@ document.addEventListener("mouseup", (e) => {
 			} break;
 
 			case Tools.rectangle: {
+				if (drawing.reverseX) {
+					let size = drawing.startX - drawing.endX;
+
+					drawing.startX -= size;
+					drawing.endX -= size;
+				}
+
+				if (drawing.reverseY) {
+					let size = drawing.startY - drawing.endY;
+
+					drawing.startY -= size;
+					drawing.endY -= size;
+				}
+
 				World.add(engine.world, [
 					Bodies.rectangle(
 						drawing.startX + (Math.abs(drawing.endX - drawing.startX) / 2),
@@ -1932,62 +1980,82 @@ ctx.font = "1em Arial";
 		});
 	}
 
-	{ // show action
-		if (tool == Tools.gas && drawing) {
-			if (drawing.startX != -1) {
-				ctx.strokeStyle = "#ddd";
-				ctx.strokeRect(
-					drawing.startX,
-					drawing.startY,
-					Math.floor(Math.abs(drawing.endX - drawing.startX) / 20) * 20,
-					Math.floor(Math.abs(drawing.endY - drawing.startY) / 20) * 20);
-				ctx.fillStyle = "#ddd";
-				ctx.fillText(
-					`${Math.floor(Math.abs(drawing.endX - drawing.startX) / 20)}x${Math.floor(Math.abs(drawing.endY - drawing.startY) / 20)}`,
-					drawing.startX,
-					drawing.startY - 5);
+	if (drawing) { // show action
+		let d = { ...drawing }
+
+		if (tool != Tools.circle) {
+			if (d.reverseX) {
+				let size = d.startX - d.endX;
+	
+				d.startX -= size;
+				d.endX -= size;
+			}
+	
+			if (d.reverseY) {
+				let size = d.startY - d.endY;
+	
+				d.startY -= size;
+				d.endY -= size;
 			}
 		}
 
-		if (tool == Tools.liquid && drawing) {
-			ctx.strokeStyle = "#ddd";
-			ctx.strokeRect(
-				drawing.startX,
-				drawing.startY,
-				Math.floor(Math.abs(drawing.endX - drawing.startX) / 20) * 20,
-				Math.floor(Math.abs(drawing.endY - drawing.startY) / 20) * 20);
-			ctx.fillStyle = "#ddd";
-			ctx.fillText(
-				`${Math.floor(Math.abs(drawing.endX - drawing.startX) / 20)}x${Math.floor(Math.abs(drawing.endY - drawing.startY) / 20)}`,
-				drawing.startX,
-				drawing.startY - 5);
-		}
-
-		if (tool == Tools.rectangle && drawing) {
-			ctx.strokeStyle = "#ddd";
-			ctx.strokeRect(drawing.startX, drawing.startY, Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY));
-			ctx.fillStyle = "#ddd";
-			ctx.fillText(
-				`${Math.abs(drawing.endX - drawing.startX)}x${Math.abs(drawing.endY - drawing.startY)}`,
-				drawing.startX,
-				drawing.startY - 5);
-		}
-
-		if (tool == Tools.circle && drawing) {
-			ctx.strokeStyle = "#ddd";
-			ctx.beginPath();
-			ctx.ellipse(
-				drawing.startX,
-				drawing.startY,
-				Math.max(Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY)),
-				Math.max(Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY)),
-				0, 0, Math.PI * 2);
-			ctx.stroke();
-			ctx.fillStyle = "#ddd";
-			ctx.fillText(
-				`r${Math.max(Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY))}`,
-				drawing.startX,
-				drawing.startY);
+		switch (tool) {
+			case Tools.gas: {
+				if (d.startX != -1) {
+					ctx.strokeStyle = "#ddd";
+					ctx.strokeRect(
+						Math.abs(d.startX),
+						Math.abs(d.startY),
+						Math.floor(Math.abs(d.endX - d.startX) / 20) * 20,
+						Math.floor(Math.abs(d.endY - d.startY) / 20) * 20);
+					ctx.fillStyle = "#ddd";
+					ctx.fillText(
+						`${Math.floor(Math.abs(d.endX - d.startX) / 20)}x${Math.floor(Math.abs(d.endY - d.startY) / 20)}`,
+						d.startX,
+						d.startY - 5);
+				}
+			} break;
+	
+			case Tools.liquid: {
+				ctx.strokeStyle = "#ddd";
+				ctx.strokeRect(
+					Math.abs(d.startX),
+					Math.abs(d.startY),
+					Math.floor(Math.abs(d.endX - d.startX) / 20) * 20,
+					Math.floor(Math.abs(d.endY - d.startY) / 20) * 20);
+				ctx.fillStyle = "#ddd";
+				ctx.fillText(
+					`${Math.floor(Math.abs(d.endX - d.startX) / 20)}x${Math.floor(Math.abs(d.endY - d.startY) / 20)}`,
+					d.startX,
+					d.startY - 5);
+			} break;
+	
+			case Tools.rectangle: {
+				ctx.strokeStyle = "#ddd";
+				ctx.strokeRect(d.startX, d.startY, Math.abs(d.endX - d.startX), Math.abs(d.endY - d.startY));
+				ctx.fillStyle = "#ddd";
+				ctx.fillText(
+					`${Math.abs(d.endX - d.startX)}x${Math.abs(d.endY - d.startY)}`,
+					d.startX,
+					d.startY - 5);
+			} break;
+	
+			case Tools.circle: {
+				ctx.strokeStyle = "#ddd";
+				ctx.beginPath();
+				ctx.ellipse(
+					d.startX,
+					d.startY,
+					Math.max(Math.abs(d.endX - d.startX), Math.abs(d.endY - d.startY)),
+					Math.max(Math.abs(d.endX - d.startX), Math.abs(d.endY - d.startY)),
+					0, 0, Math.PI * 2);
+				ctx.stroke();
+				ctx.fillStyle = "#ddd";
+				ctx.fillText(
+					`r${Math.max(Math.abs(d.endX - d.startX), Math.abs(d.endY - d.startY))}`,
+					d.startX,
+					d.startY);
+			} break;
 		}
 	}
 })();
