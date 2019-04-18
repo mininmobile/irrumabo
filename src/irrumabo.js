@@ -199,7 +199,7 @@ const MyComponents = [
 			{ type: "rectangle", x: 122, y: 225, w: 75, h: 25, options: { angle: toRad(45), isStatic: true, render: { color: { red: 0, green: 50, blue: 150, alpha: 1 } } } },
 			{ type: "rectangle", x: 4, y: 255, w: 191, h: 25, options: { isStatic: true, render: { color: { red: 0, green: 50, blue: 150, alpha: 1 } } } },
 			{ type: "rectangle", x: 75, y: 220, w: 50, h: 15, options: { isStatic: true,
-				clonerBody: { ...GasOptions[Gasses.fire], vertices: Bodies.circle(0, 0, 10).vertices, position: { x: 100, y: 210 } }, render: { visible: false } } }
+				clonerBody: { ...GasOptions[Gasses.fire], vertices: Bodies.circle(0, 0, 10).vertices.map((x) => { return { ...x, body: undefined }}), position: { x: 100, y: 210 } }, render: { visible: false } } }
 		],
 	},
 ];
@@ -1811,9 +1811,16 @@ document.addEventListener("mouseup", (e) => {
 
 	if (componentDrag) {
 		if (!hoverUi) {
-			componentDrag.parts.forEach((p) => {
+			componentDrag.parts.forEach((part) => {
+				let p = JSON.parse(JSON.stringify(part));
+
 				switch (p.type) {
 					case "rectangle": {
+						if (p.options.clonerBody) {
+							p.options.clonerBody.position.x += e.clientX;
+							p.options.clonerBody.position.y += e.clientY;
+						}
+
 						let body = Bodies.rectangle(p.x + e.clientX + (p.w / 2), p.y + e.clientY + (p.h / 2), p.w, p.h, p.options);
 
 						World.add(engine.world, [body]);
