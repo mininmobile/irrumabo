@@ -184,7 +184,7 @@ input[type="range"]:hover::-moz-range-thumb {
 }
 
 .disabled {
-	display: none;
+	display: none !important;
 }
 
 [tooltip]::after {
@@ -347,6 +347,18 @@ input[type="range"]:hover::-moz-range-thumb {
 	margin-bottom: 10%;
 	margin-left: 10%;
 	background: url("./img/missions.svg") center / contain;
+}
+
+.settings {
+	top: 0;
+	right: 0;
+	border-bottom-left-radius: 3em;
+}
+
+.settings::before {
+	margin-bottom: 10%;
+	margin-left: 10%;
+	background: url("./img/settings.svg") center / contain;
 }
 
 .tools {

@@ -346,6 +346,7 @@ if (!missions.status) {
 // get buttons
 let buttonPause = document.getElementById("pause");
 let buttonMissions = document.getElementById("missions");
+let buttonSettings = document.getElementById("settings");
 let buttonTools = document.getElementById("tools");
 let buttonComponents = document.getElementById("components");
 // get panels
@@ -354,7 +355,7 @@ let panelToolOptions = document.getElementById("tools-option-panel");
 let panelComponents = document.getElementById("components-panel");
 let panelObjective = document.getElementById("mission-objective");
 
-let canvas = document.createElement('canvas');
+let canvas = document.createElement("canvas");
 canvas.width = document.body.scrollWidth;
 canvas.height = document.body.scrollHeight;
 document.body.appendChild(canvas);
@@ -796,8 +797,14 @@ World.add(engine.world, walls);
 
 					if (state) {
 						wrapperObjective.classList.remove("hidden");
+
+						buttonMissions.classList.remove("disabled");
+						buttonSettings.classList.add("disabled");
 					} else {
 						wrapperObjective.classList.add("hidden");
+
+						buttonMissions.classList.add("disabled");
+						buttonSettings.classList.remove("disabled");
 					}
 
 					saveProgress();
@@ -1363,6 +1370,11 @@ World.add(engine.world, walls);
 // add button actions
 buttonPause.addEventListener("click", () => togglePaused());
 buttonComponents.addEventListener("click", () => panelComponents.classList.toggle("hidden"));
+
+buttonSettings.addEventListener("click", () => {
+	missions.window.window.classList.add("hidden");
+	settings.window.window.classList.toggle("hidden");
+});
 
 buttonMissions.addEventListener("click", () => {
 	settings.window.window.classList.add("hidden");
