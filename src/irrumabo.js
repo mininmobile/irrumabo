@@ -28,6 +28,7 @@ if (!options) {
 		announcer: false,
 		hints: true,
 		borderMode: 0,
+		fps: false,
 		renderMode: 0,
 		gravity: true,
 		gravityX: 0,
@@ -391,6 +392,7 @@ let shift = false;
 let ctrl = false;
 let paused = false;
 
+let lastframe = new Date();
 let drawing = undefined;
 let componentDrag = undefined;
 let contextClick = false;
@@ -956,6 +958,37 @@ World.add(engine.world, walls);
 		}
 
 		{ // render options
+			{ // fps toggle
+				let set = (state) => {
+					input.checked = state;
+					options.fps = state;
+
+					saveProgress();
+				}
+
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Show FPS Counter";
+					container.appendChild(title);
+
+				let input = document.createElement("input");
+					input.type = "checkbox";
+					input.addEventListener("change", () => set(input.checked));
+					container.appendChild(input);
+
+				let inputHandle = document.createElement("div");
+					inputHandle.classList.add("handle");
+					container.appendChild(inputHandle);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+
+				set(options.fps);
+			}
+
 			{ // render mode
 				let set = (state) => {
 					input.selectedIndex = state;
@@ -1910,7 +1943,7 @@ ctx.font = "1em Arial";
 	for (let i = 0; i < bodies.length; i += 1) {
 		let body = bodies[i];
 
-		if (!body.render.visible) continue;
+		if (!body.render.visible && mode == RenderMode.regular) continue;
 
 		ctx.beginPath();
 
@@ -1951,6 +1984,18 @@ ctx.font = "1em Arial";
 				ctx.fill();
 			} break;
 		}
+	}
+
+	if (options.fps) {
+		let thisframe = new Date();
+		let fps = Math.round(1000 / (thisframe - lastframe));
+		lastframe = thisframe;
+
+		ctx.fillStyle = "#ddd";
+		ctx.fillText(
+			`${fps} fps`,
+			em(5),
+			em(1));
 	}
 
 	if (mode == RenderMode.heat) {
@@ -2276,7 +2321,6 @@ function stopDrawing() {
 function saveProgress() {
 	localStorage.setItem("options", JSON.stringify(options));
 	localStorage.setItem("progression", JSON.stringify(missions.status));
-	localStorage.setItem("homosexual", JSON.stringify({ local: true }));
 }
 
 function getFillStyle(body) {
@@ -2293,6 +2337,10 @@ function toDeg(rad) {
 
 function toRad(deg) {
 	return deg * (Math.PI / 180);
+}
+
+function em(x = 1) {
+	return x * parseFloat(getComputedStyle(document.body).fontSize);
 }
 
 function utilenum(...args) {
