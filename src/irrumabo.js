@@ -1459,11 +1459,15 @@ document.addEventListener("keyup", (e) => {
 			case "Space": togglePaused(); break;
 
 			case "Escape": {
-				if (!missions.window.window.classList.contains("hidden")) {
-					missions.window.window.classList.add("hidden");
+				if (drawing) {
+					stopDrawing();
+				} else {
+					if (!missions.window.window.classList.contains("hidden")) {
+						missions.window.window.classList.add("hidden");
+					}
+	
+					settings.window.window.classList.toggle("hidden");
 				}
-
-				settings.window.window.classList.toggle("hidden");
 			} break;
 
 			case "KeyM": {
@@ -1493,7 +1497,7 @@ let mouseConstraint = MouseConstraint.create(engine, {
 	constraint: {
 		stiffness: 1,
 		render: {
-			visible: false
+			visible: true,
 		}
 	}
 });
@@ -1635,8 +1639,6 @@ document.addEventListener("mouseup", (e) => {
 	if (drawing) {
 		switch (tool) {
 			case Tools.gas: {
-				clearInterval(drawing.interval);
-
 				if (ctrl) {
 					let gas = Composites.stack(
 							drawing.startX,
@@ -1710,7 +1712,7 @@ document.addEventListener("mouseup", (e) => {
 			} break;
 		}
 
-		drawing = undefined;
+		stopDrawing();
 	} else if (contextBegin) {
 		let bodies = Composite.allBodies(engine.world);
 
@@ -1851,6 +1853,8 @@ ctx.font = "1em Arial";
 	let bodies = Composite.allBodies(engine.world);
 
 	window.requestAnimationFrame(render);
+
+	mouseConstraint.collisionFilter.category = tool == Tools.drag ? 0x0001 : 0x0000;
 
 	ctx.fillStyle = "#161621";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -2093,6 +2097,8 @@ function generateContextMenu(menu, items) {
 }
 
 function selectTool(t) {
+	stopDrawing();
+
 	tool = t;
 
 	for (let i = 0; i < panelTools.children.length; i++) {
@@ -2187,6 +2193,16 @@ function togglePaused(o) {
 	paused ? buttonPause.setAttribute("tooltip", "play") : buttonPause.setAttribute("tooltip", "pause");
 
 	runner.enabled = !paused;
+}
+
+function stopDrawing() {
+	if (drawing == undefined) return;
+
+	if (drawing.interval) {
+		clearInterval(drawing.interval);
+	}
+
+	drawing = undefined;
 }
 
 function saveProgress() {
