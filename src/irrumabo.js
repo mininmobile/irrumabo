@@ -393,6 +393,7 @@ let ctrl = false;
 let paused = false;
 
 let lastframe = new Date();
+let lastfps = 60;
 let drawing = undefined;
 let componentDrag = undefined;
 let contextClick = false;
@@ -559,7 +560,7 @@ let walls = [
 	Bodies.rectangle(document.body.scrollWidth / 2, -50, document.body.scrollWidth, 100, { isStatic: true, label: "wall" }),
 	// bottom
 	Bodies.rectangle(document.body.scrollWidth / 2, document.body.scrollHeight + 50, document.body.scrollWidth, 100, { isStatic: true, label: "wall" }),
-];
+]
 
 World.add(engine.world, walls);
 
@@ -1986,18 +1987,6 @@ ctx.font = "1em Arial";
 		}
 	}
 
-	if (options.fps) {
-		let thisframe = new Date();
-		let fps = Math.round(1000 / (thisframe - lastframe));
-		lastframe = thisframe;
-
-		ctx.fillStyle = "#ddd";
-		ctx.fillText(
-			`${fps} fps`,
-			em(5),
-			em(1));
-	}
-
 	if (mode == RenderMode.heat) {
 		let bodies = Composite.allBodies(engine.world);
 
@@ -2102,6 +2091,19 @@ ctx.font = "1em Arial";
 					d.startY);
 			} break;
 		}
+	}
+
+	if (options.fps) {
+		let thisframe = new Date();
+		let fps = (lastfps + (1000 / (thisframe - lastframe))) / 2;
+		lastframe = thisframe;
+		lastfps = fps;
+
+		ctx.fillStyle = "#ddd";
+		ctx.fillText(
+			`${Math.round(fps)} fps`,
+			em(5),
+			em(1));
 	}
 })();
 
