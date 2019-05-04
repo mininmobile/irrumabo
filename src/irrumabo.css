@@ -597,12 +597,12 @@ input[type="range"]:hover::-moz-range-thumb {
 	z-index: 99;
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	border-radius: 3em;
-	transition: width 0.4s, height 0.4s, opacity 0.3s;
+	transition: left 0.4s, top 0.4s, width 0.4s, height 0.4s, opacity 0.3s;
 }
 
 .window.hidden {
-	width: 0;
-	height: 0;
+	width: 0 !important;
+	height: 0 !important;
 	min-width: 0;
 	min-height: 0;
 	opacity: 0;
@@ -621,6 +621,7 @@ input[type="range"]:hover::-moz-range-thumb {
 }
 
 .helw {
+	/* default values */
 	width: 50vw;
 	height: 33.33vh;
 }

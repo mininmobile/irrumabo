@@ -27,6 +27,7 @@ if (!options) {
 		missions: true,
 		announcer: false,
 		hints: true,
+		help: true,
 		borderMode: 0,
 		fps: false,
 		renderMode: 0,
@@ -283,6 +284,38 @@ let help = {
 		window: document.getElementById("help-window"),
 		close: document.getElementById("help-close"),
 		content: document.getElementById("help-content"),
+	},
+	categories: [
+		"welcome",
+		"missions",
+		"tools",
+		"components",
+		"shortcuts",
+	],
+	data: {
+		"welcome": {
+			title: "Irrumabo for Dummies; An Introduction",
+			description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem maxime facere accusamus facilis, nihil et illo optio saepe officia, ad architecto voluptatibus aperiam ab qui error placeat asperiores suscipit earum?",
+		},
+		"missions": {
+			title: "How to Play and Create Missions",
+			element: "missions",
+			description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem maxime facere accusamus facilis, nihil et illo optio saepe officia, ad architecto voluptatibus aperiam ab qui error placeat asperiores suscipit earum?",
+		},
+		"tools": {
+			title: "Usings and Mastering Tools",
+			element: "tools",
+			description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem maxime facere accusamus facilis, nihil et illo optio saepe officia, ad architecto voluptatibus aperiam ab qui error placeat asperiores suscipit earum?",
+		},
+		"components": {
+			title: "Using and Creating Components",
+			element: "components",
+			description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem maxime facere accusamus facilis, nihil et illo optio saepe officia, ad architecto voluptatibus aperiam ab qui error placeat asperiores suscipit earum?",
+		},
+		"shortcuts": {
+			title: "Keyboard Shortcuts",
+			description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem maxime facere accusamus facilis, nihil et illo optio saepe officia, ad architecto voluptatibus aperiam ab qui error placeat asperiores suscipit earum?",
+		},
 	},
 }
 
@@ -545,7 +578,7 @@ Events.on(engine, "beforeUpdate", (e) => {
 					body.render.color.alpha -= 0.006;
 					body.render.fillStyle = getFillStyle(body);
 				}
-				
+
 				if (body.temperature < 100) {
 					World.remove(engine.world, body, true);
 				}
@@ -574,9 +607,37 @@ World.add(engine.world, walls);
 
 // initialize dialogs
 { // help window
-	help.window.window.style.left = `${document.body.scrollWidth / 4}px`;
-	help.window.window.style.top = `${document.body.scrollHeight / 3}px`;
 	help.window.close.addEventListener("click", () => help.window.window.classList.add("hidden"));
+
+	if (options.help) {
+		help.window.window.classList.remove("hidden");
+	}
+
+	{ // update help
+		generateHelpMenu();
+	}
+
+	function generateHelpMenu() {
+		help.window.window.style.width = `${document.body.scrollWidth / 2}px`;
+		help.window.window.style.height = `${document.body.scrollHeight / 3}px`;
+		help.window.window.style.left = `${document.body.scrollWidth / 4}px`;
+		help.window.window.style.top = `${document.body.scrollHeight / 3}px`;
+
+		help.categories.forEach((category) => {
+			let button = document.createElement("div");
+				button.classList.add("button", category);
+				help.window.content.appendChild(button);
+
+			let image = document.createElement("div");
+				image.classList.add("image");
+				button.appendChild(image);
+
+			let text = document.createElement("div");
+				text.classList.add("text");
+				text.innerText = category.substring(0, 1).toUpperCase() + category.substring(1).toLowerCase();
+				button.appendChild(text);
+		});
+	}
 }
 
 { // missions window
@@ -920,6 +981,38 @@ World.add(engine.world, walls);
 
 				set(options.hints);
 			}
+
+			{ // show help on launch toggle
+				let set = (state) => {
+					input.checked = state;
+					options.help = state;
+
+					saveProgress();
+				}
+
+				let container = document.createElement("div");
+					container.classList.add("option");
+					settings.window.content.appendChild(container);
+
+				let title = document.createElement("span");
+					title.innerText = "Show Help on Launch";
+					container.appendChild(title);
+
+				let input = document.createElement("input");
+					input.type = "checkbox";
+					input.checked = options.help;
+					input.addEventListener("change", () => set(input.checked));
+					container.appendChild(input);
+
+				let inputHandle = document.createElement("div");
+					inputHandle.classList.add("handle");
+					container.appendChild(inputHandle);
+
+				let display = document.createElement("span");
+					container.appendChild(display);
+
+				set(options.help);
+			}
 		}
 
 		{ // divider
@@ -937,7 +1030,7 @@ World.add(engine.world, walls);
 						case 0: {
 							killerWalls = false;
 						} break;
-		
+
 						case 1: {
 							killerWalls = true;
 						} break;
@@ -1246,7 +1339,7 @@ World.add(engine.world, walls);
 					redInput.addEventListener("blur", () => typing = false);
 					redInput.addEventListener("change", () => { c.red = redInput.value; preview.style.background = objecToRgba(c) });
 					color.appendChild(redInput);
-				
+
 				let greenTitle = document.createElement("div");
 					greenTitle.innerText = "G";
 					color.appendChild(greenTitle);
@@ -1258,7 +1351,7 @@ World.add(engine.world, walls);
 					greenInput.addEventListener("blur", () => typing = false);
 					greenInput.addEventListener("change", () => { c.green = greenInput.value; preview.style.background = objecToRgba(c) });
 					color.appendChild(greenInput);
-				
+
 				let blueTitle = document.createElement("div");
 					blueTitle.innerText = "B";
 					color.appendChild(blueTitle);
@@ -1337,7 +1430,7 @@ World.add(engine.world, walls);
 						redInput.addEventListener("blur", () => typing = false);
 						redInput.addEventListener("change", () => { defaultColors[i].red = redInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
 						color.appendChild(redInput);
-					
+
 					let greenTitle = document.createElement("div");
 						greenTitle.innerText = "G";
 						color.appendChild(greenTitle);
@@ -1349,7 +1442,7 @@ World.add(engine.world, walls);
 						greenInput.addEventListener("blur", () => typing = false);
 						greenInput.addEventListener("change", () => { defaultColors[i].green = greenInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
 						color.appendChild(greenInput);
-					
+
 					let blueTitle = document.createElement("div");
 						blueTitle.innerText = "B";
 						color.appendChild(blueTitle);
@@ -1361,11 +1454,11 @@ World.add(engine.world, walls);
 						blueInput.addEventListener("blur", () => typing = false);
 						blueInput.addEventListener("change", () => { defaultColors[i].blue = blueInput.value; preview.style.background = objecToRgba(defaultColors[i]) });
 						color.appendChild(blueInput);
-				
+
 					let alphaTitle = document.createElement("div");
 						alphaTitle.innerText = "A";
 						color.appendChild(alphaTitle);
-	
+
 					let alphaInput = document.createElement("input");
 						alphaInput.type = "text";
 						alphaInput.value = c.alpha;
@@ -2041,14 +2134,14 @@ ctx.font = "1em Arial";
 		if (tool != Tools.circle) {
 			if (d.reverseX) {
 				let size = d.startX - d.endX;
-	
+
 				d.startX -= size;
 				d.endX -= size;
 			}
-	
+
 			if (d.reverseY) {
 				let size = d.startY - d.endY;
-	
+
 				d.startY -= size;
 				d.endY -= size;
 			}
@@ -2070,7 +2163,7 @@ ctx.font = "1em Arial";
 						d.startY - 5);
 				}
 			} break;
-	
+
 			case Tools.liquid: {
 				ctx.strokeStyle = "#ddd";
 				ctx.strokeRect(
@@ -2084,7 +2177,7 @@ ctx.font = "1em Arial";
 					d.startX,
 					d.startY - 5);
 			} break;
-	
+
 			case Tools.rectangle: {
 				ctx.strokeStyle = "#ddd";
 				ctx.strokeRect(d.startX, d.startY, Math.abs(d.endX - d.startX), Math.abs(d.endY - d.startY));
@@ -2094,7 +2187,7 @@ ctx.font = "1em Arial";
 					d.startX,
 					d.startY - 5);
 			} break;
-	
+
 			case Tools.circle: {
 				ctx.strokeStyle = "#ddd";
 				ctx.beginPath();
