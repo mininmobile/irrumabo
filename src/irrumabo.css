@@ -622,7 +622,7 @@ input[type="range"]:hover::-moz-range-thumb {
 
 .helw {
 	/* default values */
-	width: 50vw;
+	width: 75vw;
 	height: 33.33vh;
 }
 
@@ -663,6 +663,41 @@ input[type="range"]:hover::-moz-range-thumb {
 	border-bottom-left-radius: 3em;
 	border-bottom-right-radius: 3em;
 	overflow: auto;
+}
+
+/* help window */
+
+.helw .content {
+	padding: 1em;
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.helw .content .button {
+	margin: 1em;
+	background: rgba(0, 0, 0, 0.4);
+	border-radius: 2em;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	flex: 1;
+	cursor: pointer;
+	transition: background 0.3s;
+}
+
+.helw .content .button:hover {
+	background: rgba(0, 0, 0, 0.8);
+}
+
+.helw .content .button .image {
+	margin: 2em;
+	flex: 1;
+}
+
+.helw .content .button .text {
+	margin: 2em;
 }
 
 /* settings window */

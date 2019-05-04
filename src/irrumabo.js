@@ -618,14 +618,14 @@ World.add(engine.world, walls);
 	}
 
 	function generateHelpMenu() {
-		help.window.window.style.width = `${document.body.scrollWidth / 2}px`;
+		help.window.window.style.width = `${(document.body.scrollWidth / 4) * 3}px`;
 		help.window.window.style.height = `${document.body.scrollHeight / 3}px`;
-		help.window.window.style.left = `${document.body.scrollWidth / 4}px`;
+		help.window.window.style.left = `${document.body.scrollWidth / 8}px`;
 		help.window.window.style.top = `${document.body.scrollHeight / 3}px`;
 
 		help.categories.forEach((category) => {
 			let button = document.createElement("div");
-				button.classList.add("button", category);
+				button.classList.add("button", `category-${category}`);
 				help.window.content.appendChild(button);
 
 			let image = document.createElement("div");
