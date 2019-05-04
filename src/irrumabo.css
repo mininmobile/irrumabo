@@ -225,12 +225,19 @@ input[type="range"]:hover::-moz-range-thumb {
 @keyframes doottoot {
 	0% {
 		left: 50%;
+		top: 0;
 		opacity: 0;
+	}
+
+	25% {
+		top: 5%;
+		opacity: 1;
 	}
 
 	100% {
 		left: 100%;
-		opacity: 1;
+		top: 0;
+		opacity: 0;
 	}
 }
 
@@ -604,13 +611,18 @@ input[type="range"]:hover::-moz-range-thumb {
 }
 
 .setw {
-	width: 33.333vw;
+	width: 33.33vw;
 	height: 50vh;
 }
 
 .misw {
-	width: 33.333vw;
+	width: 33.33vw;
 	height: 50vh;
+}
+
+.helw {
+	width: 50vw;
+	height: 33.33vh;
 }
 
 .titlebar {

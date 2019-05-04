@@ -278,6 +278,14 @@ let settings = {
 	},
 }
 
+let help = {
+	window: {
+		window: document.getElementById("help-window"),
+		close: document.getElementById("help-close"),
+		content: document.getElementById("help-content"),
+	},
+}
+
 let missions = {
 	window: {
 		window: document.getElementById("missions-window"),
@@ -565,10 +573,16 @@ let walls = [
 World.add(engine.world, walls);
 
 // initialize dialogs
+{ // help window
+	help.window.window.style.left = `${document.body.scrollWidth / 4}px`;
+	help.window.window.style.top = `${document.body.scrollHeight / 3}px`;
+	help.window.close.addEventListener("click", () => help.window.window.classList.add("hidden"));
+}
+
 { // missions window
 	missions.window.window.style.left = `${document.body.scrollWidth / 3}px`;
 	missions.window.window.style.top = `${document.body.scrollHeight / 4}px`;
-	missions.window.close.addEventListener("click", () => { missions.window.window.classList.add("hidden") });
+	missions.window.close.addEventListener("click", () => missions.window.window.classList.add("hidden"));
 
 	{ // update missions
 		generateMissionList();
@@ -783,7 +797,7 @@ World.add(engine.world, walls);
 { // settings window
 	settings.window.window.style.left = `${document.body.scrollWidth / 3}px`;
 	settings.window.window.style.top = `${document.body.scrollHeight / 4}px`;
-	settings.window.close.addEventListener("click", () => { settings.window.window.classList.add("hidden") });
+	settings.window.close.addEventListener("click", () => settings.window.window.classList.add("hidden"));
 
 	{ // update settings
 		generateSettingsList();
@@ -1407,11 +1421,13 @@ buttonComponents.addEventListener("click", () => panelComponents.classList.toggl
 
 buttonSettings.addEventListener("click", () => {
 	missions.window.window.classList.add("hidden");
+	help.window.window.classList.add("hidden");
 	settings.window.window.classList.toggle("hidden");
 });
 
 buttonMissions.addEventListener("click", () => {
 	settings.window.window.classList.add("hidden");
+	help.window.window.classList.add("hidden");
 	missions.window.window.classList.toggle("hidden");
 });
 
@@ -1496,17 +1512,22 @@ document.addEventListener("keyup", (e) => {
 				if (drawing) {
 					stopDrawing();
 				} else {
-					if (!missions.window.window.classList.contains("hidden")) {
-						missions.window.window.classList.add("hidden");
-					}
-	
+					missions.window.window.classList.add("hidden");
+					help.window.window.classList.add("hidden");
 					settings.window.window.classList.toggle("hidden");
 				}
 			} break;
 
 			case "KeyM": {
 				settings.window.window.classList.add("hidden");
+				help.window.window.classList.add("hidden");
 				missions.window.window.classList.toggle("hidden");
+			} break;
+
+			case "F1": {
+				settings.window.window.classList.add("hidden");
+				missions.window.window.classList.add("hidden");
+				help.window.window.classList.toggle("hidden");
 			} break;
 
 			case "Tab": panelTools.classList.add("hidden"); panelToolOptions.classList.add("hidden"); break;
