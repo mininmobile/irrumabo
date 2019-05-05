@@ -179,12 +179,30 @@ input[type="range"]:hover::-moz-range-thumb {
 	100% { opacity: 1; }
 }
 
+@keyframes highlighted {
+	0% {
+		box-shadow: 0 0 0 transparent;
+	}
+
+	50% {
+		box-shadow: 0 0 2em white;
+	}
+
+	100% {
+		box-shadow: 0 0 0 transparent;
+	}
+}
+
 .hidden {
 	pointer-events: none;
 }
 
 .disabled {
 	display: none !important;
+}
+
+.highlighted {
+	animation: highlighted 2s infinite ease-in-out;
 }
 
 [tooltip]::after {
@@ -667,14 +685,14 @@ input[type="range"]:hover::-moz-range-thumb {
 
 /* help window */
 
-.helw .content {
+.help-menu-container {
 	padding: 1em;
 	display: flex;
 	justify-content: center;
 	overflow: hidden;
 }
 
-.helw .content .button {
+.help-menu-container .button {
 	margin: 1em;
 	background: rgba(0, 0, 0, 0.4);
 	border-radius: 2em;
@@ -687,16 +705,16 @@ input[type="range"]:hover::-moz-range-thumb {
 	transition: background 0.3s;
 }
 
-.helw .content .button:hover {
+.help-menu-container .button:hover {
 	background: rgba(0, 0, 0, 0.8);
 }
 
-.helw .content .button .image {
+.help-menu-container .button .image {
 	margin: 2em;
 	flex: 1;
 }
 
-.helw .content .button .text {
+.help-menu-container .button .text {
 	margin: 2em;
 }
 

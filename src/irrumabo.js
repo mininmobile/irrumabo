@@ -609,6 +609,12 @@ World.add(engine.world, walls);
 { // help window
 	help.window.close.addEventListener("click", () => help.window.window.classList.add("hidden"));
 
+	let helpElements = {}
+
+	document.querySelectorAll("[help]").forEach((e) => {
+		helpElements[e.getAttribute("help")] = e;
+	});
+
 	if (options.help) {
 		help.window.window.classList.remove("hidden");
 	}
@@ -618,14 +624,19 @@ World.add(engine.world, walls);
 	}
 
 	function generateHelpMenu() {
+		help.window.content.innerHTML = "";
+
 		help.window.window.style.width = `${(document.body.scrollWidth / 4) * 3}px`;
 		help.window.window.style.height = `${document.body.scrollHeight / 3}px`;
 		help.window.window.style.left = `${document.body.scrollWidth / 8}px`;
 		help.window.window.style.top = `${document.body.scrollHeight / 3}px`;
 
+		help.window.content.classList.add("help-menu-container");
+
 		help.categories.forEach((category) => {
 			let button = document.createElement("div");
 				button.classList.add("button", `category-${category}`);
+				button.addEventListener("click", () => generateHelp(category));
 				help.window.content.appendChild(button);
 
 			let image = document.createElement("div");
@@ -637,6 +648,38 @@ World.add(engine.world, walls);
 				text.innerText = category.substring(0, 1).toUpperCase() + category.substring(1).toLowerCase();
 				button.appendChild(text);
 		});
+	}
+
+	function generateHelp(category) {
+		help.window.content.innerHTML = "";
+
+		let helpElement = helpElements[help.data[category].element];
+
+		help.window.window.style.width = `${document.body.scrollWidth / 3}px`;
+		help.window.window.style.height = `${document.body.scrollHeight / 2}px`;
+		help.window.window.style.left = `${document.body.scrollWidth / 3}px`;
+		help.window.window.style.top = `${document.body.scrollHeight / 4}px`;
+
+		help.window.content.classList.remove("help-menu-container");
+
+		helpElement.classList.add("highlighted");
+
+		let titleContainer = document.createElement("div");
+			titleContainer.classList.add("title-container");
+			help.window.content.appendChild(titleContainer);
+
+		let back = document.createElement("div");
+			back.classList.add("back");
+			back.addEventListener("click", () => {
+				helpElements[help.data[category].element].classList.remove("highlighted");
+				generateHelpMenu();
+			});
+			titleContainer.appendChild(back);
+
+		let title  = document.createElement("div");
+			title.classList.add("title");
+			title.innerText = help.data[category].title;
+			titleContainer.appendChild(title);
 	}
 }
 
