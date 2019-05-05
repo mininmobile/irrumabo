@@ -1713,397 +1713,382 @@ panelComponents.onmouseleave =
 	panelTools.onmouseleave =
 	panelToolOptions.onmouseleave = () => hoverUi = false;
 
-{ // down
-	let handler = (e) => {
-		if (e.button == 0 || !e.button) {
-			if (!hoverUi) {
-				switch (tool) {
-					case Tools.liquid: case Tools.rectangle: case Tools.circle: {
-						drawing = {
-							startX: mouse.absolute.x,
-							startY: mouse.absolute.y,
-							endX: mouse.absolute.x,
-							endY: mouse.absolute.y,
-						}
-					} break;
-	
-					case Tools.gas: {
-						let interval = setInterval(() => {
-							if (!ctrl) {
-								let gas = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
-	
-								World.add(engine.world, [gas]);
-							}
-						}, 50);
-	
-						drawing = {
-							interval: interval,
-							startX: -1,
-							startY: -1,
-							endX: -1,
-							endY: -1,
-						}
-	
-						if (!ctrl) {
-							if (missions.status.currentObjective) {
-								if (missions.status.currentObjective.args[0] == Verb.create) {
-									if (missions.status.currentObjective.args[1] == Noun.fire && toolOptions.gas.selected == "fire") completeObjective();
-									if (missions.status.currentObjective.args[1] == Noun.steam && toolOptions.gas.selected == "steam") completeObjective();
-								}
-							}
-						}
-					} break;
-	
-					case Tools.eraser: {
-						drawing = true;
-	
-						let bodies = Composite.allBodies(engine.world);
-	
-						for (i = 0; i < bodies.length; i++) {
-							let body = bodies[i];
-	
-							if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
-								World.remove(engine.world, body, true);
-	
-								break;
-							}
-						}
-					} break;
-				}
-			}
-		} else if (e.button == 2) {
-			contextBegin = true;
-		}
-	}
-
-	document.addEventListener("mousedown", handler);
-	document.addEventListener("touchstart", handler);
-}
-
-{ // move
-	let handler = (e) => {
-		if (drawing) {
+document.addEventListener("mousedown", (e) => {
+	if (e.button == 0) {
+		if (!hoverUi) {
 			switch (tool) {
 				case Tools.liquid: case Tools.rectangle: case Tools.circle: {
-					if (shift) {
-						let size = Math.max(Math.abs(mouse.absolute.x - drawing.startX), Math.abs(mouse.absolute.y - drawing.startY));
-	
-						drawing.endX = drawing.startX + size;
-						drawing.endY = drawing.startY + size;
-					} else {
-						drawing.endX = mouse.absolute.x;
-						drawing.endY = mouse.absolute.y;
+					drawing = {
+						startX: mouse.absolute.x,
+						startY: mouse.absolute.y,
+						endX: mouse.absolute.x,
+						endY: mouse.absolute.y,
 					}
-	
-					drawing.reverseX = mouse.absolute.x < drawing.startX;
-					drawing.reverseY = mouse.absolute.y < drawing.startY;
 				} break;
-	
+
 				case Tools.gas: {
-					if (ctrl) {
-						if (drawing.startX == -1) {
-							drawing.startX = mouse.absolute.x;
-							drawing.startY = mouse.absolute.y;
-							drawing.endX = mouse.absolute.x;
-							drawing.endY = mouse.absolute.y;
-						} else {
-							if (shift) {
-								let size = Math.max(Math.abs(mouse.absolute.x - drawing.startX), Math.abs(mouse.absolute.y - drawing.startY));
-	
-								drawing.endX = drawing.startX + size;
-								drawing.endY = drawing.startY + size;
-							} else {
-								drawing.endX = mouse.absolute.x;
-								drawing.endY = mouse.absolute.y;
-							}
-	
-							drawing.reverseX = mouse.absolute.x < drawing.startX;
-							drawing.reverseY = mouse.absolute.y < drawing.startY;
+					let interval = setInterval(() => {
+						if (!ctrl) {
+							let gas = Bodies.circle(mouse.absolute.x, mouse.absolute.y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
+
+							World.add(engine.world, [gas]);
 						}
-					} else {
-						drawing.startX = -1
-						drawing.startY = -1
-						drawing.endX = -1
-						drawing.endY = -1
+					}, 50);
+
+					drawing = {
+						interval: interval,
+						startX: -1,
+						startY: -1,
+						endX: -1,
+						endY: -1,
+					}
+
+					if (!ctrl) {
+						if (missions.status.currentObjective) {
+							if (missions.status.currentObjective.args[0] == Verb.create) {
+								if (missions.status.currentObjective.args[1] == Noun.fire && toolOptions.gas.selected == "fire") completeObjective();
+								if (missions.status.currentObjective.args[1] == Noun.steam && toolOptions.gas.selected == "steam") completeObjective();
+							}
+						}
 					}
 				} break;
-	
+
 				case Tools.eraser: {
+					drawing = true;
+
 					let bodies = Composite.allBodies(engine.world);
-	
+
 					for (i = 0; i < bodies.length; i++) {
 						let body = bodies[i];
-	
+
 						if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
 							World.remove(engine.world, body, true);
-	
+
 							break;
 						}
 					}
 				} break;
 			}
 		}
-	
-		if (contextBegin)
-			contextBegin = false;
+	} else if (e.button == 2) {
+		contextBegin = true;
+	}
+});
+
+document.addEventListener("mousemove", (e) => {
+	if (drawing) {
+		switch (tool) {
+			case Tools.liquid: case Tools.rectangle: case Tools.circle: {
+				if (shift) {
+					let size = Math.max(Math.abs(mouse.absolute.x - drawing.startX), Math.abs(mouse.absolute.y - drawing.startY));
+
+					drawing.endX = drawing.startX + size;
+					drawing.endY = drawing.startY + size;
+				} else {
+					drawing.endX = mouse.absolute.x;
+					drawing.endY = mouse.absolute.y;
+				}
+
+				drawing.reverseX = mouse.absolute.x < drawing.startX;
+				drawing.reverseY = mouse.absolute.y < drawing.startY;
+			} break;
+
+			case Tools.gas: {
+				if (ctrl) {
+					if (drawing.startX == -1) {
+						drawing.startX = mouse.absolute.x;
+						drawing.startY = mouse.absolute.y;
+						drawing.endX = mouse.absolute.x;
+						drawing.endY = mouse.absolute.y;
+					} else {
+						if (shift) {
+							let size = Math.max(Math.abs(mouse.absolute.x - drawing.startX), Math.abs(mouse.absolute.y - drawing.startY));
+
+							drawing.endX = drawing.startX + size;
+							drawing.endY = drawing.startY + size;
+						} else {
+							drawing.endX = mouse.absolute.x;
+							drawing.endY = mouse.absolute.y;
+						}
+
+						drawing.reverseX = mouse.absolute.x < drawing.startX;
+						drawing.reverseY = mouse.absolute.y < drawing.startY;
+					}
+				} else {
+					drawing.startX = -1
+					drawing.startY = -1
+					drawing.endX = -1
+					drawing.endY = -1
+				}
+			} break;
+
+			case Tools.eraser: {
+				let bodies = Composite.allBodies(engine.world);
+
+				for (i = 0; i < bodies.length; i++) {
+					let body = bodies[i];
+
+					if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
+						World.remove(engine.world, body, true);
+
+						break;
+					}
+				}
+			} break;
+		}
 	}
 
-	document.addEventListener("mousemove", handler);
-	document.addEventListener("touchmove", handler);
-}
+	if (contextBegin)
+		contextBegin = false;
+});
 
-{ // up
-	let handler = (e) => {
-		if (drawing) {
-			switch (tool) {
-				case Tools.gas: {
-					if (ctrl) {
-						if (drawing.reverseX) {
-							let size = drawing.startX - drawing.endX;
-	
-							drawing.startX -= size;
-							drawing.endX -= size;
-						}
-	
-						if (drawing.reverseY) {
-							let size = drawing.startY - drawing.endY;
-	
-							drawing.startY -= size;
-							drawing.endY -= size;
-						}
-	
-						let gas = Composites.stack(
-								drawing.startX,
-								drawing.startY,
-								Math.floor(Math.abs(drawing.endX - drawing.startX) / 20),
-								Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
-								0, 0, (x, y) => {
-							let body = Bodies.circle(x, y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
-	
-							return body;
-						});
-	
-						World.add(engine.world, [gas]);
-	
-						if (Math.floor((drawing.endX - drawing.startX) / 20) * Math.floor((drawing.endY - drawing.startY) / 20) > 0) {
-							if (missions.status.currentObjective) {
-								if (missions.status.currentObjective.args[0] == Verb.create) {
-									if (missions.status.currentObjective.args[1] == Noun.fire && toolOptions.gas.selected == "fire") completeObjective();
-									if (missions.status.currentObjective.args[1] == Noun.steam && toolOptions.gas.selected == "steam") completeObjective();
-								}
-							}
-						}
-					}
-				} break;
-	
-				case Tools.liquid: {
+document.addEventListener("mouseup", (e) => {
+	if (drawing) {
+		switch (tool) {
+			case Tools.gas: {
+				if (ctrl) {
 					if (drawing.reverseX) {
 						let size = drawing.startX - drawing.endX;
-	
+
 						drawing.startX -= size;
 						drawing.endX -= size;
 					}
-	
+
 					if (drawing.reverseY) {
 						let size = drawing.startY - drawing.endY;
-	
+
 						drawing.startY -= size;
 						drawing.endY -= size;
 					}
-	
-					let water = Composites.stack(
+
+					let gas = Composites.stack(
 							drawing.startX,
 							drawing.startY,
 							Math.floor(Math.abs(drawing.endX - drawing.startX) / 20),
 							Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
 							0, 0, (x, y) => {
-						let body = Bodies.circle(x, y, 10, LiquidOptions[Liquids[toolOptions.liquid.selected]]);
-	
+						let body = Bodies.circle(x, y, 10, GasOptions[Gasses[toolOptions.gas.selected]]);
+
 						return body;
 					});
-	
-					World.add(engine.world, [water]);
-	
+
+					World.add(engine.world, [gas]);
+
 					if (Math.floor((drawing.endX - drawing.startX) / 20) * Math.floor((drawing.endY - drawing.startY) / 20) > 0) {
 						if (missions.status.currentObjective) {
 							if (missions.status.currentObjective.args[0] == Verb.create) {
-								if (missions.status.currentObjective.args[1] == Noun.water && toolOptions.liquid.selected == "water") completeObjective();
-								if (missions.status.currentObjective.args[1] == Noun.oil && toolOptions.liquid.selected == "oil") completeObjective();
+								if (missions.status.currentObjective.args[1] == Noun.fire && toolOptions.gas.selected == "fire") completeObjective();
+								if (missions.status.currentObjective.args[1] == Noun.steam && toolOptions.gas.selected == "steam") completeObjective();
 							}
 						}
 					}
-				} break;
-	
-				case Tools.rectangle: {
-					if (drawing.reverseX) {
-						let size = drawing.startX - drawing.endX;
-	
-						drawing.startX -= size;
-						drawing.endX -= size;
+				}
+			} break;
+
+			case Tools.liquid: {
+				if (drawing.reverseX) {
+					let size = drawing.startX - drawing.endX;
+
+					drawing.startX -= size;
+					drawing.endX -= size;
+				}
+
+				if (drawing.reverseY) {
+					let size = drawing.startY - drawing.endY;
+
+					drawing.startY -= size;
+					drawing.endY -= size;
+				}
+
+				let water = Composites.stack(
+						drawing.startX,
+						drawing.startY,
+						Math.floor(Math.abs(drawing.endX - drawing.startX) / 20),
+						Math.floor(Math.abs(drawing.endY - drawing.startY) / 20),
+						0, 0, (x, y) => {
+					let body = Bodies.circle(x, y, 10, LiquidOptions[Liquids[toolOptions.liquid.selected]]);
+
+					return body;
+				});
+
+				World.add(engine.world, [water]);
+
+				if (Math.floor((drawing.endX - drawing.startX) / 20) * Math.floor((drawing.endY - drawing.startY) / 20) > 0) {
+					if (missions.status.currentObjective) {
+						if (missions.status.currentObjective.args[0] == Verb.create) {
+							if (missions.status.currentObjective.args[1] == Noun.water && toolOptions.liquid.selected == "water") completeObjective();
+							if (missions.status.currentObjective.args[1] == Noun.oil && toolOptions.liquid.selected == "oil") completeObjective();
+						}
 					}
-	
-					if (drawing.reverseY) {
-						let size = drawing.startY - drawing.endY;
-	
-						drawing.startY -= size;
-						drawing.endY -= size;
-					}
-	
-					World.add(engine.world, [
-						Bodies.rectangle(
-							drawing.startX + (Math.abs(drawing.endX - drawing.startX) / 2),
-							drawing.startY + (Math.abs(drawing.endY - drawing.startY) / 2),
-							Math.abs(drawing.endX - drawing.startX),
-							Math.abs(drawing.endY - drawing.startY))
-					]);
-	
-					if ((drawing.endX - drawing.startX) * (drawing.endY - drawing.startY) > 0 && missions.status.currentObjective == "Create a rectangle.") completeObjective();
-				} break;
-	
-				case Tools.circle: {
-					World.add(engine.world, [
-						Bodies.circle(
-							drawing.startX,
-							drawing.startY,
-							Math.max(Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY)))
-					]);
-	
-					if (Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY) > 0 && missions.status.currentObjective == "Create a ball.") completeObjective();
-				} break;
-			}
-	
-			stopDrawing();
-		} else if (contextBegin) {
-			let bodies = Composite.allBodies(engine.world);
-	
-			for (i = 0; i < bodies.length; i++) {
-				let body = bodies[i];
-	
-				if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
-					contextClick = true;
-	
-					context.classList.remove("hidden");
-	
-					context.style.left = mouse.absolute.x - 1 + "px";
-					context.style.top = mouse.absolute.y - 1 + "px";
-	
-					generateContextMenu(context, [
-						{ type: "button", name: "Erase", action: () => World.remove(engine.world, body, true) },
-						{ type: "divider" },
-						{ type: "sub", name: "Appearance", menu: [
-							{ type: "title", name: "Red" },
-							{ type: "range", min: 0, max: 255, step: 1, value: body.render.color.red, onchange: (e) => {
-								body.render.color.red = e.value; body.render.fillStyle = getFillStyle(body) } },
-							{ type: "title", name: "Green" },
-							{ type: "range", min: 0, max: 255, step: 1, value: body.render.color.green, onchange: (e) => {
-								body.render.color.green = e.value; body.render.fillStyle = getFillStyle(body) } },
-							{ type: "title", name: "Blue" },
-							{ type: "range", min: 0, max: 255, step: 1, value: body.render.color.blue, onchange: (e) => {
-								body.render.color.blue = e.value; body.render.fillStyle = getFillStyle(body) } },
-							{ type: "title", name: "Alpha (Opacity)" },
-							{ type: "range", min: 0, max: 1, step: 0.05, value: body.render.color.blue, onchange: (e) => {
-								body.render.color.alpha = e.value; body.render.fillStyle = getFillStyle(body) } },
-						] },
-						{ type: "sub", name: "Material", menu: [
-							{ type: "title", hidden: body.isStatic, name: "Density" },
-							{ type: "range", hidden: body.isStatic, min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => { if (!body.isStatic) {
-								Body.setDensity(body, e.value);
-	
-								if (missions.status.currentObjective == "Change the density of the ball." && body.shape == "circle") completeObjective();
-								if (missions.status.currentObjective == "Change the density of the rectangle." && body.shape == "rectangle") completeObjective();
-								if (missions.status.currentObjective == "Change the density of the polygon." && body.shape == "polygon") completeObjective();
-							} } },
-							{ type: "title", name: "Temperature" },
-							{ type: "range", min: 0, max: 532, step: 2, value: body.temperature + 100, onchange: (e) => body.temperature = e.value - 100 },
-						] },
-						{ type: "sub", name: "Position", menu: [
-							{ type: "title", name: "Angle" },
-							{ type: "range", min: 0, max: 360, step: 15, value: toDeg(body.angle), onchange: (e) => {
-								Body.setAngle(body, toRad(e.value));
-	
-								if (missions.status.currentObjective) {
-									if (missions.status.currentObjective.args[0] == Verb.rotate) {
-										if (missions.status.currentObjective.args[2] * 15 == e.value) {
-											if (missions.status.currentObjective.args[1] == Noun.circle && body.shape == "circle") completeObjective();
-											if (missions.status.currentObjective.args[1] == Noun.rectangle && body.shape == "rectangle") completeObjective();
-											if (missions.status.currentObjective.args[1] == Noun.polygon && body.shape == "polygon") completeObjective();
-										}
+				}
+			} break;
+
+			case Tools.rectangle: {
+				if (drawing.reverseX) {
+					let size = drawing.startX - drawing.endX;
+
+					drawing.startX -= size;
+					drawing.endX -= size;
+				}
+
+				if (drawing.reverseY) {
+					let size = drawing.startY - drawing.endY;
+
+					drawing.startY -= size;
+					drawing.endY -= size;
+				}
+
+				World.add(engine.world, [
+					Bodies.rectangle(
+						drawing.startX + (Math.abs(drawing.endX - drawing.startX) / 2),
+						drawing.startY + (Math.abs(drawing.endY - drawing.startY) / 2),
+						Math.abs(drawing.endX - drawing.startX),
+						Math.abs(drawing.endY - drawing.startY))
+				]);
+
+				if ((drawing.endX - drawing.startX) * (drawing.endY - drawing.startY) > 0 && missions.status.currentObjective == "Create a rectangle.") completeObjective();
+			} break;
+
+			case Tools.circle: {
+				World.add(engine.world, [
+					Bodies.circle(
+						drawing.startX,
+						drawing.startY,
+						Math.max(Math.abs(drawing.endX - drawing.startX), Math.abs(drawing.endY - drawing.startY)))
+				]);
+
+				if (Math.max(drawing.endX - drawing.startX, drawing.endY - drawing.startY) > 0 && missions.status.currentObjective == "Create a ball.") completeObjective();
+			} break;
+		}
+
+		stopDrawing();
+	} else if (contextBegin) {
+		let bodies = Composite.allBodies(engine.world);
+
+		for (i = 0; i < bodies.length; i++) {
+			let body = bodies[i];
+
+			if (Bounds.contains(body.bounds, mouse.absolute) && Vertices.contains(body.vertices, mouse.absolute)) {
+				contextClick = true;
+
+				context.classList.remove("hidden");
+
+				context.style.left = mouse.absolute.x - 1 + "px";
+				context.style.top = mouse.absolute.y - 1 + "px";
+
+				generateContextMenu(context, [
+					{ type: "button", name: "Erase", action: () => World.remove(engine.world, body, true) },
+					{ type: "divider" },
+					{ type: "sub", name: "Appearance", menu: [
+						{ type: "title", name: "Red" },
+						{ type: "range", min: 0, max: 255, step: 1, value: body.render.color.red, onchange: (e) => {
+							body.render.color.red = e.value; body.render.fillStyle = getFillStyle(body) } },
+						{ type: "title", name: "Green" },
+						{ type: "range", min: 0, max: 255, step: 1, value: body.render.color.green, onchange: (e) => {
+							body.render.color.green = e.value; body.render.fillStyle = getFillStyle(body) } },
+						{ type: "title", name: "Blue" },
+						{ type: "range", min: 0, max: 255, step: 1, value: body.render.color.blue, onchange: (e) => {
+							body.render.color.blue = e.value; body.render.fillStyle = getFillStyle(body) } },
+						{ type: "title", name: "Alpha (Opacity)" },
+						{ type: "range", min: 0, max: 1, step: 0.05, value: body.render.color.blue, onchange: (e) => {
+							body.render.color.alpha = e.value; body.render.fillStyle = getFillStyle(body) } },
+					] },
+					{ type: "sub", name: "Material", menu: [
+						{ type: "title", hidden: body.isStatic, name: "Density" },
+						{ type: "range", hidden: body.isStatic, min: 0.001, max: 0.1, step: 0.001, value: body.density, onchange: (e) => { if (!body.isStatic) {
+							Body.setDensity(body, e.value);
+
+							if (missions.status.currentObjective == "Change the density of the ball." && body.shape == "circle") completeObjective();
+							if (missions.status.currentObjective == "Change the density of the rectangle." && body.shape == "rectangle") completeObjective();
+							if (missions.status.currentObjective == "Change the density of the polygon." && body.shape == "polygon") completeObjective();
+						} } },
+						{ type: "title", name: "Temperature" },
+						{ type: "range", min: 0, max: 532, step: 2, value: body.temperature + 100, onchange: (e) => body.temperature = e.value - 100 },
+					] },
+					{ type: "sub", name: "Position", menu: [
+						{ type: "title", name: "Angle" },
+						{ type: "range", min: 0, max: 360, step: 15, value: toDeg(body.angle), onchange: (e) => {
+							Body.setAngle(body, toRad(e.value));
+
+							if (missions.status.currentObjective) {
+								if (missions.status.currentObjective.args[0] == Verb.rotate) {
+									if (missions.status.currentObjective.args[2] * 15 == e.value) {
+										if (missions.status.currentObjective.args[1] == Noun.circle && body.shape == "circle") completeObjective();
+										if (missions.status.currentObjective.args[1] == Noun.rectangle && body.shape == "rectangle") completeObjective();
+										if (missions.status.currentObjective.args[1] == Noun.polygon && body.shape == "polygon") completeObjective();
 									}
 								}
-							} },
-							{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => {
-								Body.setStatic(body, e.value);
-	
-								if (e.value && missions.status.currentObjective == "Set the static property of the ball to true." && body.shape == "circle") completeObjective();
-								if (e.value && missions.status.currentObjective == "Set the static property of the rectangle to true." && body.shape == "rectangle") completeObjective();
-								if (e.value && missions.status.currentObjective == "Set the static property of the polygon to true." && body.shape == "polygon") completeObjective();
-								if (!e.value && missions.status.currentObjective == "Set the static property of the ball to false." && body.shape == "circle") completeObjective();
-								if (!e.value && missions.status.currentObjective == "Set the static property of the rectangle to false." && body.shape == "rectangle") completeObjective();
-								if (!e.value && missions.status.currentObjective == "Set the static property of the polygon to false." && body.shape == "polygon") completeObjective();
-							} },
-						] },
-						{ type: "sub", name: "Collision", menu: [
-							{ type: "check", name: "Cloner", value: body.isCloner, onchange: (e) => body.isCloner = e.value },
-						] },
-						{ type: "divider" },
-						{ type: "sub", name: "Info", menu: [] },
-						{ type: "sub", name: "Behavior", menu: [] },
-					]);
-	
-					break;
-				}
-			}
-		}
-	
-		if (contextClick) {
-			contextClick = false;
-		} else {
-			let contexts = document.getElementsByClassName("context");
-	
-			for (let i = 0; i < contexts.length; i++) {
-				let c = contexts[i];
-	
-				if (c != context) {
-					c.remove();
-				} else {
-					c.classList.add("hidden");
-				}
-			}
-		}
-	
-		if (componentDrag) {
-			if (!hoverUi) {
-				componentDrag.parts.forEach((part) => {
-					let p = JSON.parse(JSON.stringify(part));
-	
-					switch (p.type) {
-						case "rectangle": {
-							if (p.options.clonerBody) {
-								p.options.clonerBody.position.x += e.clientX;
-								p.options.clonerBody.position.y += e.clientY;
 							}
-	
-							let body = Bodies.rectangle(p.x + e.clientX + (p.w / 2), p.y + e.clientY + (p.h / 2), p.w, p.h, p.options);
-	
-							World.add(engine.world, [body]);
-						} break;
-					}
-				});
-	
-				if (missions.status.currentObjective) {
-					if (missions.status.currentObjective.args[0] == Verb.component) {
-						if (missions.status.currentObjective.args[1] == componentDrag.name) completeObjective();
-					}
-				}
+						} },
+						{ type: "check", name: "Static", value: body.isStatic, onchange: (e) => {
+							Body.setStatic(body, e.value);
+
+							if (e.value && missions.status.currentObjective == "Set the static property of the ball to true." && body.shape == "circle") completeObjective();
+							if (e.value && missions.status.currentObjective == "Set the static property of the rectangle to true." && body.shape == "rectangle") completeObjective();
+							if (e.value && missions.status.currentObjective == "Set the static property of the polygon to true." && body.shape == "polygon") completeObjective();
+							if (!e.value && missions.status.currentObjective == "Set the static property of the ball to false." && body.shape == "circle") completeObjective();
+							if (!e.value && missions.status.currentObjective == "Set the static property of the rectangle to false." && body.shape == "rectangle") completeObjective();
+							if (!e.value && missions.status.currentObjective == "Set the static property of the polygon to false." && body.shape == "polygon") completeObjective();
+						} },
+					] },
+					{ type: "sub", name: "Collision", menu: [
+						{ type: "check", name: "Cloner", value: body.isCloner, onchange: (e) => body.isCloner = e.value },
+					] },
+					{ type: "divider" },
+					{ type: "sub", name: "Info", menu: [] },
+					{ type: "sub", name: "Behavior", menu: [] },
+				]);
+
+				break;
 			}
-	
-			componentDrag = undefined;
 		}
 	}
 
-	document.addEventListener("mouseup", handler);
-	document.addEventListener("touchend", handler);
-}
+	if (contextClick) {
+		contextClick = false;
+	} else {
+		let contexts = document.getElementsByClassName("context");
+
+		for (let i = 0; i < contexts.length; i++) {
+			let c = contexts[i];
+
+			if (c != context) {
+				c.remove();
+			} else {
+				c.classList.add("hidden");
+			}
+		}
+	}
+
+	if (componentDrag) {
+		if (!hoverUi) {
+			componentDrag.parts.forEach((part) => {
+				let p = JSON.parse(JSON.stringify(part));
+
+				switch (p.type) {
+					case "rectangle": {
+						if (p.options.clonerBody) {
+							p.options.clonerBody.position.x += e.clientX;
+							p.options.clonerBody.position.y += e.clientY;
+						}
+
+						let body = Bodies.rectangle(p.x + e.clientX + (p.w / 2), p.y + e.clientY + (p.h / 2), p.w, p.h, p.options);
+
+						World.add(engine.world, [body]);
+					} break;
+				}
+			});
+
+			if (missions.status.currentObjective) {
+				if (missions.status.currentObjective.args[0] == Verb.component) {
+					if (missions.status.currentObjective.args[1] == componentDrag.name) completeObjective();
+				}
+			}
+		}
+
+		componentDrag = undefined;
+	}
+});
 
 // start engine
 Runner.run(runner, engine);
