@@ -698,7 +698,7 @@ input[type="range"]:hover::-moz-range-thumb {
 	border-radius: 2em;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: space-evenly;
 	align-items: center;
 	flex: 1;
 	cursor: pointer;
@@ -710,12 +710,20 @@ input[type="range"]:hover::-moz-range-thumb {
 }
 
 .help-menu-container .button .image {
-	margin: 2em;
-	flex: 1;
+	width: 3em;
+	height: 3em;
+	margin-top: 2em;
 }
+
+.button.category-welcome .image { background: url(img/helpwelcome.svg) center / contain no-repeat; }
+.button.category-missions .image { background: url(img/helpmissions.svg) center / contain no-repeat; }
+.button.category-tools .image { background: url(img/helptools.svg) center / contain no-repeat; }
+.button.category-components .image { background: url(img/helpcomponents.svg) center / contain no-repeat; }
+.button.category-shortcuts .image { background: url(img/helpkeybinds.svg) center / contain no-repeat; }
 
 .help-menu-container .button .text {
 	margin: 2em;
+	margin-top: 0;
 }
 
 /* settings window */

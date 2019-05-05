@@ -651,9 +651,10 @@ World.add(engine.world, walls);
 	}
 
 	function generateHelp(category) {
-		help.window.content.innerHTML = "";
+		let data = help.data[category];
+		let helpElement;
 
-		let helpElement = helpElements[help.data[category].element];
+		help.window.content.innerHTML = "";
 
 		help.window.window.style.width = `${document.body.scrollWidth / 3}px`;
 		help.window.window.style.height = `${document.body.scrollHeight / 2}px`;
@@ -662,7 +663,10 @@ World.add(engine.world, walls);
 
 		help.window.content.classList.remove("help-menu-container");
 
-		helpElement.classList.add("highlighted");
+		if (data.helpElement) {
+			helpElement = helpElements[data.helpElement];
+			helpElement.classList.add("highlighted");
+		}
 
 		let titleContainer = document.createElement("div");
 			titleContainer.classList.add("title-container");
@@ -671,8 +675,10 @@ World.add(engine.world, walls);
 		let back = document.createElement("div");
 			back.classList.add("back");
 			back.addEventListener("click", () => {
-				helpElements[help.data[category].element].classList.remove("highlighted");
-				generateHelpMenu();
+				if (helpElement)
+					helpElement.classList.remove("highlighted");
+
+					generateHelpMenu();
 			});
 			titleContainer.appendChild(back);
 
@@ -680,6 +686,10 @@ World.add(engine.world, walls);
 			title.classList.add("title");
 			title.innerText = help.data[category].title;
 			titleContainer.appendChild(title);
+
+		let content = document.createElement("p");
+			content.innerText = help.data[category].description;
+			help.window.content.appendChild(content);
 	}
 }
 
