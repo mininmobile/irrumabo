@@ -1,2 +1,2 @@
 # irrumabo
-Physics simulator for Scifest
+moved to https://codeberg.org/zvava/irrumabo
